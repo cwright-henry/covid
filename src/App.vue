@@ -81,11 +81,15 @@ export default {
 			const countries = await load(
 				"https://restcountries.eu/rest/v2/all"
 			);
+			this.$store.commit("setLoadingStatus", "countries");
 			const cases = await load("https://api.covid19api.com/all");
+			this.$store.commit("setLoadingStatus", "cases");
 			this.parseAndStore(countries, cases);
-			this.$store.commit("isLoading", false);
+			setTimeout(() => {
+				this.$store.commit("setLoadingStatus", "parsing");
+				this.$store.commit("isLoading", false);
+			}, 0);
 		} catch (error) {
-			console.log(error);
 			EventBus.$emit("error", "Error connecting to services");
 		}
 	},

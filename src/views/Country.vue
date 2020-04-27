@@ -42,7 +42,7 @@
 				<CountrySelect :country="country" @compareChange="compareChange" />
 			</div>
 			<SingleCountry v-if="comparisions.length === 0" :country="country" />
-			<CompareCountry v-else :country="country" :comparisions="comparisions" />
+			<CountryCompare v-else :country="country" :comparisions="comparisions" />
 		</div>
 	</article>
 </template>
@@ -52,7 +52,7 @@ import { mapGetters } from "vuex";
 import BasicChart from "./BasicChart";
 import CountrySelect from "./CountrySelect";
 import SingleCountry from "./SingleCountry";
-import CompareCountry from "./CompareCountry";
+import CountryCompare from "./CountryCompare";
 
 export default {
 	data() {
@@ -74,7 +74,7 @@ export default {
 		BasicChart,
 		CountrySelect,
 		SingleCountry,
-		CompareCountry
+		CountryCompare
 	},
 	props: {
 		countryCode: {
@@ -141,7 +141,7 @@ header {
 }
 .covid-country--info__select {
 	display: flex;
-	justify-content: flex-start;
+	justify-content: space-between;
 	margin: 0 0 36px 0;
 }
 ul.covid-country--info {

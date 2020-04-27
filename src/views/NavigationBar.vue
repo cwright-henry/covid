@@ -58,7 +58,7 @@
 			>
 				<li v-for="(countries, region) in items" :key="region" class="covid-nav--region">
 					<h1>{{region}}</h1>
-					<NavigationCountry :countries="countries" />
+					<NavigationCountry :countries="countries" :scroll="scroll" />
 				</li>
 			</ul>
 			<NavigationCountry v-else :countries="items" />
@@ -92,7 +92,8 @@ export default {
 				{ text: "By Confirmed", uuid: "confirmed" },
 				{ text: "By Recovered", uuid: "recovered" },
 				{ text: "By Fatalities", uuid: "fatalities" }
-			]
+			],
+			scroll: false
 		};
 	},
 	components: {
@@ -102,10 +103,10 @@ export default {
 		EventBus.$on("toggleNavBar", () => {
 			this.drawer = !this.drawer;
 		});
+		this.scroll = true;
 	},
 	watch: {
 		currentFilter(filter) {
-			console.log(filter);
 			this.$nextTick(() => {
 				const selector =
 					filter === "region" || filter === "subregion"
@@ -119,6 +120,7 @@ export default {
 						block: "center",
 						inline: "nearest"
 					});
+				this.$root.gaInteraction("Filter Change", filter);
 			});
 		}
 	},

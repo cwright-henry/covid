@@ -5,9 +5,7 @@ import store from './store'
 import vuetify from './plugins/vuetify';
 import Highcharts from 'highcharts'
 import HighchartsVue from 'highcharts-vue'
-import HighchartsMore from 'highcharts/highcharts-more'
-import SolidGauge from 'highcharts/modules/solid-gauge'
-import EventBus from "@/events";
+import { GA } from "@/utils/mixins/ga";
 
 Highcharts.createElement('link', {
 	href: 'https://fonts.googleapis.com/css?family=Unica+One',
@@ -21,9 +19,6 @@ Highcharts.setOptions({
 		useUTC: true
 	}
 });
-
-HighchartsMore(Highcharts)
-SolidGauge(Highcharts)
 
 Vue.use(HighchartsVue)
 
@@ -62,15 +57,15 @@ Vue.filter('date-short', function (value) {
 });
 
 Vue.config.errorHandler = function (err, vm, info) {
-	EventBus.$emit("error", `Vue Error - ${err} - ${info}`);
-	console.log(err)
+	GA.methods.gaExperience("Vue Error Handler", `Vue Error - ${err} - ${info}`);
 }
 
 window.onerror = function (msg, url, line, col, error) {
-	EventBus.$emit("error", `Window Error - ${msg} - ${line} - ${col} - ${error}`);
+	GA.methods.gaExperience("Window Error Handler", `Window Error - ${msg} - ${line} - ${col} - ${error}`);
 }
 
 new Vue({
+	mixins: [GA],
 	router,
 	store,
 	vuetify,

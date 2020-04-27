@@ -41,26 +41,37 @@ export default {
 		countries: {
 			type: Array,
 			default: () => []
+		},
+		scroll: {
+			type: Boolean,
+			default: false
 		}
 	},
 	computed: {
 		...mapState(["currentCountryCode"])
 	},
 	watch: {
-		currentCountryCode() {
-			this.scrollIntoView();
+		scroll: {
+			handler: function() {
+				this.scrollIntoView();
+			}
 		}
 	},
 	methods: {
 		scrollIntoView() {
-			const current = this.$refs[this.currentCountryCode];
-			if (current && current[0]) {
-				current[0].scrollIntoView({
-					behavior: "smooth",
-					block: "center",
-					inline: "nearest"
-				});
-			}
+			/**
+			 * Let the navigation render
+			 */
+			this.$nextTick(() => {
+				const current = this.$refs[this.currentCountryCode];
+				if (current && current[0]) {
+					current[0].scrollIntoView({
+						behavior: "smooth",
+						block: "center",
+						inline: "nearest"
+					});
+				}
+			});
 		}
 	}
 };

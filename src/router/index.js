@@ -41,8 +41,15 @@ const router = new VueRouter({
 			}, 100)
 		})
 	},
-	
+
 	routes
 })
+
+router.afterEach((to) => {
+	window.gtag('config', window.GA_TRACKING_ID, {
+		page_path: to.fullPath,
+		page_title: to.name
+	});
+});
 
 export default router

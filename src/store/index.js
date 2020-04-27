@@ -10,6 +10,11 @@ export default new Vuex.Store({
 		coverage: {},	/* Frozen */
 		geoJson: {},	/* Frozen */
 		currentCountryCode: null,
+		laodingStatus: {
+			countries: false,
+			cases: false,
+			parsing: false,
+		}
 	},
 	getters: {
 		findCountry: state => countryCode => {
@@ -28,6 +33,10 @@ export default new Vuex.Store({
 		}
 	},
 	mutations: {
+		setLoadingStatus(state, data) {
+			state.laodingStatus[data] = true;
+		},
+
 		setData(state, data) {
 			state.data = data;
 		},

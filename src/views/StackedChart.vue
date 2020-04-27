@@ -125,7 +125,6 @@ export default {
 					this.clearSeries();
 					for (let i = 0; i < this.series.length; i++) {
 						const series = this.series[i];
-						console.log(series);
 						chart.addSeries({
 							type: series.type,
 							data: series.ts,

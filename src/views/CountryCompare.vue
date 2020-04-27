@@ -64,6 +64,12 @@ export default {
 	watch: {
 		comparisions: {
 			handler() {
+				this.$root.gaInteraction(
+					"Country Compare",
+					`${
+						this.country.countryCode
+					} -> ${this.comparisions.toString()}`
+				);
 				this.loadData();
 			},
 			deep: true
