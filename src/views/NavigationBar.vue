@@ -3,7 +3,7 @@
 		<div class="covid-nav--top">
 			<div class="covid-nav-world">
 				<router-link to="/world" class="covid-link">
-					<img src="../assets/earth.gif" width="28" class="mx-3" />
+					<img src="../assets/earth.gif" width="28" height="28" class="mx-3" />
 					<h1>World View</h1>
 				</router-link>
 				<v-spacer></v-spacer>

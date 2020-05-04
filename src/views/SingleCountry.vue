@@ -134,8 +134,9 @@ export default {
 		},
 
 		loadData() {
-			if (this.country.series) {
+			if (this.country.countryCode) {
 				const series = this.country.series.data;
+				this.isActive = false;
 
 				this.confirmedSeries = [];
 				this.recoveredSeries = [];

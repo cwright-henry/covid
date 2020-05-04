@@ -79,7 +79,8 @@ const objectSorter = (property, sort) => {
 };
 
 /**
- * Merge 2 timeseries based on date
+ * Merge 2 timeseries based on date, if entry does not exist
+ * clone an existing one, keyed of date
  * 
  * @param {*} data 
  * @param {*} newData 
@@ -91,7 +92,7 @@ const merge = (data, newData) => {
 		dataItem.deaths += newData.deaths;
 		dataItem.recovered += newData.recovered;
 	} else {
-		data.push(newData);
+		data.push({ ...newData });
 	}
 };
 
@@ -102,7 +103,7 @@ const createSeriesCoverage = countries => {
 	};
 
 	for (let i = 0; i < countries.length; i++) {
-		const country = JSON.parse(JSON.stringify(countries[i])); // Weird bug here, as first entry gets accumalated with rest of them
+		const country = countries[i]; // Weird bug here, as first entry gets accumalated with rest of them
 		coverage.population += country.population;
 		for (let j = 0; j < country.series.data.length; j++) {
 			merge(coverage.data, country.series.data[j]);
