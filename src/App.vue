@@ -78,17 +78,17 @@ export default {
 	async created() {
 		try {
 			this.$store.commit("isLoading", true);
+			this.$store.commit("setLoadingStatus", "Country Data...");
 			const countries = await load(
 				"https://restcountries.eu/rest/v2/all"
 			);
-			this.$store.commit("setLoadingStatus", "countries");
+			this.$store.commit("setLoadingStatus", "Covid Data...");
 			const cases = await load("https://api.covid19api.com/all");
-			this.$store.commit("setLoadingStatus", "cases");
 			this.parseAndStore(countries, cases);
+			this.$store.commit("setLoadingStatus", "Parsing...");
 			setTimeout(() => {
-				this.$store.commit("setLoadingStatus", "parsing");
 				this.$store.commit("isLoading", false);
-			}, 0);
+			}, 350);
 		} catch (error) {
 			EventBus.$emit("error", "Error connecting to services");
 		}

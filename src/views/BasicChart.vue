@@ -107,21 +107,33 @@ export default {
 	data() {
 		return {
 			options: options(this),
-			ref: `covid-chart-${uuid()}`
+			ref: `covid-chart-${uuid()}`,
+			observer: null,
+			isRendered: false
 		};
 	},
 	watch: {
+		// Only invoked on existing confirmed, recovered, fatalities
 		ts() {
-			this.update();
+			if (this.ts.length > 0) {
+				this.isRendered = false;
+				this.render();
+			}
 		}
 	},
 	mounted() {
-		this.update();
+		this.observer = new IntersectionObserver(([entry]) => {
+			if (entry && entry.isIntersecting) {
+				this.render();
+			}
+		}, this.options);
+
+		this.observer.observe(this.$el);
 	},
 	methods: {
-		update() {
+		render() {
 			const chart = this.$refs[this.ref].chart;
-			if (this.ts.length > 0) {
+			if (!this.isRendered) {
 				this.$nextTick(() => {
 					this.clearSeries();
 					chart.addSeries({
@@ -131,6 +143,7 @@ export default {
 						name: this.name
 					});
 					chart.reflow();
+					this.isRendered = true;
 				});
 			}
 		},
@@ -141,6 +154,9 @@ export default {
 				chart.series[0].remove(false);
 			}
 		}
+	},
+	destroyed() {
+		this.observer.disconnect();
 	}
 };
 </script>

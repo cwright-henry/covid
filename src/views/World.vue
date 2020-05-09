@@ -47,7 +47,7 @@
 							<span>{{latestConfirmed | number(0)}}</span>
 						</div>
 					</h1>
-					<BasicChart :ts="confirmedDailySeries" chartType="bar" name="`World Daily Change" />
+					<BasicChart :ts="confirmedDailySeries" chartType="bar" name="World Daily Change" />
 				</div>
 			</div>
 			<div class="covid-world--charts">
@@ -63,7 +63,7 @@
 							<span>{{latestRecovered | number(0)}}</span>
 						</div>
 					</h1>
-					<BasicChart :ts="recovereDailySeries" chartType="bar" name="`World Daily Change" />
+					<BasicChart :ts="recovereDailySeries" chartType="bar" name="World Daily Change" />
 				</div>
 			</div>
 			<div class="covid-world--charts">
@@ -98,8 +98,8 @@ export default {
 			mapStyle: "mapbox://styles/mapbox/dark-v10?optimize=true",
 			viewState: {
 				longitude: -22,
-				latitude: 31,
-				zoom: 1,
+				latitude: 32,
+				zoom: 1.15,
 				bearing: 0,
 				pitch: 0,
 				antialias: true
