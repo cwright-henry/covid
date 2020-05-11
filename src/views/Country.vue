@@ -16,7 +16,10 @@
 					<label>Population Density</label>
 					<div>
 						{{country.population / country.area | number(0)}}
-						<span>per km<sup>2</sup></span>
+						<span>
+							per km
+							<sup>2</sup>
+						</span>
 					</div>
 				</li>
 				<li class="mr-3" v-if="country.series.provinces.length > 0">
@@ -108,7 +111,7 @@ export default {
 
 		loadData() {
 			this.$store.commit("setCurrentCountryCode", this.countryCode);
-			this.country = this.findCountry(this.countryCode);
+			this.country = Object.freeze(this.findCountry(this.countryCode));
 			const series = this.country.series.data;
 			if (series.length > 1) {
 				const lastest = series[series.length - 1];
