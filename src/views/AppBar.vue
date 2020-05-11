@@ -3,7 +3,7 @@
 		<v-app-bar-nav-icon color="#fff" @click="toggleNavBar"></v-app-bar-nav-icon>
 		<div class="covid-appbar--header ml-4">
 			<h1>
-				Covid 19
+				Covid 19 Watch
 				<span>Last Updated: {{total.date | date-long}}</span>
 			</h1>
 			<ul>
