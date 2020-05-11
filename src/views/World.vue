@@ -37,49 +37,49 @@
 			<div class="covid-world--charts">
 				<div class="covid-world--charts__chart">
 					<h1>Confirmed</h1>
-					<BasicChart :ts="confirmedSeries" chartType="line" name="World Confirmed" />
+					<BasicChart :ts="coverage.ts.confirmedSeries" chartType="line" name="World Confirmed" />
 				</div>
 				<div class="covid-world--charts__chart">
 					<h1>
 						Daily Confirmed
 						<div>
 							Latest
-							<span>{{latestConfirmed | number(0)}}</span>
+							<span>{{coverage.ts.latestConfirmed | number(0)}}</span>
 						</div>
 					</h1>
-					<BasicChart :ts="confirmedDailySeries" chartType="bar" name="World Daily Change" />
+					<BasicChart :ts="coverage.ts.confirmedDailySeries" chartType="bar" name="World Daily Change" />
 				</div>
 			</div>
 			<div class="covid-world--charts">
 				<div class="covid-world--charts__chart">
 					<h1>Recovered</h1>
-					<BasicChart :ts="recoveredSeries" chartType="line" name="World Recovered" />
+					<BasicChart :ts="coverage.ts.recoveredSeries" chartType="line" name="World Recovered" />
 				</div>
 				<div class="covid-world--charts__chart">
 					<h1>
 						Daily Recovered
 						<div>
 							Latest
-							<span>{{latestRecovered | number(0)}}</span>
+							<span>{{coverage.ts.latestRecovered | number(0)}}</span>
 						</div>
 					</h1>
-					<BasicChart :ts="recovereDailySeries" chartType="bar" name="World Daily Change" />
+					<BasicChart :ts="coverage.ts.recoveredDailySeries" chartType="bar" name="World Daily Change" />
 				</div>
 			</div>
 			<div class="covid-world--charts">
 				<div class="covid-world--charts__chart">
 					<h1>Fatalities</h1>
-					<BasicChart :ts="deathsSeries" chartType="line" name="World Recovered" />
+					<BasicChart :ts="coverage.ts.deathSeries" chartType="line" name="World Recovered" />
 				</div>
 				<div class="covid-world--charts__chart">
 					<h1>
 						Daily Fatalities
 						<div>
 							Latest
-							<span>{{latestDeaths | number(0)}}</span>
+							<span>{{coverage.ts.latestDeaths | number(0)}}</span>
 						</div>
 					</h1>
-					<BasicChart :ts="deathsDailySeries" chartType="bar" name="`World Daily Change" />
+					<BasicChart :ts="coverage.ts.deathDailySeries" chartType="bar" name="`World Daily Change" />
 				</div>
 			</div>
 		</div>
@@ -104,17 +104,8 @@ export default {
 				pitch: 0,
 				antialias: true
 			},
-			confirmedSeries: [],
-			confirmedDailySeries: [],
-			recoveredSeries: [],
-			recovereDailySeries: [],
-			deathsSeries: [],
-			deathsDailySeries: [],
 			filter: "confirmed",
-			streams: [],
-			latestConfirmed: 0,
-			latestRecovered: 0,
-			latestDeaths: 0
+			streams: []
 		};
 	},
 	components: {
@@ -141,7 +132,6 @@ export default {
 
 		this.map.on("load", () => {
 			this.loadLayer();
-			this.parseCoverage();
 		});
 	},
 	methods: {
@@ -189,57 +179,6 @@ export default {
 					20000,
 					"#F44336"
 				]);
-			}
-		},
-
-		parseCoverage() {
-			this.confirmedSeries = [];
-			this.recoveredSeries = [];
-			this.deathsSeries = [];
-			for (const { confirmed, recovered, deaths, date } of this.coverage
-				.data) {
-				this.confirmedSeries.push([date, confirmed]);
-				this.recoveredSeries.push([date, recovered]);
-				this.deathsSeries.push([date, deaths]);
-			}
-
-			this.confirmedDailySeries = [];
-			for (let i = 1; i < this.confirmedSeries.length; i++) {
-				const date = this.confirmedSeries[i][0];
-				const diff =
-					this.confirmedSeries[i][1] - this.confirmedSeries[i - 1][1];
-				this.confirmedDailySeries.push([date, diff]);
-			}
-			if (this.confirmedDailySeries.length > 0) {
-				this.latestConfirmed = this.confirmedDailySeries[
-					this.confirmedDailySeries.length - 1
-				][1];
-			}
-
-			this.recovereDailySeries = [];
-			for (let i = 1; i < this.recoveredSeries.length; i++) {
-				const date = this.recoveredSeries[i][0];
-				const diff =
-					this.recoveredSeries[i][1] - this.recoveredSeries[i - 1][1];
-				this.recovereDailySeries.push([date, diff]);
-			}
-			if (this.recovereDailySeries.length > 0) {
-				this.latestRecovered = this.recovereDailySeries[
-					this.recovereDailySeries.length - 1
-				][1];
-			}
-
-			this.deathsDailySeries = [];
-			for (let i = 1; i < this.deathsSeries.length; i++) {
-				const date = this.deathsSeries[i][0];
-				const diff =
-					this.deathsSeries[i][1] - this.deathsSeries[i - 1][1];
-				this.deathsDailySeries.push([date, diff]);
-			}
-			if (this.deathsDailySeries.length > 0) {
-				this.latestDeaths = this.deathsDailySeries[
-					this.deathsDailySeries.length - 1
-				][1];
 			}
 		},
 

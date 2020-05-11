@@ -40,14 +40,10 @@ import SplashScreen from "@/views/SplashScreen";
 import EventBus from "@/events";
 
 import { load } from "@/services/Api";
-import {
-	uuid,
-	createGeoJson,
-	getLatest,
-	createSeriesCoverage,
-	createdSeriesForCountry,
-	findReplacementName
-} from "@/utils";
+import { createGeoJson, parse, createSeriesCoverage } from "@/utils";
+
+const COUNTRY_API = "https://restcountries.eu/rest/v2/all";
+const CASES_API = "https://api.covid19api.com/all";
 
 export default {
 	name: "App",
@@ -79,11 +75,9 @@ export default {
 		try {
 			this.$store.commit("isLoading", true);
 			this.$store.commit("setLoadingStatus", "Country Data...");
-			const countries = await load(
-				"https://restcountries.eu/rest/v2/all"
-			);
+			const countries = await load(COUNTRY_API);
 			this.$store.commit("setLoadingStatus", "Covid Data...");
-			const cases = await load("https://api.covid19api.com/all");
+			const cases = await load(CASES_API);
 			this.parseAndStore(countries, cases);
 			this.$store.commit("setLoadingStatus", "Parsing...");
 			setTimeout(() => {
@@ -104,38 +98,7 @@ export default {
 
 	methods: {
 		parseAndStore(countries, cases) {
-			const data = [];
-			for (const country of countries) {
-				const entries = cases.filter(
-					item => country.alpha2Code === item.CountryCode
-				);
-				if (entries.length > 0) {
-					const name = findReplacementName(country.name);
-					const item = {
-						uuid: uuid(),
-						countryName: name,
-						filteredName: name.toLowerCase(),
-						countryCode: country.alpha2Code,
-						countryCode3: country.alpha3Code,
-						flag: country.flag,
-						population: country.population,
-						lat: country.latlng[0],
-						lng: country.latlng[1],
-						borders: country.borders,
-						area: country.area /* Square kilometers */,
-						regionName: country.region,
-						subRegionName: country.subregion,
-						regionCode: country.regionalBlocs[0]
-							? country.regionalBlocs[0].acronym
-							: "Other",
-						series: createdSeriesForCountry(
-							entries,
-							country.alpha2Code
-						)
-					};
-					data.push({ ...item, ...getLatest(item) });
-				}
-			}
+			const data = parse(countries, cases);
 			this.$store.commit(
 				"setGeoJson",
 				Object.freeze(createGeoJson(data))

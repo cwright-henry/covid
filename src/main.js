@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import 'animate.css'
 import vuetify from './plugins/vuetify';
 import Highcharts from 'highcharts'
 import HighchartsVue from 'highcharts-vue'
@@ -58,10 +59,12 @@ Vue.filter('date-short', function (value) {
 
 Vue.config.errorHandler = function (err, vm, info) {
 	GA.methods.gaExperience("Vue Error Handler", `Vue Error - ${err} - ${info}`);
+	console.log(err)
 }
 
 window.onerror = function (msg, url, line, col, error) {
 	GA.methods.gaExperience("Window Error Handler", `Window Error - ${msg} - ${line} - ${col} - ${error}`);
+	console.log(error)
 }
 
 new Vue({

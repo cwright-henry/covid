@@ -3,18 +3,22 @@
 		<div class="covid-country--charts">
 			<div class="covid-country--charts__chart">
 				<h1>Cumulative Confirmed</h1>
-				<BasicChart :ts="confirmedSeries" chartType="line" :name="`${country.countryName} Confirmed`" />
+				<BasicChart
+					:ts="country.series.ts.confirmedSeries"
+					chartType="line"
+					:name="`${country.countryName} Confirmed`"
+				/>
 			</div>
 			<div class="covid-country--charts__chart">
 				<h1>
 					Daily Confirmed
 					<div>
 						Latest
-						<span>{{latestConfirmed | number(0)}}</span>
+						<span>{{country.series.ts.latestConfirmed | number(0)}}</span>
 					</div>
 				</h1>
 				<BasicChart
-					:ts="confirmedDailySeries"
+					:ts="country.series.ts.confirmedDailySeries"
 					chartType="bar"
 					:name="`${country.countryName} Confirmed Daily Change`"
 				/>
@@ -23,18 +27,22 @@
 		<div class="covid-country--charts">
 			<div class="covid-country--charts__chart">
 				<h1>Cumulative Recovered</h1>
-				<BasicChart :ts="recoveredSeries" chartType="line" :name="`${country.countryName} Recovered`" />
+				<BasicChart
+					:ts="country.series.ts.recoveredSeries"
+					chartType="line"
+					:name="`${country.countryName} Recovered`"
+				/>
 			</div>
 			<div class="covid-country--charts__chart">
 				<h1>
 					Daily Recovered
 					<div>
 						Latest
-						<span>{{latestRecovered | number(0)}}</span>
+						<span>{{country.series.ts.latestRecovered | number(0)}}</span>
 					</div>
 				</h1>
 				<BasicChart
-					:ts="recoveredDailySeries"
+					:ts="country.series.ts.recoveredDailySeries"
 					chartType="bar"
 					:name="`${country.countryName} Recovered Daily Changge`"
 				/>
@@ -43,18 +51,22 @@
 		<div class="covid-country--charts">
 			<div class="covid-country--charts__chart">
 				<h1>Cumulative Fatalities</h1>
-				<BasicChart :ts="deathSeries" chartType="line" :name="`${country.countryName} Deaths`" />
+				<BasicChart
+					:ts="country.series.ts.deathSeries"
+					chartType="line"
+					:name="`${country.countryName} Deaths`"
+				/>
 			</div>
 			<div class="covid-country--charts__chart">
 				<h1>
 					Daily Fatalities
 					<div>
 						Latest
-						<span>{{latestDeaths | number(0)}}</span>
+						<span>{{country.series.ts.latestDeaths | number(0)}}</span>
 					</div>
 				</h1>
 				<BasicChart
-					:ts="deathDailySeries"
+					:ts="country.series.ts.deathDailySeries"
 					chartType="bar"
 					:name="`${country.countryName} Deaths Daily Changge`"
 				/>
@@ -62,132 +74,86 @@
 		</div>
 		<div class="covid-country--charts__provinces" v-if="country.series.provinces.length > 0">
 			<h1>Confirmed Cases By Province</h1>
-			<ul class="covid-country--charts__provinces">
-				<li v-for="(province, index) of country.series.provinces" :key="province.uuid">
+			<transition-group tag="ul" @enter="enter" :css="false" class="covid-country--charts__provinces">
+				<li v-for="(province, index) of scrollableProvinces" :key="province.uuid">
 					<h1>{{province.name}}</h1>
 					<BasicChart
-						:ts="getConfirmedSeries(province.data)"
+						:ts="province.ts.confirmedDailySeries"
 						chartType="bar"
-						height="200"
+						height="250"
 						:color="findAColor(index)"
 						:name="`${province.name} Deaths Daily Changge`"
 					/>
 				</li>
-			</ul>
+			</transition-group>
+			<InfiniteScroll :hasNext="scrollable" @loadmore="loadMore" />
 		</div>
 	</div>
 </template>
 
 <script>
 import BasicChart from "./BasicChart";
-import { findColor } from "@/utils";
+import { animation } from "@/utils/mixins/animation";
+import InfiniteScroll from "./InfiniteScroll";
+import { findColor, objectSorter } from "@/utils";
+
+const SCROLL_AMOUNT = 4;
+const provinceNameSorter = new objectSorter("name");
 
 export default {
 	props: {
 		country: {
 			type: Object,
-			default: () => {
+			default: () => ({
 				series: {
-					data: [];
-					provinces: [];
+					ts: {
+						confirmedSeries: [],
+						recoveredSeries: [],
+						deathSeries: [],
+						confirmedDailySeries: [],
+						recoveredDailySeries: [],
+						deathDailySeries: []
+					},
+					data: [],
+					provinces: []
 				}
-			}
+			})
 		}
 	},
+	mixins: [animation],
 	data() {
 		return {
-			confirmedSeries: [],
-			confirmedDailySeries: [],
-			recoveredSeries: [],
-			recoveredDailySeries: [],
-			deathSeries: [],
-			deathDailySeries: [],
-			latestConfirmed: 0,
-			latestRecovered: 0,
-			latestDeaths: 0
+			scrollAmount: SCROLL_AMOUNT,
+			ANIMATION_IN: "animate__fadeInDown",
+			ANIMATION_TIME: "1.0s"
 		};
 	},
 	components: {
-		BasicChart
+		BasicChart,
+		InfiniteScroll
+	},
+	computed: {
+		scrollableProvinces() {
+			return this.country.series.provinces.slice(0, this.scrollAmount);
+		},
+
+		scrollable() {
+			return this.scrollAmount < this.country.series.provinces.length;
+		}
 	},
 	watch: {
 		country() {
-			this.loadData();
+			this.scrollAmount = SCROLL_AMOUNT;
+			this.country.series.provinces.sort(provinceNameSorter);
 		}
 	},
-	mounted() {
-		this.loadData();
-	},
 	methods: {
+		loadMore() {
+			this.scrollAmount += SCROLL_AMOUNT;
+		},
+
 		findAColor(index) {
 			return findColor(index);
-		},
-
-		getConfirmedSeries(series) {
-			const confirmedSeries = [];
-			for (let i = 1; i < series.length; i++) {
-				const date = series[i].date;
-				const diff = series[i].confirmed - series[i - 1].confirmed;
-				confirmedSeries.push([date, diff]);
-			}
-			return confirmedSeries;
-		},
-
-		loadData() {
-			if (this.country.countryCode) {
-				const series = this.country.series.data;
-				this.isActive = false;
-
-				this.confirmedSeries = [];
-				this.recoveredSeries = [];
-				this.deathSeries = [];
-				this.confirmedDailySeries = [];
-				this.recoveredDailySeries = [];
-				this.deathDailySeries = [];
-				for (const { confirmed, recovered, deaths, date } of series) {
-					this.confirmedSeries.push([date, confirmed]);
-					this.recoveredSeries.push([date, recovered]);
-					this.deathSeries.push([date, deaths]);
-				}
-
-				for (let i = 1; i < this.confirmedSeries.length; i++) {
-					const date = this.confirmedSeries[i][0];
-					const diff =
-						this.confirmedSeries[i][1] -
-						this.confirmedSeries[i - 1][1];
-					this.confirmedDailySeries.push([date, diff]);
-				}
-				if (this.confirmedDailySeries.length > 0) {
-					this.latestConfirmed = this.confirmedDailySeries[
-						this.confirmedDailySeries.length - 1
-					][1];
-				}
-
-				for (let i = 1; i < this.recoveredSeries.length; i++) {
-					const date = this.recoveredSeries[i][0];
-					const diff =
-						this.recoveredSeries[i][1] -
-						this.recoveredSeries[i - 1][1];
-					this.recoveredDailySeries.push([date, diff]);
-				}
-				if (this.recoveredDailySeries.length > 0) {
-					this.latestRecovered = this.recoveredDailySeries[
-						this.recoveredDailySeries.length - 1
-					][1];
-				}
-
-				for (let i = 1; i < this.deathSeries.length; i++) {
-					const date = this.deathSeries[i][0];
-					const diff =
-						this.deathSeries[i][1] - this.deathSeries[i - 1][1];
-					this.deathDailySeries.push([date, diff]);
-				}
-				if (this.deathDailySeries.length > 0) {
-					this.latestDeaths = this.deathDailySeries[
-						this.deathDailySeries.length - 1
-					][1];
-				}
-			}
 		}
 	}
 };
@@ -236,6 +202,7 @@ export default {
 		flex-wrap: wrap;
 		li {
 			width: 25%;
+			padding: 24px 0;
 			h1 {
 				font-size: 13px;
 				text-transform: uppercase;

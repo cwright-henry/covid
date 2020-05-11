@@ -108,32 +108,21 @@ export default {
 		return {
 			options: options(this),
 			ref: `covid-chart-${uuid()}`,
-			observer: null,
 			isRendered: false
 		};
 	},
 	watch: {
-		// Only invoked on existing confirmed, recovered, fatalities
 		ts() {
-			if (this.ts.length > 0) {
-				this.isRendered = false;
-				this.render();
-			}
+			this.render();
 		}
 	},
 	mounted() {
-		this.observer = new IntersectionObserver(([entry]) => {
-			if (entry && entry.isIntersecting) {
-				this.render();
-			}
-		}, this.options);
-
-		this.observer.observe(this.$el);
+		this.render();
 	},
 	methods: {
 		render() {
 			const chart = this.$refs[this.ref].chart;
-			if (!this.isRendered) {
+			if (this.ts.length > 0) {
 				this.$nextTick(() => {
 					this.clearSeries();
 					chart.addSeries({
@@ -143,7 +132,6 @@ export default {
 						name: this.name
 					});
 					chart.reflow();
-					this.isRendered = true;
 				});
 			}
 		},
@@ -154,9 +142,6 @@ export default {
 				chart.series[0].remove(false);
 			}
 		}
-	},
-	destroyed() {
-		this.observer.disconnect();
 	}
 };
 </script>

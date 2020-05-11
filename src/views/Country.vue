@@ -12,6 +12,13 @@
 					<label>Population</label>
 					<div>{{country.population | number(0)}}</div>
 				</li>
+				<li class="mr-3">
+					<label>Population Density</label>
+					<div>
+						{{country.population / country.area | number(0)}}
+						<span>per km<sup>2</sup></span>
+					</div>
+				</li>
 				<li class="mr-3" v-if="country.series.provinces.length > 0">
 					<label>Provinces</label>
 					<div>{{country.series.provinces.length | number(0)}}</div>
@@ -60,7 +67,8 @@ export default {
 			country: {
 				series: {
 					data: [],
-					provinces: []
+					provinces: [],
+					ts: {}
 				}
 			},
 			confirmed: 0,

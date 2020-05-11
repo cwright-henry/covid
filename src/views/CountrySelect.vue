@@ -115,7 +115,7 @@ export default {
 
 <style lang="less">
 .covid-country--select {
-	width: 500px;
+	width: 100%;
 	max-width: 100%;
 	label {
 		font-weight: 300;
