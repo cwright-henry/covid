@@ -76,7 +76,13 @@
 			<h1>Confirmed Cases By Province</h1>
 			<transition-group tag="ul" @enter="enter" :css="false" class="covid-country--charts__provinces">
 				<li v-for="(province, index) of scrollableProvinces" :key="province.uuid">
-					<h1>{{province.name}}</h1>
+					<h1>
+						{{province.name}}
+						<div>
+							Latest
+							<span>{{province.ts.latestConfirmed | number(0)}}</span>
+						</div>
+					</h1>
 					<BasicChart
 						:ts="province.ts.confirmedDailySeries"
 						chartType="bar"
@@ -209,6 +215,19 @@ export default {
 				font-weight: 300;
 				color: #fff;
 				margin: 0 0 4px 12px;
+				display: flex;
+				justify-content: space-between;
+				align-items: baseline;
+				div {
+					margin: 0 16px 0 0;
+					font-size: 12px;
+					color: #e0e0e0;
+					span {
+						margin: 0 0 0 2px;
+						font-size: 14px;
+						color: var(--section-header-color);
+					}
+				}
 			}
 		}
 	}

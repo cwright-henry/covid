@@ -10,7 +10,7 @@ const replacements = [
 	{ longName: "Lao People's Democratic Republic", shortName: 'Lao' },
 	{ longName: "Moldova (Republic of)", shortName: 'Moldova' },
 	{ longName: "Palestine, State of", shortName: 'Palestine' },
-	{ longName: "Korea (Republic of)", shortName: 'Korea' },
+	{ longName: "Korea (Republic of)", shortName: 'South Korea' },
 	{ longName: "Tanzania, United Republic of", shortName: 'Tanzania' },
 	{ longName: "Macedonia (the former Yugoslav Republic of)", shortName: 'Macedonia' },
 	{ longName: "United Kingdom of Great Britain and Northern Ireland", shortName: 'United Kingdom' },
