@@ -8,7 +8,6 @@ export default new Vuex.Store({
 		isLoading: false,
 		data: [],		/* Frozen - Need to copy it to alter it, even sorting! */
 		coverage: {},	/* Frozen */
-		geoJson: {},	/* Frozen */
 		currentCountryCode: null,
 		laodingStatus: ''
 	},
@@ -39,10 +38,6 @@ export default new Vuex.Store({
 
 		setCoverage(state, coverage) {
 			state.coverage = coverage;
-		},
-
-		setGeoJson(state, geoJson) {
-			state.geoJson = geoJson;
 		},
 
 		isLoading(state, isLoading) {

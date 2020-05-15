@@ -71,7 +71,9 @@ export default {
 				series: {
 					data: [],
 					provinces: [],
-					ts: {}
+					ts: {},
+					stats: {},
+					geojson: {}
 				}
 			},
 			confirmed: 0,

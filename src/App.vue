@@ -99,10 +99,6 @@ export default {
 	methods: {
 		parseAndStore(countries, cases) {
 			const data = parse(countries, cases);
-			this.$store.commit(
-				"setGeoJson",
-				Object.freeze(createGeoJson(data))
-			);
 			this.$store.commit("setData", Object.freeze(data));
 			this.$store.commit(
 				"setCoverage",

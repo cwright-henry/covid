@@ -1,4 +1,5 @@
 import { uuid } from './utils'
+import { createGeoJsonForCountry, createGeoJsonForCountries } from './geojson'
 
 /**
  * Replace long names with shorter - this helps the map
@@ -53,6 +54,7 @@ export const parse = (countries, cases) => {
 					country.alpha2Code
 				)
 			};
+			item.geojson = createGeoJsonForCountry(item)
 			data.push({ ...item, ...getLatest(item) });
 		}
 	}
@@ -60,6 +62,11 @@ export const parse = (countries, cases) => {
 	return data;
 }
 
+/**
+ * Coverage/summary of all the countries
+ * 
+ * @param {*} countries List of supported countries
+ */
 export const createSeriesCoverage = countries => {
 	const coverage = {
 		population: 0,
@@ -74,12 +81,19 @@ export const createSeriesCoverage = countries => {
 		}
 	}
 
-	coverage.ts = createSeriesData(coverage.data)
+	const geoJson = createGeoJsonForCountries(countries);
 
-	return coverage;
+	return Object.assign(coverage, createSeriesData(coverage.data), { geoJson });
 };
 
+/**
+ * Creates timeseries, latest and totals for confirmed, recovered and fatalities.
+ * Assumes that dates are ordered - is this correct?
+ * 
+ * @param {*} series Either a country. province or city
+ */
 const createSeriesData = (series) => {
+	// Timeseries
 	const confirmedSeries = [];
 	const recoveredSeries = [];
 	const deathSeries = [];
@@ -87,16 +101,35 @@ const createSeriesData = (series) => {
 	const recoveredDailySeries = [];
 	const deathDailySeries = [];
 
+	// Latest Figures
 	let latestConfirmed = 0;
 	let latestRecovered = 0;
 	let latestDeaths = 0;
 
+	// Total Figures
+	let totalConfirmed = 0;
+	let totalRecovered = 0;
+	let totalDeaths = 0;
+
+	// Create cummalative timeseries
 	for (const { confirmed, recovered, deaths, date } of series) {
 		confirmedSeries.push([date, confirmed]);
 		recoveredSeries.push([date, recovered]);
 		deathSeries.push([date, deaths]);
 	}
 
+	// Create totals
+	if (confirmedSeries.length > 0) {
+		totalConfirmed = confirmedSeries[confirmedSeries.length - 1][1];
+	}
+	if (recoveredSeries.length > 0) {
+		totalRecovered = recoveredSeries[recoveredSeries.length - 1][1];
+	}
+	if (deathSeries.length > 0) {
+		totalDeaths = deathSeries[deathSeries.length - 1][1];
+	}
+
+	// Create daily time series and latest figures
 	for (let i = 1; i < confirmedSeries.length; i++) {
 		const date = confirmedSeries[i][0];
 		const diff =
@@ -136,15 +169,22 @@ const createSeriesData = (series) => {
 	}
 
 	return {
-		confirmedSeries,
-		recoveredSeries,
-		deathSeries,
-		confirmedDailySeries,
-		recoveredDailySeries,
-		deathDailySeries,
-		latestConfirmed,
-		latestRecovered,
-		latestDeaths,
+		ts: {
+			confirmedSeries,
+			recoveredSeries,
+			deathSeries,
+			confirmedDailySeries,
+			recoveredDailySeries,
+			deathDailySeries,
+		},
+		stats: {
+			latestConfirmed,
+			latestRecovered,
+			latestDeaths,
+			totalConfirmed,
+			totalRecovered,
+			totalDeaths,
+		}
 	}
 }
 
@@ -261,11 +301,11 @@ const createdSeriesForCountry = (entries, countryCode) => {
 		}
 	}
 
-	series.ts = createSeriesData(series.data)
+	Object.assign(series, createSeriesData(series.data))
 	for (let province of series.provinces) {
-		province.ts = createSeriesData(province.data);
+		Object.assign(province, createSeriesData(province.data))
 		for (let city of province.cities) {
-			city.ts = createSeriesData(city.data);
+			Object.assign(city, createSeriesData(city.data))
 		}
 	}
 

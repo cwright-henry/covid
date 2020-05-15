@@ -2,7 +2,13 @@
 	<div>
 		<div class="covid-country--charts">
 			<div class="covid-country--charts__chart">
-				<h1>Cumulative Confirmed</h1>
+				<h1>
+					Cumulative Confirmed
+					<div>
+						Latest
+						<span>{{country.series.stats.totalConfirmed | number(0)}}</span>
+					</div>
+				</h1>
 				<BasicChart
 					:ts="country.series.ts.confirmedSeries"
 					chartType="line"
@@ -14,7 +20,7 @@
 					Daily Confirmed
 					<div>
 						Latest
-						<span>{{country.series.ts.latestConfirmed | number(0)}}</span>
+						<span>{{country.series.stats.latestConfirmed | number(0)}}</span>
 					</div>
 				</h1>
 				<BasicChart
@@ -26,7 +32,13 @@
 		</div>
 		<div class="covid-country--charts">
 			<div class="covid-country--charts__chart">
-				<h1>Cumulative Recovered</h1>
+				<h1>
+					Cumulative Recovered
+					<div>
+						Latest
+						<span>{{country.series.stats.totalRecovered | number(0)}}</span>
+					</div>
+				</h1>
 				<BasicChart
 					:ts="country.series.ts.recoveredSeries"
 					chartType="line"
@@ -38,7 +50,7 @@
 					Daily Recovered
 					<div>
 						Latest
-						<span>{{country.series.ts.latestRecovered | number(0)}}</span>
+						<span>{{country.series.stats.latestRecovered | number(0)}}</span>
 					</div>
 				</h1>
 				<BasicChart
@@ -50,7 +62,13 @@
 		</div>
 		<div class="covid-country--charts">
 			<div class="covid-country--charts__chart">
-				<h1>Cumulative Fatalities</h1>
+				<h1>
+					Cumulative Fatalities
+					<div>
+						Latest
+						<span>{{country.series.stats.totalDeaths | number(0)}}</span>
+					</div>
+				</h1>
 				<BasicChart
 					:ts="country.series.ts.deathSeries"
 					chartType="line"
@@ -62,7 +80,7 @@
 					Daily Fatalities
 					<div>
 						Latest
-						<span>{{country.series.ts.latestDeaths | number(0)}}</span>
+						<span>{{country.series.stats.latestDeaths | number(0)}}</span>
 					</div>
 				</h1>
 				<BasicChart
@@ -80,7 +98,7 @@
 						{{province.name}}
 						<div>
 							Latest
-							<span>{{province.ts.latestConfirmed | number(0)}}</span>
+							<span>{{province.stats.latestConfirmed | number(0)}}</span>
 						</div>
 					</h1>
 					<BasicChart
