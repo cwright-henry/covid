@@ -1,5 +1,5 @@
 import { uuid } from './utils'
-import { createGeoJsonForCountry, createGeoJsonForCountries } from './geojson'
+import { createGeoJsonForCountry, createGeoJsonForCountries, createGeoJsonHistoryForCountries } from './geojson'
 
 /**
  * Replace long names with shorter - this helps the map
@@ -58,7 +58,6 @@ export const parse = (countries, cases) => {
 			data.push({ ...item, ...getLatest(item) });
 		}
 	}
-
 	return data;
 }
 
@@ -70,7 +69,11 @@ export const parse = (countries, cases) => {
 export const createSeriesCoverage = countries => {
 	const coverage = {
 		population: 0,
-		data: []
+		data: [],
+		geoJson: null,
+		history: null,
+		stats: null,
+		ts: null
 	};
 
 	for (let i = 0; i < countries.length; i++) {
@@ -80,10 +83,12 @@ export const createSeriesCoverage = countries => {
 			merge(coverage.data, country.series.data[j]);
 		}
 	}
-
-	const geoJson = createGeoJsonForCountries(countries);
-
-	return Object.assign(coverage, createSeriesData(coverage.data), { geoJson });
+	const seriesData = createSeriesData(coverage.data);
+	coverage.stats = seriesData.stats;
+	coverage.ts = seriesData.ts
+	coverage.geoJson = createGeoJsonForCountries(countries);
+	coverage.history = createGeoJsonHistoryForCountries(countries)
+	return coverage;
 };
 
 /**

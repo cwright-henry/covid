@@ -4,79 +4,21 @@
 			<div id="map" ref="map"></div>
 		</div>
 		<div class="covid-map--filters">
-			<v-radio-group
-				v-model="filter"
-				active-class="covid-radio"
-				dense
-				hide-details
-				@change="onFilterChange()"
-			>
-				<div class="pl-4">
-					<h1>Filter Map By</h1>
-					<div class="covid-map--filters__radio">
-						<v-radio hide-details label="Popluation" value="population" color="linkColor"></v-radio>
-						<span>{{coverage.population | number(0)}}</span>
-					</div>
-					<div class="covid-map--filters__radio">
-						<v-radio hide-details label="Latest Confirmed" value="latestConfirmed" color="linkColor"></v-radio>
-						<span>{{coverage.stats.latestConfirmed | number(0)}}</span>
-					</div>
-					<div class="covid-map--filters__radio">
-						<v-radio hide-details label="Latest Recovered" value="latestRecovered" color="linkColor"></v-radio>
-						<span>{{coverage.stats.latestRecovered | number(0)}}</span>
-					</div>
-					<div class="covid-map--filters__radio">
-						<v-radio hide-details label="Latest Fatalities" value="latestDeaths" color="linkColor"></v-radio>
-						<span>{{coverage.stats.latestDeaths | number(0)}}</span>
-					</div>
-					<div class="covid-map--filters__radio">
-						<v-radio hide-details label="Total Confirmed" value="totalConfirmed" color="linkColor"></v-radio>
-						<span>{{coverage.stats.totalConfirmed | number(0)}}</span>
-					</div>
-					<div class="covid-map--filters__radio">
-						<v-radio hide-details label="Total Recovered" value="totalRecovered" color="linkColor"></v-radio>
-						<span>{{coverage.stats.totalRecovered | number(0)}}</span>
-					</div>
-					<div class="covid-map--filters__radio">
-						<v-radio hide-details label="Total Fatalities" value="totalDeaths" color="linkColor"></v-radio>
-						<span>{{coverage.stats.totalDeaths | number(0)}}</span>
-					</div>
-				</div>
-			</v-radio-group>
+			<MapFilters :coverage="coverage" @onFilterChange="onFilterChange" />
+			<MapSlider
+				class="mt-6"
+				:currentFilter="filter"
+				:coverage="coverage"
+				@coverageChange="coverageChange"
+			/>
 		</div>
 	</section>
 </template>
 
 <script>
 import mapboxgl from "mapbox-gl";
-
-const sortGeoJson = (property, sort) => {
-	return function(a, b) {
-		if (
-			a["properties"][property] != undefined &&
-			b["properties"][property] !== undefined
-		) {
-			const left =
-				typeof a["properties"][property] === "string"
-					? a["properties"][property].toUpperCase()
-					: a["properties"][property];
-			const right =
-				typeof b["properties"][property] === "string"
-					? b["properties"][property].toUpperCase()
-					: b["properties"][property];
-
-			if (left < right) {
-				return sort ? (sort === "desc" ? -1 : 1) : -1;
-			}
-			if (left > right) {
-				return sort ? (sort === "desc" ? 1 : -1) : 1;
-			}
-		}
-		return 0;
-	};
-};
-
-const lastConfirmedSorter = sortGeoJson("latestConfirmedRaw", "asc");
+import MapFilters from "./MapFilters";
+import MapSlider from "./MapSlider";
 
 export default {
 	props: {
@@ -86,6 +28,10 @@ export default {
 				stats: {}
 			})
 		}
+	},
+	components: {
+		MapFilters,
+		MapSlider
 	},
 	data() {
 		return {
@@ -100,7 +46,8 @@ export default {
 				antialias: true
 			},
 			mapLoaded: false,
-			filter: "latestConfirmed"
+			filter: "latestConfirmed",
+			counter: 0
 		};
 	},
 	created() {
@@ -134,22 +81,33 @@ export default {
 		}
 	},
 	methods: {
+		coverageChange(current) {
+			this.map
+				.getSource("coverage")
+				.setData(this.coverage.history[current][this.filter]);
+		},
+
 		setDataSource() {
 			if (this.mapLoaded) {
-				this.coverage.geoJson.features.sort(lastConfirmedSorter);
-				this.map.getSource("coverage").setData(this.coverage.geoJson);
+				this.map
+					.getSource("coverage")
+					.setData(this.coverage.geoJson[this.filter]);
 			}
 		},
 
-		onFilterChange() {
+		onFilterChange(filter) {
+			this.filter = filter;
+			if (this.filter !== "population") {
+				this.map
+					.getSource("coverage")
+					.setData(this.coverage.geoJson[this.filter]);
+			}
 			this.map.setLayoutProperty("coverage-labels", "text-field", [
 				"concat",
 				["to-string", ["get", "name"]],
 				"\n",
 				["to-string", ["get", this.filter]]
 			]);
-
-			console.log(this.filter);
 
 			switch (this.filter) {
 				case "population":
@@ -243,6 +201,7 @@ export default {
 				source: "coverage",
 				paint: {
 					"circle-radius": 3,
+					"circle-opacity": 0.75,
 					"circle-color": "#B3E5FC"
 				}
 			});
@@ -295,6 +254,7 @@ export default {
 <style lang="less" scoped>
 section {
 	display: flex;
+	flex-wrap: wrap;
 
 	.covid-map--container {
 		width: 75%;
@@ -311,30 +271,13 @@ section {
 	}
 	.covid-map--filters {
 		flex: 1;
+		margin: 0 0 0 12px;
 		h1 {
 			font-size: 16px;
 			text-transform: uppercase;
 			font-weight: 300;
 			color: var(--section-header-color);
-			margin: 0 0 6px 8px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
-		.covid-map--filters__radio {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			max-width: 320px;
-			width: 100%;
-			padding: 6px 12px 0 8px;
-			border-radius: 4px;
-			span {
-				font-size: 16px;
-				margin: 0 0 4px;
-				color: var(--section-header-color);
-				font-weight: 300;
-			}
+			margin: 0 0 4px 8px;
 		}
 	}
 	.v-input--selection-controls {

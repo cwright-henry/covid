@@ -19,6 +19,10 @@ const routes = [
 		component: Country,
 		props: (route) => ({ countryCode: route.params.country })
 	},
+	{
+		path: '*',
+		redirect: '/'
+	}
 ]
 
 const router = new VueRouter({

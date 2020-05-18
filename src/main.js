@@ -34,7 +34,11 @@ const dateOptionsLong = {
 };
 
 const dateOptionsCompact = {
-	year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC'
+	year: 'numeric', month: 'short', day: '2-digit', timeZone: 'UTC'
+};
+
+const dateOptionsDayOnly = {
+	day: '2-digit'
 };
 
 Vue.filter('number', function (value, precision) {
@@ -54,6 +58,12 @@ Vue.filter('date-long', function (value) {
 Vue.filter('date-short', function (value) {
 	if (value && !isNaN(value))
 		return new Intl.DateTimeFormat(navigator.language, dateOptionsCompact).format(value);
+	return value;
+});
+
+Vue.filter('date-day', function (value) {
+	if (value && !isNaN(value))
+		return new Intl.DateTimeFormat(navigator.language, dateOptionsDayOnly).format(value);
 	return value;
 });
 

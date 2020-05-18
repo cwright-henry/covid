@@ -4,16 +4,16 @@ import Vuetify from 'vuetify/lib';
 Vue.use(Vuetify);
 
 export default new Vuetify({
-    icons: {
-        iconfont: 'mdi'
-    },
-    theme: {
-        dark: true,
-        themes: {
-            dark: {
-                primary: '#212121',
-                linkColor: '#2196F3'
-            }
-        }
-    }
+	icons: {
+		iconfont: 'mdi'
+	},
+	theme: {
+		dark: true,
+		themes: {
+			dark: {
+				primary: '#212121',
+				linkColor: '#2196F3'
+			}
+		}
+	}
 });

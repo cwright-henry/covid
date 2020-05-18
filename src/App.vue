@@ -84,6 +84,7 @@ export default {
 				this.$store.commit("isLoading", false);
 			}, 350);
 		} catch (error) {
+			console.log(error)
 			EventBus.$emit("error", "Error connecting to services");
 		}
 	},

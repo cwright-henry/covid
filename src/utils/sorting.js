@@ -1,4 +1,37 @@
 /**
+ * Sort the properties of geoJson file
+ * 
+ * @param {*} property 
+ * @param {*} sort 
+ */
+export const sortGeoJson = (property, sort) => {
+	return function (a, b) {
+		if (
+			a["properties"][property] != undefined &&
+			b["properties"][property] !== undefined
+		) {
+			const left =
+				typeof a["properties"][property] === "string"
+					? a["properties"][property].toUpperCase()
+					: a["properties"][property];
+			const right =
+				typeof b["properties"][property] === "string"
+					? b["properties"][property].toUpperCase()
+					: b["properties"][property];
+
+			if (left < right) {
+				return sort ? (sort === "desc" ? -1 : 1) : -1;
+			}
+			if (left > right) {
+				return sort ? (sort === "desc" ? 1 : -1) : 1;
+			}
+		}
+		return 0;
+	};
+};
+
+
+/**
  * Generic Sort array of object by properties
  * 
  * @param {*} property 
