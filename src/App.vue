@@ -7,7 +7,7 @@
 			<v-content>
 				<v-container fluid>
 					<div class="covid-perspective">
-						<transition name="fade" mode="out-in">
+						<transition :name="transitionName">
 							<keep-alive>
 								<router-view></router-view>
 							</keep-alive>
@@ -40,10 +40,17 @@ import SplashScreen from "@/views/SplashScreen";
 import EventBus from "@/events";
 
 import { load } from "@/services/Api";
-import { createGeoJson, parse, createSeriesCoverage } from "@/utils";
+import {
+	createGeoJson,
+	parse,
+	createSeriesCoverage,
+	parseIreland
+} from "@/utils";
 
 const COUNTRY_API = "https://restcountries.eu/rest/v2/all";
 const CASES_API = "https://api.covid19api.com/all";
+const IRELAND_API =
+	"https://services1.arcgis.com/eNO7HHeQ3rUcBllm/arcgis/rest/services/Covid19CountyStatisticsHPSCIrelandOpenData/FeatureServer/0/query?where=TimeStampDate%20%3E%3D%20TIMESTAMP%20%272020-03-12%2000%3A00%3A00%27%20&outFields=CountyName,PopulationCensus16,Lat,Long,ConfirmedCovidCases,TimeStampDate&outSR=4326&f=json";
 
 export default {
 	name: "App",
@@ -57,7 +64,8 @@ export default {
 			top: true,
 			bottom: false,
 			left: false,
-			right: false
+			right: false,
+			transitionName: null
 		};
 	},
 
@@ -72,23 +80,35 @@ export default {
 	},
 
 	async created() {
+		this.$router.beforeEach((to, from, next) => {
+			if (from.name === "country" && to.name === "provinces") {
+				this.transitionName = "slide-left";
+			} else if (from.name === "provinces" && to.name === "country") {
+				this.transitionName = "slide-right";
+			} else {
+				this.transitionName = "fade";
+			}
+
+			next();
+		});
+
 		try {
 			this.$store.commit("isLoading", true);
 			this.$store.commit("setLoadingStatus", "Country Data...");
 			const countries = await load(COUNTRY_API);
+			const irelandData = await load(IRELAND_API);
 			this.$store.commit("setLoadingStatus", "Covid Data...");
 			const cases = await load(CASES_API);
-			this.parseAndStore(countries, cases);
+			this.parseAndStore(countries, cases, irelandData);
 			this.$store.commit("setLoadingStatus", "Parsing...");
 			setTimeout(() => {
 				this.$store.commit("isLoading", false);
 			}, 350);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			EventBus.$emit("error", "Error connecting to services");
 		}
 	},
-
 	mounted() {
 		EventBus.$on("error", reason => {
 			this.msg = true;
@@ -98,12 +118,20 @@ export default {
 	},
 
 	methods: {
-		parseAndStore(countries, cases) {
-			const data = parse(countries, cases);
-			this.$store.commit("setData", Object.freeze(data));
+		parseAndStore(countryData, casesData, irelandData) {
+			const countries = parse(countryData, casesData);
+			const ireland = parseIreland(irelandData);
+			const ieData = countries.find(item => item.countryCode === "IE");
+			if (ieData) {
+				ieData.geojson = ireland.geojson;
+				ieData.population = ireland.population;
+				ieData.series.provinces = ireland.provinces;
+			}
+
+			this.$store.commit("setData", Object.freeze(countries));
 			this.$store.commit(
 				"setCoverage",
-				Object.freeze(createSeriesCoverage(data))
+				Object.freeze(createSeriesCoverage(countries))
 			);
 		}
 	}
@@ -126,7 +154,7 @@ ul {
 	--app-header-color: #b3e5fc;
 	--nav-region-header-color: #e1f5fe;
 	--section-header-color: #b3e5fc;
-	--link-color: #64b5f6;
+	--link-color: #fff9c4;
 }
 .covid-link {
 	text-decoration: none;
@@ -170,5 +198,27 @@ ul {
 .fade-enter,
 .fade-leave-active {
 	opacity: 0;
+}
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+	transition-duration: 0.475s;
+	transition-property: all;
+	transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);
+	overflow: hidden;
+}
+
+.slide-left-enter,
+.slide-right-leave-active {
+	opacity: 0;
+	transform: translate(100%, 0) !important;
+}
+
+.slide-left-leave-active,
+.slide-right-enter {
+	opacity: 0;
+	max-width: 1750px;
+	transform: translate(-100%, 0) !important;
 }
 </style>

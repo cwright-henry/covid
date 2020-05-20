@@ -75,7 +75,7 @@
 <script>
 import { mapState } from "vuex";
 import WorldMapView from "./WorldMapView";
-import BasicChart from "./BasicChart";
+import BasicChart from "@/views/common/BasicChart";
 
 export default {
 	components: {

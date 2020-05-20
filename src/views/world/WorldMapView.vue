@@ -1,11 +1,11 @@
 <template>
 	<section>
 		<div class="covid-map--container">
-			<div id="map" ref="map"></div>
+			<div id="worldMap" ref="map"></div>
 		</div>
 		<div class="covid-map--filters">
-			<MapFilters :coverage="coverage" @onFilterChange="onFilterChange" />
-			<MapSlider
+			<WorldMapFilters :coverage="coverage" @onFilterChange="onFilterChange" />
+			<WorldMapSlider
 				class="mt-6"
 				:currentFilter="filter"
 				:coverage="coverage"
@@ -17,8 +17,8 @@
 
 <script>
 import mapboxgl from "mapbox-gl";
-import MapFilters from "./MapFilters";
-import MapSlider from "./MapSlider";
+import WorldMapFilters from "./WorldMapFilters";
+import WorldMapSlider from "./WorldMapSlider";
 
 export default {
 	props: {
@@ -30,8 +30,8 @@ export default {
 		}
 	},
 	components: {
-		MapFilters,
-		MapSlider
+		WorldMapFilters,
+		WorldMapSlider
 	},
 	data() {
 		return {
@@ -261,7 +261,7 @@ section {
 		height: 500px;
 		position: relative;
 		overflow: hidden;
-		#map {
+		#worldMap {
 			position: absolute;
 			top: 0;
 			left: 0;

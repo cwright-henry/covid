@@ -1,6 +1,6 @@
 <template>
 	<div class="covid-map-slider">
-		<h1>Run History</h1>
+		<h1>Play History</h1>
 
 		<div>
 			<v-slider

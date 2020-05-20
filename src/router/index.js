@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import World from '@/views/World'
-import Country from '@/views/Country'
+import World from '@/views/world/World'
+import Country from '@/views/country/Country'
+import Provinces from '@/views/provinces/Provinces'
 
 Vue.use(VueRouter)
 
@@ -12,11 +13,19 @@ const routes = [
 	},
 	{
 		path: '/world',
+		name: 'world',
 		component: World,
 	},
 	{
 		path: '/country/:country',
+		name: 'country',
 		component: Country,
+		props: (route) => ({ countryCode: route.params.country })
+	},
+	{
+		path: '/country/:country/provinces',
+		name: 'provinces',
+		component: Provinces,
 		props: (route) => ({ countryCode: route.params.country })
 	},
 	{

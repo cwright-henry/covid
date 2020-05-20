@@ -30,6 +30,28 @@ export const sortGeoJson = (property, sort) => {
 	};
 };
 
+/**
+ * Sort timeseries
+ * 
+ * @param {*} property 
+ * @param {*} sort 
+ */
+export const timeseriesSorter = (sort) => {
+	return function (a, b) {
+		if ((a[0] != undefined) && (b[0] !== undefined)) {
+			const left = a[0];
+			const right = b[0];
+
+			if (left < right) {
+				return sort ? (sort === "desc" ? -1 : 1) : -1;
+			}
+			if (left > right) {
+				return sort ? (sort === "desc" ? 1 : -1) : 1;
+			}
+		}
+		return 0;
+	};
+};
 
 /**
  * Generic Sort array of object by properties
