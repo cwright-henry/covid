@@ -154,7 +154,7 @@ ul {
 	--app-header-color: #b3e5fc;
 	--nav-region-header-color: #e1f5fe;
 	--section-header-color: #b3e5fc;
-	--link-color: #fff9c4;
+	--link-color: #64B5F6;
 }
 .covid-link {
 	text-decoration: none;

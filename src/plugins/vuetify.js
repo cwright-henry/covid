@@ -12,7 +12,7 @@ export default new Vuetify({
 		themes: {
 			dark: {
 				primary: '#212121',
-				linkColor: '#FFF9C4'
+				linkColor: '#64B5F6'
 			}
 		}
 	}

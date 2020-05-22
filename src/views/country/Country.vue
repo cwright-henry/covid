@@ -9,17 +9,17 @@
 				<v-spacer></v-spacer>
 				<v-btn
 					v-if="country.series.provinces.length > 0"
-					color="linkColor"
+					color="#f2f2f2"
 					outlined
 					small
 					:to="`/country/${countryCode}/provinces`"
 				>
 					{{country.series.provinces.length | number(0)}} {{local.provinceName}}
-					<v-icon size="20" right>mdi-arrow-right-bold-circle</v-icon>
+					<v-icon size="20" color="linkColor" right>mdi-arrow-right-bold-circle</v-icon>
 				</v-btn>
-				<v-btn class="ml-8" color="linkColor" outlined small :to="`/country/${countryCode}/provinces`">
+				<v-btn class="ml-8" color="#f2f2f2" outlined small :to="`/country/${countryCode}/provinces`">
 					Compare To
-					<v-icon size="20" right>mdi-arrow-right-bold-circle</v-icon>
+					<v-icon size="20" color="linkColor" right>mdi-arrow-right-bold-circle</v-icon>
 				</v-btn>
 			</header>
 			<ul class="covid-country--info">
