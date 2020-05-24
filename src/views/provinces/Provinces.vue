@@ -100,7 +100,6 @@ export default {
 	methods: {
 		loadData() {
 			this.country = Object.freeze(this.findCountry(this.countryCode));
-			console.log(this.country);
 		}
 	}
 };

@@ -7,7 +7,7 @@
 				v-model="current"
 				thumb-label="always"
 				ticks
-				color="#1565C0"
+				color="linkColor"
 				track-color="grey"
 				hide-details
 				class="mt-12 px-2"
@@ -16,10 +16,19 @@
 				@end="onEndSlide"
 				:disabled="isDisabled"
 			>
-				<template v-slot:thumb-label="{ }">{{currentDate | date-day}}</template>
+				<template v-slot:thumb-label="{ }">
+					<span class="covid-map-slider--thumb">{{currentDate | date-day}}</span>
+				</template>
+				<template v-slot:prepend>
+					<v-icon color="linkColor" @click="decrement">mdi-minus</v-icon>
+				</template>
+
+				<template v-slot:append>
+					<v-icon color="linkColor" @click="increment">mdi-plus</v-icon>
+				</template>
 			</v-slider>
 			<div class="covid-map-slider--play">
-				<v-btn color="#1565C0" small depressed fab @click="toggle" :disabled="isDisabled">
+				<v-btn color="linkColor" small depressed outlined fab @click="toggle" :disabled="isDisabled">
 					<v-icon>{{ isPlaying ? 'mdi-pause' : 'mdi-play' }}</v-icon>
 				</v-btn>
 				<div class="covid-map-slider--play__date">{{currentDate | date-short}}</div>
@@ -96,6 +105,24 @@ export default {
 			this.$emit("coverageChange", this.current);
 		},
 
+		decrement() {
+			if (this.current === 0) {
+				this.current = this.max;
+			} else {
+				this.current--;
+			}
+			this.$emit("coverageChange", this.current);
+		},
+
+		increment() {
+			if (this.current === this.max) {
+				this.current = 0;
+			} else {
+				this.current++;
+			}
+			this.$emit("coverageChange", this.current);
+		},
+
 		reset() {
 			this.isPlaying = false;
 			clearTimeout(this.timer);
@@ -117,10 +144,13 @@ export default {
 		color: var(--section-header-color);
 		margin: 0 0 8px 8px;
 	}
+	.covid-map-slider--thumb {
+		color: #212121;
+	}
 	.covid-map-slider--play {
 		display: flex;
 		justify-content: center;
-		align-items: center;
+		align-items: flex-end;
 		position: relative;
 		.covid-map-slider--play__date {
 			position: absolute;

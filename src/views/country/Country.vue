@@ -10,15 +10,11 @@
 				<v-btn
 					v-if="country.series.provinces.length > 0"
 					color="#f2f2f2"
-					outlined
-					small
+					text
+					small1
 					:to="`/country/${countryCode}/provinces`"
 				>
-					{{country.series.provinces.length | number(0)}} {{local.provinceName}}
-					<v-icon size="20" color="linkColor" right>mdi-arrow-right-bold-circle</v-icon>
-				</v-btn>
-				<v-btn class="ml-8" color="#f2f2f2" outlined small :to="`/country/${countryCode}/provinces`">
-					Compare To
+					Explore
 					<v-icon size="20" color="linkColor" right>mdi-arrow-right-bold-circle</v-icon>
 				</v-btn>
 			</header>

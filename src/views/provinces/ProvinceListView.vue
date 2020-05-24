@@ -60,7 +60,7 @@ export default {
 	data() {
 		return {
 			scrollAmount: SCROLL_AMOUNT,
-			ANIMATION_IN: "animate__fadeInDown",
+			ANIMATION_IN: "animate__fadeInUp",
 			ANIMATION_TIME: "1.0s"
 		};
 	},

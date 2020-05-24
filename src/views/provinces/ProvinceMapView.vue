@@ -36,7 +36,7 @@ export default {
 			viewState: {
 				longitude: 50,
 				latitude: 20,
-				zoom: 1,
+				zoom: 3,
 				bearing: 0,
 				pitch: 0,
 				antialias: true
@@ -79,7 +79,6 @@ export default {
 	methods: {
 		setDataSource() {
 			if (this.mapLoaded) {
-				console.log(this.coverage.geojson);
 				this.map.getSource("coverage").setData(this.coverage.geojson);
 				this.map.flyTo({
 					// These options control the ending camera position: centered at
