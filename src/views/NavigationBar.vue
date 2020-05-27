@@ -21,7 +21,7 @@
 						</v-btn>
 					</template>
 					<div class="covid-nav-world--filters">
-						<h1>Sort Countries</h1>
+						<h1>Sort Countries By</h1>
 						<ul>
 							<li
 								v-for="filter of sortFilters"
@@ -58,10 +58,15 @@
 			>
 				<li v-for="(countries, region) in items" :key="region" class="covid-nav--region">
 					<h1>{{region}}</h1>
-					<NavigationCountry :countries="countries" :scroll="scroll" />
+					<NavigationCountry
+						:countries="countries"
+						:scroll="scroll"
+						:filter="currentFilter"
+						:search="search"
+					/>
 				</li>
 			</ul>
-			<NavigationCountry v-else :countries="items" />
+			<NavigationCountry v-else :countries="items" :filter="currentFilter" :search="search" />
 		</div>
 	</v-navigation-drawer>
 </template>
@@ -70,12 +75,14 @@
 import { mapState } from "vuex";
 import NavigationCountry from "./NavigationCountry";
 import {
-	getLastest,
 	arrangeByRegion,
 	arrangeByPopulation,
-	arrangeByConfirmed,
-	arrangeByRecovered,
-	arrangeByFatalities
+	arrangeByTotalConfirmed,
+	arrangeByTotalRecovered,
+	arrangeByTotalFatalities,
+	arrangeByLatestConfirmed,
+	arrangeByLatestRecovered,
+	arrangeByLatestFatalities
 } from "@/utils";
 import EventBus from "@/events";
 
@@ -84,14 +91,17 @@ export default {
 		return {
 			search: null,
 			drawer: !this.$vuetify.breakpoint.mdAndDown,
-			currentFilter: "subregion",
+			currentFilter: "lastestconfirmed",
 			sortFilters: [
-				{ text: "By Region", uuid: "region" },
-				{ text: "By Sub Region", uuid: "subregion" },
-				{ text: "By Population", uuid: "population" },
-				{ text: "By Confirmed", uuid: "confirmed" },
-				{ text: "By Recovered", uuid: "recovered" },
-				{ text: "By Fatalities", uuid: "fatalities" }
+				{ text: "Region", uuid: "region" },
+				{ text: "Sub Region", uuid: "subregion" },
+				{ text: "Total Population", uuid: "population" },
+				{ text: "Latest Confirmed", uuid: "lastestconfirmed" },
+				{ text: "Latest Recovered", uuid: "lastestrecovered" },
+				{ text: "Latest Fatalities", uuid: "lastestfatalities" },
+				{ text: "Total Confirmed", uuid: "confirmed" },
+				{ text: "Total Recovered", uuid: "recovered" },
+				{ text: "Total Fatalities", uuid: "fatalities" }
 			],
 			scroll: false
 		};
@@ -147,11 +157,17 @@ export default {
 				case "population":
 					return arrangeByPopulation(data);
 				case "confirmed":
-					return arrangeByConfirmed(data);
+					return arrangeByTotalConfirmed(data);
 				case "recovered":
-					return arrangeByRecovered(data);
+					return arrangeByTotalRecovered(data);
 				case "fatalities":
-					return arrangeByFatalities(data);
+					return arrangeByTotalFatalities(data);
+				case "lastestconfirmed":
+					return arrangeByLatestConfirmed(data);
+				case "lastestrecovered":
+					return arrangeByLatestRecovered(data);
+				case "lastestfatalities":
+					return arrangeByLatestFatalities(data);
 			}
 			return [];
 		}
@@ -174,11 +190,11 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		margin: 4px 0 !important;
-		padding: 4px 4px !important;
+		padding: 6px 4px !important;
 		width: 200px;
 		border-radius: 4px;
 		cursor: pointer;
+		border-bottom: 1px solid #424242;
 		&:hover {
 			background-color: #424242;
 		}
@@ -187,6 +203,10 @@ export default {
 			i {
 				color: var(--link-color);
 			}
+		}
+		&:last-child {
+			padding-bottom: 0 !important;
+			border-bottom: none;
 		}
 	}
 }

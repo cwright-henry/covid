@@ -1,13 +1,19 @@
 <template>
 	<ul class="covid-nav-countries">
-		<li v-for="country of countries" :key="country.uuid" :ref="country.countryCode">
+		<li v-for="(country, index) of countries" :key="country.uuid" :ref="country.countryCode">
 			<router-link
 				:to="`/country/${country.countryCode}`"
 				class="covid-link covid-nav-countries--country"
 			>
-				<img :src="country.flag" width="28" class="mx-2" />
+				<div class="covid-nav-countries--rank">
+					<img :src="country.flag" width="28" height="14" class="mx-2" />
+					<span v-if="hasRank">{{index + 1}}</span>
+				</div>
 				<div class="covid-nav-countries--country__info">
-					<h2>{{country.countryName}}</h2>
+					<h2>
+						{{country.countryName}}
+						<span>{{filterType === 'totals' ? "Total" : "Latest"}}</span>
+					</h2>
 					<ul>
 						<li class="mr-3">
 							<label>Population</label>
@@ -15,15 +21,15 @@
 						</li>
 						<li class="mr-3">
 							<label>Confirmed</label>
-							<span>{{country.latestConfirmed | number(0)}}</span>
+							<span>{{filterType === 'totals' ? country.series.stats.totalConfirmed : country.series.stats.latestConfirmed | number(0)}}</span>
 						</li>
 						<li class="mr-3">
 							<label>Recovered</label>
-							<span>{{country.latestRecovered | number(0)}}</span>
+							<span>{{filterType === 'totals' ? country.series.stats.totalRecovered : country.series.stats.latestRecovered | number(0)}}</span>
 						</li>
 						<li>
 							<label>Fatalities</label>
-							<span>{{country.latestFatalities | number(0)}}</span>
+							<span>{{filterType === 'totals' ? country.series.stats.totalDeaths : country.series.stats.latestDeaths | number(0)}}</span>
 						</li>
 					</ul>
 				</div>
@@ -45,10 +51,55 @@ export default {
 		scroll: {
 			type: Boolean,
 			default: false
+		},
+		filter: {
+			type: String,
+			default: null
+		},
+		search: {
+			type: String,
+			default: null
 		}
 	},
 	computed: {
-		...mapState(["currentCountryCode"])
+		...mapState(["currentCountryCode"]),
+
+		filterType() {
+			switch (this.filter) {
+				case "region":
+				case "subregion":
+				case "population":
+				case "confirmed":
+				case "recovered":
+				case "fatalities":
+					return "totals";
+				case "lastestconfirmed":
+				case "lastestrecovered":
+				case "lastestfatalities":
+					return "latest";
+			}
+			return "totals";
+		},
+
+		hasRank() {
+			if (this.search) {
+				return false;
+			}
+			switch (this.filter) {
+				case "region":
+				case "subregion":
+					return false;
+				case "population":
+				case "confirmed":
+				case "recovered":
+				case "fatalities":
+				case "lastestconfirmed":
+				case "lastestrecovered":
+				case "lastestfatalities":
+					return true;
+			}
+			return true;
+		}
 	},
 	watch: {
 		scroll: {
@@ -80,10 +131,24 @@ export default {
 <style lang="less" scoped>
 ul.covid-nav-countries {
 	li {
-		margin: 8px 0;
+		margin: 12px 0;
+		.covid-nav-countries--rank {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: flex-start;
+			margin: 6px 0 0 0;
+			span {
+				font-size: 11px;
+				font-weight: 300;
+				text-transform: uppercase;
+				display: inline-block;
+				margin: 8px 0 0 0;
+			}
+		}
 		.covid-nav-countries--country {
 			display: flex;
-			align-items: center;
+			align-items: flex-start;
 			color: #fff;
 			.covid-nav-countries--country__info {
 				h2 {
@@ -93,6 +158,14 @@ ul.covid-nav-countries {
 					text-overflow: ellipsis;
 					width: 220px;
 					margin: 0 0 2px 0;
+					font-weight: 500;
+					span {
+						font-size: 9px;
+						font-weight: 300;
+						text-transform: uppercase;
+						display: inline-block;
+						margin: 0 0 0 2px;
+					}
 				}
 				ul {
 					display: flex;
@@ -102,6 +175,9 @@ ul.covid-nav-countries {
 						flex-direction: column;
 						align-items: flex-start;
 						margin: 0;
+						&:first-child {
+							width: 70px;
+						}
 					}
 				}
 			}

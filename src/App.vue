@@ -38,19 +38,9 @@ import AppBar from "@/views/AppBar";
 import NavigationBar from "@/views/NavigationBar";
 import SplashScreen from "@/views/SplashScreen";
 import EventBus from "@/events";
+import { getAll } from "@/services/Api";
 
-import { load } from "@/services/Api";
-import {
-	createGeoJson,
-	parse,
-	createSeriesCoverage,
-	parseIreland
-} from "@/utils";
-
-const COUNTRY_API = "https://restcountries.eu/rest/v2/all";
-const CASES_API = "https://api.covid19api.com/all";
-const IRELAND_API =
-	"https://services1.arcgis.com/eNO7HHeQ3rUcBllm/arcgis/rest/services/Covid19CountyStatisticsHPSCIrelandOpenData/FeatureServer/0/query?where=TimeStampDate%20%3E%3D%20TIMESTAMP%20%272020-03-12%2000%3A00%3A00%27%20&outFields=CountyName,PopulationCensus16,Lat,Long,ConfirmedCovidCases,TimeStampDate&outSR=4326&f=json";
+const API = `/covid/api/coverage`;
 
 export default {
 	name: "App",
@@ -94,16 +84,10 @@ export default {
 
 		try {
 			this.$store.commit("isLoading", true);
-			this.$store.commit("setLoadingStatus", "Country Data...");
-			const countries = await load(COUNTRY_API);
-			const irelandData = await load(IRELAND_API);
-			this.$store.commit("setLoadingStatus", "Covid Data...");
-			const cases = await load(CASES_API);
-			this.parseAndStore(countries, cases, irelandData);
-			this.$store.commit("setLoadingStatus", "Parsing...");
-			setTimeout(() => {
-				this.$store.commit("isLoading", false);
-			}, 350);
+			const data = await getAll(API);
+			this.$store.commit("setData", Object.freeze(data.countries));
+			this.$store.commit("setCoverage", Object.freeze(data.coverage));
+			this.$store.commit("isLoading", false);
 		} catch (error) {
 			console.log(error);
 			EventBus.$emit("error", "Error connecting to services");
@@ -115,25 +99,6 @@ export default {
 			this.text = reason;
 			this.color = "#F44336";
 		});
-	},
-
-	methods: {
-		parseAndStore(countryData, casesData, irelandData) {
-			const countries = parse(countryData, casesData);
-			const ireland = parseIreland(irelandData);
-			const ieData = countries.find(item => item.countryCode === "IE");
-			if (ieData) {
-				ieData.geojson = ireland.geojson;
-				ieData.population = ireland.population;
-				ieData.series.provinces = ireland.provinces;
-			}
-
-			this.$store.commit("setData", Object.freeze(countries));
-			this.$store.commit(
-				"setCoverage",
-				Object.freeze(createSeriesCoverage(countries))
-			);
-		}
 	}
 };
 </script>
@@ -154,7 +119,7 @@ ul {
 	--app-header-color: #b3e5fc;
 	--nav-region-header-color: #e1f5fe;
 	--section-header-color: #b3e5fc;
-	--link-color: #64B5F6;
+	--link-color: #64b5f6;
 }
 .covid-link {
 	text-decoration: none;

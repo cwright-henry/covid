@@ -1,35 +1,13 @@
 <template>
 	<div id="loading-wrapper">
 		<div id="loading-text">
-			LOADING
-			<span>{{laodingStatus}}</span>
-			<span>Step {{progress}} of 3</span>
+			<span>Covid 19 Watch</span>
+			<span>Loading...</span>
 		</div>
 		<div id="loading-content"></div>
 	</div>
 </template>
 
-<script>
-import { mapState } from "vuex";
-export default {
-	data() {
-		return {
-			progress: 0
-		};
-	},
-	computed: {
-		...mapState(["laodingStatus"])
-	},
-	watch: {
-		laodingStatus: {
-			handler: function() {
-				this.progress += 1;
-			},
-			immediate: true
-		}
-	}
-};
-</script>
 
 <style lang="less">
 #loading-wrapper {
@@ -48,12 +26,12 @@ export default {
 	color: #fff176;
 	width: 100px;
 	height: 30px;
-	margin: -36px 0 0 -45px;
+	margin: -24px 0 0 -45px;
 	text-align: center;
 	font-family: "PT Sans Narrow", sans-serif;
 	font-size: 20px;
 	span:nth-child(1) {
-		font-size: 16px;
+		font-size: 18px;
 		display: block;
 	}
 	span:nth-child(2) {
