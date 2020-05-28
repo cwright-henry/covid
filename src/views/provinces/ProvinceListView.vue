@@ -25,7 +25,7 @@
 
 <script>
 import BasicChart from "@/views/common/BasicChart";
-import { animation } from "@/utils/mixins/animation";
+import { animation } from "@/utils";
 import InfiniteScroll from "@/views/common/InfiniteScroll";
 import { findColor, objectSorter } from "@/utils";
 

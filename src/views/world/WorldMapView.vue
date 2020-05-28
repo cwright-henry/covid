@@ -25,7 +25,8 @@ export default {
 		coverage: {
 			type: Object,
 			default: () => ({
-				stats: {}
+				stats: {},
+				history: []
 			})
 		}
 	},
@@ -80,6 +81,11 @@ export default {
 			this.setDataSource();
 		}
 	},
+	computed: {
+		lastDate() {
+			return this.coverage.history.length - 1;
+		}
+	},
 	methods: {
 		coverageChange(current) {
 			this.map
@@ -91,7 +97,7 @@ export default {
 			if (this.mapLoaded) {
 				this.map
 					.getSource("coverage")
-					.setData(this.coverage.geoJson[this.filter]);
+					.setData(this.coverage.history[this.lastDate][this.filter]);
 			}
 		},
 
@@ -100,7 +106,7 @@ export default {
 			if (this.filter !== "population") {
 				this.map
 					.getSource("coverage")
-					.setData(this.coverage.geoJson[this.filter]);
+					.setData(this.coverage.history[this.lastDate][this.filter]);
 			}
 			this.map.setLayoutProperty("coverage-labels", "text-field", [
 				"concat",

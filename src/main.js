@@ -6,7 +6,7 @@ import 'animate.css'
 import vuetify from './plugins/vuetify';
 import Highcharts from 'highcharts'
 import HighchartsVue from 'highcharts-vue'
-import { GA } from "@/utils/mixins/ga";
+import { GA } from "@/utils";
 
 Highcharts.createElement('link', {
 	href: 'https://fonts.googleapis.com/css?family=Unica+One',

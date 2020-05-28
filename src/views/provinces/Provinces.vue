@@ -16,30 +16,26 @@
 					<div>{{country.population | number(0)}}</div>
 				</li>
 				<li class="mr-3">
-					<label>{{local.provinceName}}</label>
-					<div>{{country.series.provinces.length | number(0)}}</div>
-				</li>
-				<li class="mr-3">
 					<label>Confirmed</label>
 					<div>
-						{{country.latestConfirmed | number(0)}}
-						<span>{{country.latestConfirmedRate | number(2)}}%</span>
+						{{country.series.stats.totalConfirmed | number(0)}}
+						<span>{{(country.series.stats.totalConfirmed / country.population) * 100 | number(2)}}%</span>
 					</div>
 				</li>
 				<li class="mr-3">
 					<label>Recovered</label>
 					<div>
-						{{country.latestRecovered | number(0)}}
-						<span>{{country.latestRecoveryRate | number(2)}}%</span>
+						{{country.series.stats.totalRecovered | number(0)}}
+						<span>{{(country.series.stats.totalRecovered / country.series.stats.totalConfirmed) * 100 | number(2)}}%</span>
 					</div>
 				</li>
 				<li class="mr-3">
 					<label>Fatalities</label>
 					<div>
-						{{country.latestFatalities | number(0)}}
-						<span>{{country.latestFatalityRate | number(2)}}%</span>
+						{{country.series.stats.totalDeaths | number(0)}}
+						<span>{{(country.series.stats.totalDeaths / country.series.stats.totalConfirmed) * 100 | number(2)}}%</span>
 					</div>
-				</li>
+				</li>h
 			</ul>
 			<ProvinceMapView :coverage="country" :local="local" class="mb-8" />
 			<ProvinceListView :country="country" :local="local" />
