@@ -17,19 +17,25 @@
 					<ul>
 						<li class="mr-3">
 							<label>Population</label>
-							<span>{{country.population | number(0)}}</span>
+							<span :class="{isHighlighted : isPopulationSelected}">{{country.population | number(0)}}</span>
 						</li>
 						<li class="mr-3">
 							<label>Confirmed</label>
-							<span>{{filterType === 'totals' ? country.series.stats.totalConfirmed : country.series.stats.latestConfirmed | number(0)}}</span>
+							<span
+								:class="{isHighlighted : isConfirmedSelected}"
+							>{{filterType === 'totals' ? country.series.stats.totalConfirmed : country.series.stats.latestConfirmed | number(0)}}</span>
 						</li>
 						<li class="mr-3">
 							<label>Recovered</label>
-							<span>{{filterType === 'totals' ? country.series.stats.totalRecovered : country.series.stats.latestRecovered | number(0)}}</span>
+							<span
+								:class="{isHighlighted : isRecoveredSelected}"
+							>{{filterType === 'totals' ? country.series.stats.totalRecovered : country.series.stats.latestRecovered | number(0)}}</span>
 						</li>
 						<li>
 							<label>Fatalities</label>
-							<span>{{filterType === 'totals' ? country.series.stats.totalDeaths : country.series.stats.latestDeaths | number(0)}}</span>
+							<span
+								:class="{isHighlighted : isFatalitiesSelected}"
+							>{{filterType === 'totals' ? country.series.stats.totalDeaths : country.series.stats.latestDeaths | number(0)}}</span>
 						</li>
 					</ul>
 				</div>
@@ -99,6 +105,28 @@ export default {
 					return true;
 			}
 			return true;
+		},
+
+		isPopulationSelected() {
+			return this.filter === "population";
+		},
+		isConfirmedSelected() {
+			return (
+				this.filter === "confirmed" ||
+				this.filter === "lastestconfirmed"
+			);
+		},
+		isRecoveredSelected() {
+			return (
+				this.filter === "recovered" ||
+				this.filter === "lastestrecovered"
+			);
+		},
+		isFatalitiesSelected() {
+			return (
+				this.filter === "fatalities" ||
+				this.filter === "lastestfatalities"
+			);
 		}
 	},
 	watch: {
@@ -177,6 +205,9 @@ ul.covid-nav-countries {
 						margin: 0;
 						&:first-child {
 							width: 70px;
+						}
+						span.isHighlighted {
+							color: var(--section-header-color);
 						}
 					}
 				}
