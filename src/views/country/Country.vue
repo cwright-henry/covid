@@ -165,12 +165,7 @@ export default {
 					stats: {},
 					geojson: {}
 				}
-			},
-			confirmed: 0,
-			recovered: 0,
-			deaths: 0,
-			deathRate: 0,
-			comparisions: []
+			}
 		};
 	},
 	components: {
@@ -202,25 +197,9 @@ export default {
 		}
 	},
 	methods: {
-		compareChange(values) {
-			this.comparisions = values;
-		},
-
 		loadData() {
 			this.$store.commit("setCurrentCountryCode", this.countryCode);
 			this.country = Object.freeze(this.findCountry(this.countryCode));
-			const series = this.country.series.data;
-			if (series.length > 1) {
-				const lastest = series[series.length - 1];
-				const previous = series[series.length - 2];
-				this.confirmed = lastest.confirmed;
-				this.recovered = lastest.recovered;
-				this.deaths = lastest.deaths;
-
-				if (this.confirmed) {
-					this.deathRate = (this.deaths / this.confirmed) * 100;
-				}
-			}
 		}
 	}
 };
