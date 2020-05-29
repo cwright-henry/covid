@@ -4,7 +4,7 @@
 			<div id="provinceMap" ref="map"></div>
 		</div>
 		<div class="covid-province-map--filters">
-			<ProvinceMapFilters :country="coverage" @onFilterChange="onFilterChange" />
+			<ProvinceMapFilters :country="country" @onFilterChange="onFilterChange" />
 		</div>
 	</section>
 </template>
@@ -15,7 +15,7 @@ import ProvinceMapFilters from "./ProvinceMapFilters";
 
 export default {
 	props: {
-		coverage: {
+		country: {
 			type: Object,
 			default: () => ({
 				stats: {}
@@ -68,7 +68,7 @@ export default {
 		});
 	},
 	watch: {
-		coverage() {
+		country() {
 			this.setDataSource();
 		},
 
@@ -79,11 +79,11 @@ export default {
 	methods: {
 		setDataSource() {
 			if (this.mapLoaded) {
-				this.map.getSource("coverage").setData(this.coverage.geojson);
+				this.map.getSource("coverage").setData(this.country.geojson);
 				this.map.flyTo({
 					// These options control the ending camera position: centered at
 					// the target, at zoom level 9, and north up.
-					center: [this.coverage.lng, this.coverage.lat],
+					center: [this.country.lng, this.country.lat],
 					zoom: this.local.zoom,
 					pitch: this.local.pitch,
 

@@ -35,9 +35,9 @@
 						{{country.series.stats.totalDeaths | number(0)}}
 						<span>{{(country.series.stats.totalDeaths / country.series.stats.totalConfirmed) * 100 | number(2)}}%</span>
 					</div>
-				</li>h
+				</li>
 			</ul>
-			<ProvinceMapView :coverage="country" :local="local" class="mb-8" />
+			<ProvinceMapView :country="country" :local="local" class="mb-8" />
 			<ProvinceListView :country="country" :local="local" />
 		</div>
 	</article>
@@ -66,12 +66,7 @@ export default {
 					stats: {},
 					geojson: {}
 				}
-			},
-			confirmed: 0,
-			recovered: 0,
-			deaths: 0,
-			deathRate: 0,
-			comparisions: []
+			}
 		};
 	},
 	components: {

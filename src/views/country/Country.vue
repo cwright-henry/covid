@@ -11,7 +11,6 @@
 					v-if="country.series.provinces.length > 0"
 					color="#f2f2f2"
 					text
-					small1
 					:to="`/country/${countryCode}/provinces`"
 				>
 					Explore
