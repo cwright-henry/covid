@@ -10,7 +10,7 @@
 					<span v-if="hasRank">{{index + 1}}</span>
 				</div>
 				<div class="covid-nav-countries--country__info">
-					<h2>
+					<h2 :title="country.countryName">
 						{{country.countryName}}
 						<span>{{filterType === 'totals' ? "Total" : "Latest"}}</span>
 					</h2>
@@ -75,13 +75,13 @@ export default {
 				case "region":
 				case "subregion":
 				case "population":
-				case "confirmed":
-				case "recovered":
-				case "fatalities":
+				case "totalConfirmed":
+				case "totalRecovered":
+				case "totalFatalities":
 					return "totals";
-				case "lastestconfirmed":
-				case "lastestrecovered":
-				case "lastestfatalities":
+				case "latestConfirmed":
+				case "latestRecovered":
+				case "latestFatalities":
 					return "latest";
 			}
 			return "totals";
@@ -96,12 +96,12 @@ export default {
 				case "subregion":
 					return false;
 				case "population":
-				case "confirmed":
-				case "recovered":
-				case "fatalities":
-				case "lastestconfirmed":
-				case "lastestrecovered":
-				case "lastestfatalities":
+				case "totalConfirmed":
+				case "totalRecovered":
+				case "totalFatalities":
+				case "latestConfirmed":
+				case "latestRecovered":
+				case "latestFatalities":
 					return true;
 			}
 			return true;
@@ -112,20 +112,20 @@ export default {
 		},
 		isConfirmedSelected() {
 			return (
-				this.filter === "confirmed" ||
-				this.filter === "lastestconfirmed"
+				this.filter === "totalConfirmed" ||
+				this.filter === "latestConfirmed"
 			);
 		},
 		isRecoveredSelected() {
 			return (
-				this.filter === "recovered" ||
-				this.filter === "lastestrecovered"
+				this.filter === "totalRecovered" ||
+				this.filter === "latestRecovered"
 			);
 		},
 		isFatalitiesSelected() {
 			return (
-				this.filter === "fatalities" ||
-				this.filter === "lastestfatalities"
+				this.filter === "totalFatalities" ||
+				this.filter === "latestFatalities"
 			);
 		}
 	},
@@ -207,7 +207,7 @@ ul.covid-nav-countries {
 							width: 70px;
 						}
 						span.isHighlighted {
-							color: var(--section-header-color);
+							color: #FFF9C4;
 						}
 					}
 				}

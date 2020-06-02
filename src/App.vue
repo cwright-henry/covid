@@ -38,9 +38,7 @@ import AppBar from "@/views/AppBar";
 import NavigationBar from "@/views/NavigationBar";
 import SplashScreen from "@/views/SplashScreen";
 import EventBus from "@/events";
-import { getAll } from "@/services/Api";
-
-const API = `/covid/api/coverage`;
+import { getCoverage } from "@/utils";
 
 export default {
 	name: "App",
@@ -84,7 +82,7 @@ export default {
 
 		try {
 			this.$store.commit("isLoading", true);
-			const data = await getAll(API);
+			const data = await getCoverage();
 			this.$store.commit("setData", Object.freeze(data.countries));
 			this.$store.commit("setCoverage", Object.freeze(data.coverage));
 			this.$store.commit("isLoading", false);

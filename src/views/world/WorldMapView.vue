@@ -145,11 +145,11 @@ export default {
 						"#4CAF50"
 					]);
 					break;
-				case "latestDeaths":
+				case "latestFatalities":
 					this.map.setPaintProperty("coverage-labels", "text-color", [
 						"interpolate",
 						["cubic-bezier", 0, 0.5, 1, 0.5],
-						["get", "latestDeathsRaw"],
+						["get", "latestFatalitiesRaw"],
 						0,
 						"#FFF176",
 						10,
@@ -178,11 +178,11 @@ export default {
 						"#4CAF50"
 					]);
 					break;
-				case "totalDeaths":
+				case "totalFatalities":
 					this.map.setPaintProperty("coverage-labels", "text-color", [
 						"interpolate",
 						["cubic-bezier", 0, 0.5, 1, 0.5],
-						["get", "totalDeathsRaw"],
+						["get", "totalFatalitiesRaw"],
 						10,
 						"#FFF176",
 						1000,

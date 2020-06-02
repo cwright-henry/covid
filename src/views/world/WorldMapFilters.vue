@@ -1,11 +1,5 @@
 <template>
-	<v-radio-group
-		v-model="filter"
-		active-class="covid-radio"
-		dense
-		hide-details
-		@change="onFilterChange()"
-	>
+	<v-radio-group v-model="filter" active-class="covid-radio" dense hide-details>
 		<div class="covid-map-filters">
 			<h1>Filter Map by</h1>
 			<div>
@@ -22,7 +16,7 @@
 					<span>{{coverage.stats.latestRecovered | number(0)}}</span>
 				</div>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Latest Fatalities" value="latestDeaths" color="linkColor"></v-radio>
+					<v-radio hide-details label="Latest Fatalities" value="latestFatalities" color="linkColor"></v-radio>
 					<span>{{coverage.stats.latestDeaths | number(0)}}</span>
 				</div>
 				<div class="covid-map--filters__radio">
@@ -34,7 +28,7 @@
 					<span>{{coverage.stats.totalRecovered | number(0)}}</span>
 				</div>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Total Fatalities" value="totalDeaths" color="linkColor"></v-radio>
+					<v-radio hide-details label="Total Fatalities" value="totalFatalities" color="linkColor"></v-radio>
 					<span>{{coverage.stats.totalDeaths | number(0)}}</span>
 				</div>
 			</div>
@@ -43,6 +37,7 @@
 </template>
 
 <script>
+import EventBus from "@/events";
 export default {
 	props: {
 		coverage: {
@@ -52,14 +47,20 @@ export default {
 			})
 		}
 	},
+	mounted() {
+		EventBus.$on("onNavFilterChange", filter => {
+			this.filter = filter;
+		});
+	},
 	data() {
 		return {
 			filter: "latestConfirmed"
 		};
 	},
-	methods: {
-		onFilterChange() {
+	watch: {
+		filter() {
 			this.$emit("onFilterChange", this.filter);
+			EventBus.$emit("onWorldMapFilterChange", this.filter);
 		}
 	}
 };

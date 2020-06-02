@@ -1,5 +1,6 @@
 export * from './sorting'
 export * from './utils'
 export * from './provinces'
+export * from './coverage'
 export * from './mixins/animation'
 export * from './mixins/ga'

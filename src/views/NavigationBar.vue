@@ -91,17 +91,17 @@ export default {
 		return {
 			search: null,
 			drawer: !this.$vuetify.breakpoint.mdAndDown,
-			currentFilter: "lastestconfirmed",
+			currentFilter: "latestConfirmed",
 			sortFilters: [
 				{ text: "Region", uuid: "region" },
 				{ text: "Sub Region", uuid: "subregion" },
 				{ text: "Total Population", uuid: "population" },
-				{ text: "Latest Confirmed", uuid: "lastestconfirmed" },
-				{ text: "Latest Recovered", uuid: "lastestrecovered" },
-				{ text: "Latest Fatalities", uuid: "lastestfatalities" },
-				{ text: "Total Confirmed", uuid: "confirmed" },
-				{ text: "Total Recovered", uuid: "recovered" },
-				{ text: "Total Fatalities", uuid: "fatalities" }
+				{ text: "Latest Confirmed", uuid: "latestConfirmed" },
+				{ text: "Latest Recovered", uuid: "latestRecovered" },
+				{ text: "Latest Fatalities", uuid: "latestFatalities" },
+				{ text: "Total Confirmed", uuid: "totalConfirmed" },
+				{ text: "Total Recovered", uuid: "totalRecovered" },
+				{ text: "Total Fatalities", uuid: "totalFatalities" }
 			],
 			scroll: false
 		};
@@ -112,6 +112,9 @@ export default {
 	mounted() {
 		EventBus.$on("toggleNavBar", () => {
 			this.drawer = !this.drawer;
+		});
+		EventBus.$on("onWorldMapFilterChange", filter => {
+			this.currentFilter = filter;
 		});
 		this.scroll = true;
 	},
@@ -156,17 +159,23 @@ export default {
 					return arrangeByRegion(data, true);
 				case "population":
 					return arrangeByPopulation(data);
-				case "confirmed":
+				case "totalConfirmed":
+					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return arrangeByTotalConfirmed(data);
-				case "recovered":
+				case "totalRecovered":
+					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return arrangeByTotalRecovered(data);
-				case "fatalities":
+				case "totalFatalities":
+					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return arrangeByTotalFatalities(data);
-				case "lastestconfirmed":
+				case "latestConfirmed":
+					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return arrangeByLatestConfirmed(data);
-				case "lastestrecovered":
+				case "latestRecovered":
+					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return arrangeByLatestRecovered(data);
-				case "lastestfatalities":
+				case "latestFatalities":
+					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return arrangeByLatestFatalities(data);
 			}
 			return [];
