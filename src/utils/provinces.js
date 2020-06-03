@@ -34,9 +34,9 @@ const provinces = {
 		pitch: 45,
 		provinceName: 'Provinces'
 	},
-	'UK': {
-		zoom: 2,
-		pitch: 45,
+	'GB': {
+		zoom: 5.5,
+		pitch: 0,
 		provinceName: 'Territories'
 	},
 	'DEFAULT': {

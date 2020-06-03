@@ -207,7 +207,7 @@ ul.covid-nav-countries {
 							width: 70px;
 						}
 						span.isHighlighted {
-							color: #FFF9C4;
+							color: var(--section-header-color);
 						}
 					}
 				}

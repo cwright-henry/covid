@@ -1,9 +1,14 @@
 import { uuid } from './utils'
 import { timeseriesSorter } from './sorting'
 
+/**
+ * DONT forget this one
+ * https://services1.arcgis.com/eNO7HHeQ3rUcBllm/arcgis/rest/services/CovidStatisticsProfileHPSCIrelandOpenData/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json
+ */
+
 const tsSorter = timeseriesSorter('desc')
 
-const numberFormat = new Intl.NumberFormat({ maximumFractionDigits: 0, minimumFractionDigits: 0 });
+const numberFormat = new Intl.NumberFormat(navigator.language, { maximumFractionDigits: 0, minimumFractionDigits: 0 });
 
 const createFeatureCollection = () => {
     return {

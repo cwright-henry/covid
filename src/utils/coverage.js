@@ -1,6 +1,7 @@
 import { load } from '@/services/Api';
 import { parse, createSeriesCoverage } from './parsing'
 import { parseIreland } from './parseIE'
+import { parseUK } from './parseUK'
 
 class Coverage {
     static COUNTRY_URL = "https://restcountries.eu/rest/v2/all";
