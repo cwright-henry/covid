@@ -6,6 +6,25 @@
 import { mapState } from "vuex";
 import { uuid } from "@/utils";
 
+const SMA_AVG = data => {
+	const moveMean = [];
+
+	for (var i = 3; i < data.length - 3; i++) {
+		var mean =
+			(data[i][1] +
+				data[i - 1][1] +
+				data[i - 2][1] +
+				data[i - 3][1] +
+				data[i + 1][1] +
+				data[i + 2][1] +
+				data[i + 3][1]) /
+			7.0;
+		moveMean.push([data[i][0], mean]);
+	}
+
+	return moveMean;
+};
+
 const options = vm => {
 	return {
 		chart: {
@@ -66,10 +85,14 @@ const options = vm => {
 		plotOptions: {
 			line: {
 				lineWidth: 1,
+				color: "#2196F3",
 				marker: {
 					enabled: true,
 					radius: 3
 				}
+			},
+			bar: {
+				opacity: 0.5
 			}
 		}
 	};
@@ -90,6 +113,10 @@ export default {
 		color: {
 			type: String,
 			default: "#2196F3"
+		},
+		showSMA: {
+			type: Boolean,
+			default: false
 		},
 		name: {
 			type: String,
@@ -131,6 +158,23 @@ export default {
 						data: this.ts,
 						name: this.name
 					});
+
+					if (this.showSMA) {
+						const movingAvg = SMA_AVG(this.ts);
+						chart.addSeries({
+							type: "line",
+							data: movingAvg,
+							name: `7 Day Moving Average`,
+							lineWidth: 3,
+							color:'#2196F3',
+							marker: {
+								enabled: false
+							},
+							tooltip: {
+								valueDecimals: 0
+							}
+						});
+					}
 					chart.reflow();
 				});
 			}

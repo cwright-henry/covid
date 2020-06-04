@@ -21,7 +21,12 @@
 							<span>{{coverage.stats.latestConfirmed | number(0)}}</span>
 						</div>
 					</h1>
-					<BasicChart :ts="coverage.ts.confirmedDailySeries" chartType="bar" name="World Daily Change" />
+					<BasicChart
+						:ts="coverage.ts.confirmedDailySeries"
+						chartType="bar"
+						showSMA
+						name="World Daily Change"
+					/>
 				</div>
 			</div>
 			<div class="covid-world--charts">
@@ -43,7 +48,12 @@
 							<span>{{coverage.stats.latestRecovered | number(0)}}</span>
 						</div>
 					</h1>
-					<BasicChart :ts="coverage.ts.recoveredDailySeries" chartType="bar" name="World Daily Change" />
+					<BasicChart
+						:ts="coverage.ts.recoveredDailySeries"
+						chartType="bar"
+						showSMA
+						name="World Daily Change"
+					/>
 				</div>
 			</div>
 			<div class="covid-world--charts">
@@ -65,7 +75,12 @@
 							<span>{{coverage.stats.latestDeaths | number(0)}}</span>
 						</div>
 					</h1>
-					<BasicChart :ts="coverage.ts.deathDailySeries" chartType="bar" name="`World Daily Change" />
+					<BasicChart
+						:ts="coverage.ts.deathDailySeries"
+						chartType="bar"
+						showSMA
+						name="`World Daily Change"
+					/>
 				</div>
 			</div>
 		</div>
