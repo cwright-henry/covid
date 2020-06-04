@@ -4,12 +4,12 @@
 		<div class="covid-appbar--header ml-4">
 			<h1>
 				Covid 19 Watch
-				<span>Last Updated: {{total.date | date-long}}</span>
+				<span>Last Updated: {{coverage.lastestDate | date-long}}</span>
 			</h1>
 			<ul>
 				<li class="mr-8">
 					<label>Countries</label>
-					<div>{{data.length | number(0)}}</div>
+					<div>{{coverage.numCountries | number(0)}}</div>
 				</li>
 				<li class="mr-8">
 					<label>Population</label>
@@ -18,22 +18,22 @@
 				<li class="mr-8">
 					<label>Confirmed</label>
 					<div>
-						{{total.confirmed | number(0)}}
-						<span>{{confirmedRate | number(2)}}%</span>
+						{{coverage.stats.totalConfirmed | number(0)}}
+						<span>{{(coverage.stats.totalConfirmed / coverage.population) * 100 | number(2)}}%</span>
 					</div>
 				</li>
 				<li class="mr-8">
 					<label>Recovered</label>
 					<div>
-						{{total.recovered | number(0)}}
-						<span>{{ this.recoveryRate | number(2)}}%</span>
+						{{coverage.stats.totalRecovered | number(0)}}
+						<span>{{(coverage.stats.totalRecovered / coverage.stats.totalConfirmed) * 100 | number(2)}}%</span>
 					</div>
 				</li>
 				<li>
 					<label>Fatalities</label>
 					<div>
-						{{total.deaths | number(0)}}
-						<span>{{fatalityRate | number(2)}}%</span>
+						{{coverage.stats.totalDeaths | number(0)}}
+						<span>{{(coverage.stats.totalDeaths / coverage.stats.totalConfirmed) * 100 | number(2)}}%</span>
 					</div>
 				</li>
 			</ul>
@@ -47,43 +47,12 @@ import { mapState } from "vuex";
 import EventBus from "@/events";
 
 export default {
-	data() {
-		return {
-			confirmedRate: 0,
-			fatalityRate: 0,
-			recoveryRate: 0
-		};
-	},
 	computed: {
-		...mapState(["coverage", "data"]),
-
-		total() {
-			if (this.coverage.data && this.coverage.data.length > 1) {
-				const coverage = this.coverage.data[
-					this.coverage.data.length - 1
-				];
-
-				this.confirmedRate =
-					(coverage.confirmed / this.coverage.population) * 100;
-
-				if (coverage.confirmed !== 0) {
-					this.fatalityRate =
-						(coverage.deaths / coverage.confirmed) * 100;
-				}
-
-				if (coverage.confirmed !== 0) {
-					this.recoveryRate =
-						(coverage.recovered / coverage.confirmed) * 100;
-				}
-
-				return coverage;
-			}
-			return {};
-		}
+		...mapState(["coverage"])
 	},
 	methods: {
 		toggleNavBar() {
-			EventBus.$emit("toggleNavBar");
+			EventBus.$emit("onToggleNavBar");
 		}
 	}
 };

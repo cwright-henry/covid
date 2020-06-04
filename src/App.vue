@@ -1,6 +1,6 @@
 <template>
 	<v-app>
-		<SplashScreen v-if="isLoading"></SplashScreen>
+		<SplashScreen v-if="isLoading" :isLoadError="isLoadError"></SplashScreen>
 		<template v-else>
 			<AppBar />
 			<NavigationBar />
@@ -53,7 +53,8 @@ export default {
 			bottom: false,
 			left: false,
 			right: false,
-			transitionName: null
+			transitionName: null,
+			isLoadError: false
 		};
 	},
 
@@ -87,16 +88,9 @@ export default {
 			this.$store.commit("setCoverage", Object.freeze(data.coverage));
 			this.$store.commit("isLoading", false);
 		} catch (error) {
-			console.log(error);
-			EventBus.$emit("error", "Error connecting to services");
+			console.log(error)
+			this.isLoadError = true;
 		}
-	},
-	mounted() {
-		EventBus.$on("error", reason => {
-			this.msg = true;
-			this.text = reason;
-			this.color = "#F44336";
-		});
 	}
 };
 </script>

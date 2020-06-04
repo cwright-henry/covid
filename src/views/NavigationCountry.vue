@@ -1,5 +1,11 @@
 <template>
-	<ul class="covid-nav-countries">
+	<transition-group
+		tag="ul"
+		@enter="enter"
+		:css="false"
+		@before-leave="beforeLeave"
+		class="covid-nav-countries"
+	>
 		<li v-for="(country, index) of countries" :key="country.uuid" :ref="country.countryCode">
 			<router-link
 				:to="`/country/${country.countryCode}`"
@@ -41,12 +47,13 @@
 				</div>
 			</router-link>
 		</li>
-	</ul>
+	</transition-group>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import EventBus from "@/events";
+import { animation } from "@/utils";
 
 export default {
 	props: {
@@ -67,6 +74,7 @@ export default {
 			default: null
 		}
 	},
+	mixins: [animation],
 	computed: {
 		...mapState(["currentCountryCode"]),
 

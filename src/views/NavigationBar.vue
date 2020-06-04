@@ -74,17 +74,40 @@
 <script>
 import { mapState } from "vuex";
 import NavigationCountry from "./NavigationCountry";
-import {
-	arrangeByRegion,
-	arrangeByPopulation,
-	arrangeByTotalConfirmed,
-	arrangeByTotalRecovered,
-	arrangeByTotalFatalities,
-	arrangeByLatestConfirmed,
-	arrangeByLatestRecovered,
-	arrangeByLatestFatalities
-} from "@/utils";
+import { objectSorter, sortCountries } from "@/utils";
 import EventBus from "@/events";
+
+/**
+ * Sort By population
+ */
+const populationSorter = objectSorter("population", "asc");
+const totalConfirmedSorter = sortCountries("totalConfirmed", "asc");
+const latestConfirmedSorter = sortCountries("latestConfirmed", "asc");
+const totalRecoveredSorter = sortCountries("totalRecovered", "asc");
+const latestRecoveredSorter = sortCountries("latestRecovered", "asc");
+const totalDeathsSorter = sortCountries("totalDeaths", "asc");
+const latestDeathsSorter = sortCountries("latestDeaths", "asc");
+const regionSorter = (countries, subRegion) => {
+	const regions = {};
+	for (const country of copy) {
+		const regionName = subRegion
+			? country.subRegionName
+			: country.regionName;
+		if (!regions[regionName]) {
+			regions[regionName] = new Array();
+		}
+		regions[regionName].push(country);
+	}
+
+	const ordered = {};
+	Object.keys(regions)
+		.sort()
+		.forEach(function(key) {
+			ordered[key] = regions[key];
+		});
+
+	return ordered;
+};
 
 export default {
 	data() {
@@ -110,7 +133,7 @@ export default {
 		NavigationCountry
 	},
 	mounted() {
-		EventBus.$on("toggleNavBar", () => {
+		EventBus.$on("onToggleNavBar", () => {
 			this.drawer = !this.drawer;
 		});
 		EventBus.$on("onWorldMapFilterChange", filter => {
@@ -140,12 +163,18 @@ export default {
 	computed: {
 		...mapState(["data"]),
 
+		dataCopy() {
+			const copy = [];
+			this.data.forEach(item => copy.push(item));
+			return copy;
+		},
+
 		items() {
 			const searchTerm = this.search
 				? this.search.trim().toLowerCase()
 				: null;
 
-			let data = this.data;
+			let data = this.dataCopy;
 			if (searchTerm) {
 				data = this.data.filter(item => {
 					return item.filteredName.indexOf(searchTerm) !== -1;
@@ -154,29 +183,29 @@ export default {
 
 			switch (this.currentFilter) {
 				case "region":
-					return arrangeByRegion(data);
+					return regionSorter(data);
 				case "subregion":
-					return arrangeByRegion(data, true);
+					return regionSorter(data, true);
 				case "population":
-					return arrangeByPopulation(data);
+					return data.sort(populationSorter);
 				case "totalConfirmed":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
-					return arrangeByTotalConfirmed(data);
+					return data.sort(totalConfirmedSorter);
 				case "totalRecovered":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
-					return arrangeByTotalRecovered(data);
+					return data.sort(totalRecoveredSorter);
 				case "totalFatalities":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
-					return arrangeByTotalFatalities(data);
+					return data.sort(totalDeathsSorter);
 				case "latestConfirmed":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
-					return arrangeByLatestConfirmed(data);
+					return data.sort(latestConfirmedSorter);
 				case "latestRecovered":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
-					return arrangeByLatestRecovered(data);
+					return data.sort(latestRecoveredSorter);
 				case "latestFatalities":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
-					return arrangeByLatestFatalities(data);
+					return data.sort(latestDeathsSorter);
 			}
 			return [];
 		}

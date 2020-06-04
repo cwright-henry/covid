@@ -39,6 +39,7 @@ export const sortGeoJson = (property, sort) => {
 export const sortCountries = (property, sort) => {
 	return function (a, b) {
 		if (
+			a["series"] && b["series"] &&
 			a["series"]['stats'][property] != undefined &&
 			b["series"]['stats'][property] !== undefined
 		) {
@@ -106,106 +107,4 @@ export const objectSorter = (property, sort) => {
 		}
 		return 0;
 	};
-};
-
-/**
- * Sort By population
- */
-const populationSorter = objectSorter('population', 'asc')
-export const arrangeByPopulation = countries => {
-	const copy = [];
-	countries.forEach(item => copy.push(item));
-	return copy.sort(populationSorter);
-};
-
-/**
- * Sort by Confirmed cases
- */
-const totalConfirmedSorter = sortCountries('totalConfirmed', 'asc')
-export const arrangeByTotalConfirmed = countries => {
-	const copy = [];
-	countries.forEach(item => copy.push(item));
-	return copy.sort(totalConfirmedSorter);
-};
-
-/**
- * Sort by Latest Confirmed cases
- */
-const latestConfirmedSorter = sortCountries('latestConfirmed', 'asc')
-export const arrangeByLatestConfirmed = countries => {
-	const copy = [];
-	countries.forEach(item => copy.push(item));
-	return copy.sort(latestConfirmedSorter);
-};
-
-/**
- * Sort by Total Recovered cases
- */
-const totalRecoveredSorter = sortCountries('totalRecovered', 'asc')
-export const arrangeByTotalRecovered = countries => {
-	const copy = [];
-	countries.forEach(item => copy.push(item));
-	return copy.sort(totalRecoveredSorter);
-};
-
-/**
- * Sort by Latest Recovered cases
- */
-const latestRecoveredSorter = sortCountries('latestRecovered', 'asc')
-export const arrangeByLatestRecovered = countries => {
-	const copy = [];
-	countries.forEach(item => copy.push(item));
-	return copy.sort(latestRecoveredSorter);
-};
-
-/**
- * Sort by Total Fatality cases
- */
-const totalDeathsSorter = sortCountries('totalDeaths', 'asc')
-export const arrangeByTotalFatalities = countries => {
-	const copy = [];
-	countries.forEach(item => copy.push(item));
-	return copy.sort(totalDeathsSorter);
-};
-
-/**
- * Sort by Latest Fatality cases
- */
-const latestDeathsSorter = sortCountries('latestDeaths', 'asc')
-export const arrangeByLatestFatalities = countries => {
-	const copy = [];
-	countries.forEach(item => copy.push(item));
-	return copy.sort(latestDeathsSorter);
-};
-
-
-/**
- * Group counties by region or subregion
- * 
- * @param {*} countries 
- * @param {*} subRegion 
- */
-export const arrangeByRegion = (countries, subRegion) => {
-	const regions = {};
-	const copy = [];
-	countries.forEach(item => copy.push(item));
-
-	for (const country of copy) {
-		const regionName = subRegion
-			? country.subRegionName
-			: country.regionName;
-		if (!regions[regionName]) {
-			regions[regionName] = new Array();
-		}
-		regions[regionName].push(country);
-	}
-
-	const ordered = {};
-	Object.keys(regions)
-		.sort()
-		.forEach(function (key) {
-			ordered[key] = regions[key];
-		});
-
-	return ordered;
 };

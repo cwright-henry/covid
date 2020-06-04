@@ -68,26 +68,67 @@ export const parse = (countries, cases) => {
  */
 export const createSeriesCoverage = countries => {
 	const coverage = {
+		numCountries: countries.length,
+		lastestDate: null,
 		population: 0,
 		data: [],
-		geoJson: null,
 		history: null,
-		stats: null,
-		ts: null
+		stats: {
+			latestConfirmed: 0,
+			latestRecovered: 0,
+			latestDeaths: 0,
+			totalConfirmed: 0,
+			totalRecovered: 0,
+			totalDeaths: 0
+		},
+		ts: {
+			confirmedSeries: [],
+			recoveredSeries: [],
+			deathSeries: [],
+			confirmedDailySeries: [],
+			recoveredDailySeries: [],
+			deathDailySeries: []
+		}
+	};
+
+	const mergeToCoverageTs = (tsTo, tsFrom) => {
+		for (let i = 0; i < tsFrom.length; i++) {
+			const entry = tsFrom[i];
+			const current = tsTo.find(item => item[0] === entry[0]);
+			if (current) {
+				current[1] += entry[1];
+			} else {
+				tsTo.push(entry);
+			}
+		}
 	};
 
 	for (let i = 0; i < countries.length; i++) {
-		const country = countries[i]; // Weird bug here, as first entry gets accumalated with rest of them
-		coverage.population += country.population;
-		for (let j = 0; j < country.series.data.length; j++) {
-			merge(coverage.data, country.series.data[j]);
-		}
+		const country = countries[i];
 
-		delete country.series.data;
+		// Merge pop
+		coverage.population += country.population;
+
+		// Merge stats
+		coverage.stats.latestConfirmed += country.series.stats.latestConfirmed;
+		coverage.stats.latestRecovered += country.series.stats.latestRecovered;
+		coverage.stats.latestDeaths += country.series.stats.latestDeaths;
+		coverage.stats.totalConfirmed += country.series.stats.totalConfirmed;
+		coverage.stats.totalRecovered += country.series.stats.totalRecovered;
+		coverage.stats.totalDeaths += country.series.stats.totalDeaths;
+
+		// Merge ts
+		mergeToCoverageTs(coverage.ts.confirmedSeries, country.series.ts.confirmedSeries);
+		mergeToCoverageTs(coverage.ts.recoveredSeries, country.series.ts.recoveredSeries);
+		mergeToCoverageTs(coverage.ts.deathSeries, country.series.ts.deathSeries);
+		mergeToCoverageTs(coverage.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
+		mergeToCoverageTs(coverage.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
+		mergeToCoverageTs(coverage.ts.deathDailySeries, country.series.ts.deathDailySeries);
+
+		// lastest Date
+		coverage.lastestDate = country.series.ts.confirmedSeries[country.series.ts.confirmedSeries.length - 1][0];
 	}
-	const seriesData = createSeriesData(coverage.data);
-	coverage.stats = seriesData.stats;
-	coverage.ts = seriesData.ts;
+
 	coverage.history = createGeoJsonHistoryForCountries(countries)
 	return coverage;
 };
@@ -153,7 +194,7 @@ const createSeriesData = (series) => {
 		const diff =
 			confirmedSeries[i][1] -
 			confirmedSeries[i - 1][1];
-		confirmedDailySeries.push([date, diff]);
+		confirmedDailySeries.push([date, diff > 0 ? diff : 0]);
 	}
 	if (confirmedDailySeries.length > 0) {
 		latestConfirmed = confirmedDailySeries[
@@ -207,24 +248,6 @@ const createSeriesData = (series) => {
 }
 
 /**
- * Merge 2 timeseries based on date, if entry does not exist
- * clone an existing one, keyed of date
- * 
- * @param {*} data 
- * @param {*} newData 
- */
-const merge = (data, newData) => {
-	const dataItem = data.find(item => item.date === newData.date);
-	if (dataItem) {
-		dataItem.confirmed += newData.confirmed;
-		dataItem.deaths += newData.deaths;
-		dataItem.recovered += newData.recovered;
-	} else {
-		data.push({ ...newData });
-	}
-};
-
-/**
  * Ignore cities - US only
  * 
  * @param {*} entries 
@@ -232,7 +255,7 @@ const merge = (data, newData) => {
  */
 const createdSeriesForCountry = (entries, countryCode) => {
 	const series = {
-		data: [],
+		data: [],		/* Get Garbage collected at the end of day */
 		provinces: []
 	};
 
@@ -243,6 +266,17 @@ const createdSeriesForCountry = (entries, countryCode) => {
 			recovered: entries[i].Recovered,
 			date: new Date(entries[i].Date).getTime()
 		};
+	};
+
+	const merge = (data, newData) => {
+		const current = data.find(item => item.date === newData.date);
+		if (current) {
+			current.confirmed += newData.confirmed;
+			current.deaths += newData.deaths;
+			current.recovered += newData.recovered;
+		} else {
+			data.push({ ...newData });
+		}
 	};
 
 	for (let i = 0; i < entries.length; i++) {
@@ -341,10 +375,13 @@ const createdSeriesForCountry = (entries, countryCode) => {
 	}
 
 	Object.assign(series, createSeriesData(series.data))
+	delete series.data;
 	for (let province of series.provinces) {
 		Object.assign(province, createSeriesData(province.data))
+		delete province.data;
 		for (let city of province.cities) {
 			Object.assign(city, createSeriesData(city.data))
+			delete city.data;
 		}
 	}
 
