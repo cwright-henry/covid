@@ -54,7 +54,9 @@ export const parse = (countries, cases) => {
 					country.alpha2Code
 				)
 			};
-			item.geojson = createGeoJsonForCountry(item)
+			if (item.series.provinces.length > 0) {
+				item.geojson = createGeoJsonForCountry(item)
+			}
 			data.push(item)
 		}
 	}
@@ -71,7 +73,6 @@ export const createSeriesCoverage = countries => {
 		numCountries: countries.length,
 		lastestDate: null,
 		population: 0,
-		data: [],
 		history: null,
 		stats: {
 			latestConfirmed: 0,
@@ -98,7 +99,7 @@ export const createSeriesCoverage = countries => {
 			if (current) {
 				current[1] += entry[1];
 			} else {
-				tsTo.push(entry);
+				tsTo.push([entry[0], entry[1]]);
 			}
 		}
 	};

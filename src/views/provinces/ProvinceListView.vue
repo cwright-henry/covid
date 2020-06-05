@@ -15,6 +15,7 @@
 					chartType="bar"
 					height="250"
 					:color="findAColor(index)"
+					showSMA
 					:name="`${province.name} Deaths Daily Changge`"
 				/>
 			</li>

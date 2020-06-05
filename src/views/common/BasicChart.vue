@@ -166,7 +166,7 @@ export default {
 							data: movingAvg,
 							name: `7 Day Moving Average`,
 							lineWidth: 3,
-							color:'#2196F3',
+							color: this.color,
 							marker: {
 								enabled: false
 							},

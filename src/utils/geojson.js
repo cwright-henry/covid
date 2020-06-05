@@ -1,6 +1,6 @@
 import { sortGeoJson } from './sorting'
 
-const numberFormat = new Intl.NumberFormat({ maximumFractionDigits: 0, minimumFractionDigits: 0 });
+const numberFormat = new Intl.NumberFormat(navigator.language, { maximumFractionDigits: 0, minimumFractionDigits: 0 });
 const totalConfirmedSorter = sortGeoJson("totalConfirmedRaw", "asc");
 const totalRecoveredSorter = sortGeoJson("totalRecoveredRaw", "asc");
 const totalFatalitiesSorter = sortGeoJson("totalFatalitiesRaw", "asc");
@@ -64,6 +64,8 @@ export const createGeoJsonForCountry = country => {
     else {
         geoJson.features.push(createFeature(country, country.series.stats));
     }
+
+    geoJson.features.sort(lastConfirmedSorter)
 
     return geoJson;
 }
