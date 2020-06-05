@@ -89,7 +89,7 @@ const totalDeathsSorter = sortCountries("totalDeaths", "asc");
 const latestDeathsSorter = sortCountries("latestDeaths", "asc");
 const regionSorter = (countries, subRegion) => {
 	const regions = {};
-	for (const country of copy) {
+	for (const country of countries) {
 		const regionName = subRegion
 			? country.subRegionName
 			: country.regionName;
