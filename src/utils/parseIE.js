@@ -1,5 +1,6 @@
 import { uuid } from './utils'
 import { timeseriesSorter } from './sorting'
+import { numberFormat } from './format'
 
 /**
  * DONT forget this one
@@ -7,8 +8,6 @@ import { timeseriesSorter } from './sorting'
  */
 
 const tsSorter = timeseriesSorter('desc')
-
-const numberFormat = new Intl.NumberFormat(navigator.language, { maximumFractionDigits: 0, minimumFractionDigits: 0 });
 
 const createFeatureCollection = () => {
     return {
@@ -22,10 +21,10 @@ const createFeature = (county, stats) => {
         type: 'Feature',
         properties: {
             name: county.name,
-            population: numberFormat.format(county.population || 0),
-            totalConfirmed: numberFormat.format(stats.totalConfirmed || 0),
+            population: numberFormat(county.population || 0, 0),
+            totalConfirmed: numberFormat(stats.totalConfirmed || 0, 0),
             totalConfirmedRaw: stats.totalConfirmed || 0,
-            latestConfirmed: numberFormat.format(stats.latestConfirmed || 0),
+            latestConfirmed: numberFormat(stats.latestConfirmed || 0, 0),
             latestConfirmedRaw: stats.latestConfirmed || 0
         },
         geometry: {

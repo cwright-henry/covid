@@ -1,6 +1,6 @@
 import { sortGeoJson } from './sorting'
+import { numberFormat } from './format'
 
-const numberFormat = new Intl.NumberFormat(navigator.language, { maximumFractionDigits: 0, minimumFractionDigits: 0 });
 const totalConfirmedSorter = sortGeoJson("totalConfirmedRaw", "asc");
 const totalRecoveredSorter = sortGeoJson("totalRecoveredRaw", "asc");
 const totalFatalitiesSorter = sortGeoJson("totalFatalitiesRaw", "asc");
@@ -26,19 +26,19 @@ const createFeature = (region, stats) => {
         type: 'Feature',
         properties: {
             name: region.countryName || region.name,
-            population: numberFormat.format(region.population || 0),
+            population: numberFormat(region.population || 0, 0),
             countryCode: region.countryCode || '',
-            totalConfirmed: numberFormat.format(stats.totalConfirmed || 0),
+            totalConfirmed: numberFormat(stats.totalConfirmed || 0, 0),
             totalConfirmedRaw: stats.totalConfirmed || 0,
-            totalRecovered: numberFormat.format(stats.totalRecovered || 0),
+            totalRecovered: numberFormat(stats.totalRecovered || 0, 0),
             totalRecoveredRaw: stats.totalRecovered || 0,
-            totalFatalities: numberFormat.format(stats.totalFatalities || 0),
+            totalFatalities: numberFormat(stats.totalFatalities || 0, 0),
             totalFatalitiesRaw: stats.totalFatalities || 0,
-            latestConfirmed: numberFormat.format(stats.latestConfirmed || 0),
+            latestConfirmed: numberFormat(stats.latestConfirmed || 0, 0),
             latestConfirmedRaw: stats.latestConfirmed || 0,
-            latestRecovered: numberFormat.format(stats.latestRecovered || 0),
+            latestRecovered: numberFormat(stats.latestRecovered || 0, 0),
             latestRecoveredRaw: stats.latestRecovered || 0,
-            latestFatalities: numberFormat.format(stats.latestFatalities || 0),
+            latestFatalities: numberFormat(stats.latestFatalities || 0, 0),
             latestFatalitiesRaw: stats.latestFatalities || 0
         },
         geometry: {
