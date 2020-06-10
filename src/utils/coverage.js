@@ -1,7 +1,6 @@
 import { load } from '@/services/Api';
 import { parse, createSeriesCoverage } from './parsing'
 import { parseIreland } from './parseIE'
-import { parseUK } from './parseUK'
 
 class Coverage {
     static COUNTRY_URL = "https://restcountries.eu/rest/v2/all";
@@ -9,9 +8,11 @@ class Coverage {
     static IRELAND_URL = "https://services1.arcgis.com/eNO7HHeQ3rUcBllm/arcgis/rest/services/Covid19CountyStatisticsHPSCIrelandOpenData/FeatureServer/0/query?where=TimeStampDate%20%3E%3D%20TIMESTAMP%20%272020-04-20%2000%3A00%3A00%27%20&outFields=CountyName,PopulationCensus16,Lat,Long,ConfirmedCovidCases,TimeStampDate&outSR=4326&f=json"
 
     static async getAll() {
-        const countryData = await load(Coverage.COUNTRY_URL);
-        const casesData = await load(Coverage.CASES_URL);
-        const irelandData = await load(Coverage.IRELAND_URL);
+        const [countryData, casesData, irelandData] = await Promise.all([
+            load(Coverage.COUNTRY_URL),
+            load(Coverage.CASES_URL),
+            load(Coverage.IRELAND_URL)
+        ]);
 
         const countries = parse(countryData, casesData);
         const ireland = parseIreland(irelandData);
