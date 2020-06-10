@@ -15,7 +15,7 @@ const colors = [
     "#ffeb3b",
     "#ff5722",
     "#607d8b",
-    "#000000",
+    "#FFFFFF",
     "#ff0000"
 ];
 
