@@ -64,6 +64,40 @@ export const sortCountries = (property, sort) => {
 };
 
 /**
+ * Sort the properties of countries.stats
+ * 
+ * @param {*} property 
+ * @param {*} sort 
+ */
+export const sortCountriesStats = (property, sort) => {
+	return function (a, b) {
+		if (
+			a["stats"] && b["stats"] &&
+			a['stats'][property] != undefined &&
+			b['stats'][property] !== undefined
+		) {
+			const left =
+				typeof a['stats'][property] === "string"
+					? a['stats'][property].toUpperCase()
+					: a['stats'][property];
+			const right =
+				typeof b['stats'][property] === "string"
+					? b['stats'][property].toUpperCase()
+					: b['stats'][property];
+
+			if (left < right) {
+				return sort ? (sort === "desc" ? -1 : 1) : -1;
+			}
+			if (left > right) {
+				return sort ? (sort === "desc" ? 1 : -1) : 1;
+			}
+		}
+		return 0;
+	};
+};
+
+
+/**
  * Sort timeseries
  * 
  * @param {*} property 

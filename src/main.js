@@ -18,16 +18,16 @@ Highcharts.createElement('link', {
 Highcharts.setOptions({
 	global: {
 		useUTC: true
+	},
+	lang: {
+		thousandsSep: ',',
+		decimalPoint: '.'
 	}
 });
 
 Vue.use(HighchartsVue)
 
 Vue.config.productionTip = false;
-
-const dateOptionsDayOnly = {
-	day: '2-digit'
-};
 
 Vue.filter('number', function (value, precision) {
 	return numberFormat(value, precision);

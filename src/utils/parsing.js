@@ -1,5 +1,6 @@
 import { uuid } from './utils'
 import { createGeoJsonForCountry, createGeoJsonHistoryForCountries } from './geojson'
+import { sortCountriesStats } from './sorting'
 
 /**
  * Replace long names with shorter - this helps the map
@@ -19,12 +20,14 @@ const replacements = [
 	{ longName: "Venezuela (Bolivarian Republic of)", shortName: 'Venezuela' }
 ];
 
+const statsSorter = sortCountriesStats('latestConfirmed', 'asc');
+
 const findReplacementName = name => {
 	const replacement = replacements.find(item => item.longName === name);
 	return replacement ? replacement.shortName : name;
 }
 
-export const parse = (countries, cases) => {
+export const parseWorld = (countries, cases) => {
 	const data = [];
 	for (const country of countries) {
 		const entries = cases.filter(
@@ -92,7 +95,7 @@ export const createSeriesCoverage = countries => {
 		}
 	};
 
-	const mergeToCoverageTs = (tsTo, tsFrom) => {
+	const merge = (tsTo, tsFrom) => {
 		for (let i = 0; i < tsFrom.length; i++) {
 			const entry = tsFrom[i];
 			const current = tsTo.find(item => item[0] === entry[0]);
@@ -119,12 +122,12 @@ export const createSeriesCoverage = countries => {
 		coverage.stats.totalDeaths += country.series.stats.totalDeaths;
 
 		// Merge ts
-		mergeToCoverageTs(coverage.ts.confirmedSeries, country.series.ts.confirmedSeries);
-		mergeToCoverageTs(coverage.ts.recoveredSeries, country.series.ts.recoveredSeries);
-		mergeToCoverageTs(coverage.ts.deathSeries, country.series.ts.deathSeries);
-		mergeToCoverageTs(coverage.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
-		mergeToCoverageTs(coverage.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
-		mergeToCoverageTs(coverage.ts.deathDailySeries, country.series.ts.deathDailySeries);
+		merge(coverage.ts.confirmedSeries, country.series.ts.confirmedSeries);
+		merge(coverage.ts.recoveredSeries, country.series.ts.recoveredSeries);
+		merge(coverage.ts.deathSeries, country.series.ts.deathSeries);
+		merge(coverage.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
+		merge(coverage.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
+		merge(coverage.ts.deathDailySeries, country.series.ts.deathDailySeries);
 
 		// lastest Date
 		coverage.lastestDate = country.series.ts.confirmedSeries[country.series.ts.confirmedSeries.length - 1][0];
@@ -361,30 +364,143 @@ const createdSeriesForCountry = (entries, countryCode) => {
 		}
 	}
 
-	if (
-		hasCities ||
-		countryCode === "AU" ||
-		countryCode === "CA" ||
-		countryCode === "CN"
-	) {
-		series.data = [];
-		for (let j = 0; j < series.provinces.length; j++) {
-			for (let x = 0; x < series.provinces[j].data.length; x++) {
-				merge(series.data, series.provinces[j].data[x]);
-			}
-		}
-	}
-
 	Object.assign(series, createSeriesData(series.data))
 	delete series.data;
 	for (let province of series.provinces) {
 		Object.assign(province, createSeriesData(province.data))
 		delete province.data;
 		for (let city of province.cities) {
-			Object.assign(city, createSeriesData(city.data))
 			delete city.data;
 		}
 	}
 
 	return series;
+}
+
+/**
+ * Bases on subRegionName create a series
+ */
+export const createSeriesRegion = (countries) => {
+	const regions = []
+	const subRegions = [];
+
+	const merge = (tsTo, tsFrom) => {
+		for (let i = 0; i < tsFrom.length; i++) {
+			const entry = tsFrom[i];
+			const current = tsTo.find(item => item[0] === entry[0]);
+			if (current) {
+				current[1] += entry[1];
+			} else {
+				tsTo.push([entry[0], entry[1]]);
+			}
+		}
+	};
+
+	for (const country of countries) {
+		let region = subRegions.find(item => item.subRegion === country.subRegionName);
+		if (!region) {
+			region = {
+				uuid: uuid(),
+				population: 0,
+				region: country.regionName,
+				subRegion: country.subRegionName,
+				countries: [],
+				stats: {
+					latestConfirmed: 0,
+					latestRecovered: 0,
+					latestDeaths: 0,
+					totalConfirmed: 0,
+					totalRecovered: 0,
+					totalDeaths: 0
+				},
+				ts: {
+					confirmedSeries: [],
+					recoveredSeries: [],
+					deathSeries: [],
+					confirmedDailySeries: [],
+					recoveredDailySeries: [],
+					deathDailySeries: []
+				}
+			}
+			subRegions.push(region)
+		}
+		region.population += country.population;
+		region.countries.push(country)
+	}
+
+	// Now merge country series into region series
+	for (const region of subRegions) {
+		for (const country of region.countries) {
+			// Merge stats
+			region.stats.latestConfirmed += country.series.stats.latestConfirmed;
+			region.stats.latestRecovered += country.series.stats.latestRecovered;
+			region.stats.latestDeaths += country.series.stats.latestDeaths;
+			region.stats.totalConfirmed += country.series.stats.totalConfirmed;
+			region.stats.totalRecovered += country.series.stats.totalRecovered;
+			region.stats.totalDeaths += country.series.stats.totalDeaths;
+
+			// Merge ts
+			merge(region.ts.confirmedSeries, country.series.ts.confirmedSeries);
+			merge(region.ts.recoveredSeries, country.series.ts.recoveredSeries);
+			merge(region.ts.deathSeries, country.series.ts.deathSeries);
+			merge(region.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
+			merge(region.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
+			merge(region.ts.deathDailySeries, country.series.ts.deathDailySeries);
+		}
+	}
+
+	for (const region of subRegions) {
+		let aregion = regions.find(item => item.name === region.region);
+		if (!aregion) {
+			aregion = {
+				uuid: uuid(),
+				population: 0,
+				name: region.region,
+				subRegions: [],
+				stats: {
+					latestConfirmed: 0,
+					latestRecovered: 0,
+					latestDeaths: 0,
+					totalConfirmed: 0,
+					totalRecovered: 0,
+					totalDeaths: 0
+				},
+				ts: {
+					confirmedSeries: [],
+					recoveredSeries: [],
+					deathSeries: [],
+					confirmedDailySeries: [],
+					recoveredDailySeries: [],
+					deathDailySeries: []
+				}
+			}
+			regions.push(aregion)
+		}
+		aregion.subRegions.push(region);
+		aregion.population += region.population;
+
+		// Merge stats
+		aregion.stats.latestConfirmed += region.stats.latestConfirmed;
+		aregion.stats.latestRecovered += region.stats.latestRecovered;
+		aregion.stats.latestDeaths += region.stats.latestDeaths;
+		aregion.stats.totalConfirmed += region.stats.totalConfirmed;
+		aregion.stats.totalRecovered += region.stats.totalRecovered;
+		aregion.stats.totalDeaths += region.stats.totalDeaths;
+
+		// Merge ts
+		merge(aregion.ts.confirmedSeries, region.ts.confirmedSeries);
+		merge(aregion.ts.recoveredSeries, region.ts.recoveredSeries);
+		merge(aregion.ts.deathSeries, region.ts.deathSeries);
+		merge(aregion.ts.confirmedDailySeries, region.ts.confirmedDailySeries);
+		merge(aregion.ts.recoveredDailySeries, region.ts.recoveredDailySeries);
+		merge(aregion.ts.deathDailySeries, region.ts.deathDailySeries);
+
+	}
+
+	regions.sort(statsSorter);
+	for (const region of regions) {
+		region.subRegions.sort(statsSorter)
+	}
+
+	return regions;
 }

@@ -68,7 +68,7 @@ export default {
 		...mapState(["isLoading"])
 	},
 
-	async created() {
+	created() {
 		this.$router.beforeEach((to, from, next) => {
 			if (from.name === "country" && to.name === "provinces") {
 				this.transitionName = "slide-left";
@@ -83,12 +83,15 @@ export default {
 
 		try {
 			this.$store.commit("isLoading", true);
-			const data = await getCoverage();
-			this.$store.commit("setData", Object.freeze(data.countries));
-			this.$store.commit("setCoverage", Object.freeze(data.coverage));
-			this.$store.commit("isLoading", false);
+			this.$nextTick(async () => {
+				const { countries, coverage, regions } = await getCoverage();
+				this.$store.commit("setData", Object.freeze(countries));
+				this.$store.commit("setCoverage", Object.freeze(coverage));
+				this.$store.commit("setRegions", Object.freeze(regions));
+				this.$store.commit("isLoading", false);
+			});
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			this.isLoadError = true;
 		}
 	}

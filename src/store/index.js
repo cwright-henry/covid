@@ -8,6 +8,7 @@ export default new Vuex.Store({
 		isLoading: false,
 		data: [],		/* Frozen - Need to copy it to alter it, even sorting! */
 		coverage: {},	/* Frozen */
+		regions: [],	/* Frozen */
 		currentCountryCode: null,
 		laodingStatus: ''
 	},
@@ -38,6 +39,10 @@ export default new Vuex.Store({
 
 		setCoverage(state, coverage) {
 			state.coverage = coverage;
+		},
+
+		setRegions(state, regions) {
+			state.regions = regions;
 		},
 
 		isLoading(state, isLoading) {

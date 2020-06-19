@@ -3,7 +3,7 @@
 		<div id="loading-wrapper" v-if="!isLoadError">
 			<div id="loading-text">
 				<span>Covid 19 Watch</span>
-				<span>Loading...</span>
+				<span>{{status}}</span>
 			</div>
 			<div id="loading-content"></div>
 		</div>
@@ -23,6 +23,11 @@ export default {
 			type: Boolean,
 			default: false
 		}
+	},
+	data() {
+		return {
+			status: "Loading Data..."
+		};
 	}
 };
 </script>
