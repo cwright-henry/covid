@@ -17,43 +17,7 @@
 					<v-icon size="20" color="linkColor" right>mdi-arrow-right-bold-circle</v-icon>
 				</v-btn>
 			</header>
-			<ul class="covid-country--info">
-				<li class="mr-3">
-					<label>Population</label>
-					<div>{{country.population | number(0)}}</div>
-				</li>
-				<li class="mr-3">
-					<label>Population Density</label>
-					<div>
-						{{country.population / country.area | number(0)}}
-						<span>
-							per km
-							<sup>2</sup>
-						</span>
-					</div>
-				</li>
-				<li class="mr-3">
-					<label>Confirmed</label>
-					<div>
-						{{country.series.stats.totalConfirmed | number(0)}}
-						<span>{{(country.series.stats.totalConfirmed / country.population) * 100 | number(2)}}%</span>
-					</div>
-				</li>
-				<li class="mr-3">
-					<label>Recovered</label>
-					<div>
-						{{country.series.stats.totalRecovered | number(0)}}
-						<span>{{(country.series.stats.totalRecovered / country.series.stats.totalConfirmed) * 100 | number(2)}}%</span>
-					</div>
-				</li>
-				<li class="mr-3">
-					<label>Fatalities</label>
-					<div>
-						{{country.series.stats.totalDeaths | number(0)}}
-						<span>{{(country.series.stats.totalDeaths / country.series.stats.totalConfirmed) * 100 | number(2)}}%</span>
-					</div>
-				</li>
-			</ul>
+			<RegionStats :region="country" />
 			<div class="covid-country--charts">
 				<div class="covid-country--charts__chart">
 					<h1>
@@ -154,6 +118,7 @@
 <script>
 import { mapGetters } from "vuex";
 import BasicChart from "@/views/common/BasicChart";
+import RegionStats from "@/views/common/RegionStats";
 import { getLocalProvince } from "@/utils";
 
 export default {
@@ -171,7 +136,8 @@ export default {
 		};
 	},
 	components: {
-		BasicChart
+		BasicChart,
+		RegionStats
 	},
 	props: {
 		countryCode: {
@@ -226,31 +192,6 @@ header {
 	display: flex;
 	justify-content: space-between;
 	margin: 0 0 36px 0;
-}
-ul.covid-country--info {
-	display: flex;
-	margin: 0 0 32px 0;
-	li {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		border-radius: 4px;
-		background-color: #424242;
-		padding: 8px 16px;
-		min-width: 170px;
-		border: 1px solid #616161;
-		label {
-			font-size: 14px;
-			color: var(--app-header-color);
-		}
-		div {
-			font-size: 18px;
-			span {
-				margin: 0 0 0 4px;
-				font-size: 13px;
-			}
-		}
-	}
 }
 .covid-country--charts {
 	display: flex;

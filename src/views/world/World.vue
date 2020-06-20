@@ -14,7 +14,7 @@
 				</h1>
 				<div class="covid-world--charts__chart">
 					<div>
-						<ColumnChart :regions="regionData.confirmed" name="Total Confirmed" />
+						<PieChart :regions="regionData.confirmed" name="Total Confirmed" />
 					</div>
 					<div>
 						<BasicChart
@@ -36,7 +36,7 @@
 				</h1>
 				<div class="covid-world--charts__chart">
 					<div>
-						<ColumnChart :regions="regionData.recovered" name="Total Recovered" />
+						<PieChart :regions="regionData.recovered" name="Total Recovered" />
 					</div>
 					<div>
 						<BasicChart
@@ -58,7 +58,7 @@
 				</h1>
 				<div class="covid-world--charts__chart">
 					<div>
-						<ColumnChart :regions="regionData.fatalities" name="Total Fatalities" />
+						<PieChart :regions="regionData.fatalities" name="Total Fatalities" />
 					</div>
 					<div>
 						<BasicChart
@@ -81,9 +81,10 @@
 								<span>{{region.stats.latestConfirmed | number(0)}}</span>
 							</div>
 						</h1>
+						<RegionStats :region="region" isSlim class="mt-6" />
 						<div class="covid-world--charts__chart">
 							<div>
-								<ColumnChart :regions="getSubRegionData(region)" name="Total Confirmed" />
+								<PieChart :regions="getSubRegionData(region)" name="Total Confirmed" />
 							</div>
 							<div>
 								<BasicChart
@@ -125,7 +126,9 @@ import { mapState } from "vuex";
 import WorldMapView from "./WorldMapView";
 import BasicChart from "@/views/common/BasicChart";
 import ColumnChart from "@/views/common/ColumnChart";
-import { findColor, objectSorter } from "@/utils";
+import RegionStats from "@/views/common/RegionStats";
+import PieChart from "@/views/common/PieChart";
+import { findColor, objectSorter, lightenDarkenColor } from "@/utils";
 
 const valueSorter = objectSorter("value", "asc");
 
@@ -133,7 +136,9 @@ export default {
 	components: {
 		BasicChart,
 		WorldMapView,
-		ColumnChart
+		ColumnChart,
+		RegionStats,
+		PieChart
 	},
 	computed: {
 		...mapState(["coverage", "data", "regions"]),
@@ -171,11 +176,13 @@ export default {
 
 		getSubRegionData(region) {
 			const confirmed = [];
+			let index = 0;
 
 			for (const region of region.subRegions) {
 				confirmed.push({
 					name: region.subRegion,
-					value: region.stats.latestConfirmed
+					value: region.stats.latestConfirmed,
+					color: lightenDarkenColor(this.findAColor(index++), -40)
 				});
 			}
 
