@@ -91,7 +91,7 @@
 									:ts="region.ts.confirmedDailySeries"
 									chartType="bar"
 									showSMA
-									:name="`${region.name} Deaths Daily Changge`"
+									:name="`${region.name} Confirmed Daily Change`"
 								/>
 							</div>
 						</div>
@@ -110,7 +110,7 @@
 									height="250"
 									:color="findAColor(index)"
 									showSMA
-									:name="`${region.name} Deaths Daily Changge`"
+									:name="`${region.name} Confirmed Daily Change`"
 								/>
 							</li>
 						</ul>
