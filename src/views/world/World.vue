@@ -110,7 +110,7 @@
 									height="250"
 									:color="findAColor(index)"
 									showSMA
-									:name="`${region.name} Confirmed Daily Change`"
+									:name="`${subregion.subRegion} Confirmed Daily Change`"
 								/>
 							</li>
 						</ul>
