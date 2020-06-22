@@ -1,5 +1,9 @@
 <template>
 	<ul class="covid-region--stats" :class="{slim: isSlim}">
+		<li v-if="region.numCountries !== undefined">
+			<label>Countries</label>
+			<div>{{numCountries | number(0)}}</div>
+		</li>
 		<li>
 			<label>Population</label>
 			<div>{{population | number(0)}}</div>
@@ -48,6 +52,9 @@ export default {
 		}
 	},
 	computed: {
+		numCountries() {
+			return this.region.numCountries;
+		},
 		population() {
 			return this.region.population;
 		},
@@ -120,7 +127,7 @@ ul.covid-region--stats {
 			font-size: 18px;
 			span.small {
 				margin: 0 0 0 4px;
-				font-size: 13px;
+				font-size: 12px;
 			}
 		}
 	}
@@ -131,10 +138,11 @@ ul.covid-region--stats {
 			border: none;
 			border-right: 1px solid #757575;
 			border-radius: 0px;
-			padding: 8px 16px 8px 32px;
+			padding: 4px 24px 8px 24px;
 			margin: 0 0 0 0;
+			min-width: auto;
 			&:first-child {
-				padding: 8px 16px;
+				padding: 4px 16px 8px 0;
 			}
 			&:last-child {
 				border-right: none;

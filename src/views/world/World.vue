@@ -21,7 +21,7 @@
 							:ts="coverage.ts.confirmedDailySeries"
 							chartType="bar"
 							showSMA
-							name="World Daily Change"
+							name="Daily Change"
 						/>
 					</div>
 				</div>
@@ -43,7 +43,7 @@
 							:ts="coverage.ts.recoveredDailySeries"
 							chartType="bar"
 							showSMA
-							name="World Daily Change"
+							name="Daily Change"
 						/>
 					</div>
 				</div>
@@ -61,12 +61,7 @@
 						<PieChart :regions="regionData.fatalities" name="Total Fatalities" />
 					</div>
 					<div>
-						<BasicChart
-							:ts="coverage.ts.deathDailySeries"
-							chartType="bar"
-							showSMA
-							name="`World Daily Change"
-						/>
+						<BasicChart :ts="coverage.ts.deathDailySeries" chartType="bar" showSMA name="Daily Change" />
 					</div>
 				</div>
 			</div>
@@ -81,7 +76,7 @@
 								<span>{{region.stats.latestConfirmed | number(0)}}</span>
 							</div>
 						</h1>
-						<RegionStats :region="region" isSlim class="mt-6" />
+						<RegionStats :region="region" isSlim class="ma-6" />
 						<div class="covid-world--charts__chart">
 							<div>
 								<PieChart :regions="getSubRegionData(region)" name="Total Confirmed" />
@@ -91,7 +86,7 @@
 									:ts="region.ts.confirmedDailySeries"
 									chartType="bar"
 									showSMA
-									:name="`${region.name} Confirmed Daily Change`"
+									name="Daily Change"
 								/>
 							</div>
 						</div>
@@ -110,7 +105,7 @@
 									height="250"
 									:color="findAColor(index)"
 									showSMA
-									:name="`${subregion.subRegion} Confirmed Daily Change`"
+									name="Daily Change"
 								/>
 							</li>
 						</ul>
@@ -126,7 +121,6 @@
 import { mapState } from "vuex";
 import WorldMapView from "./WorldMapView";
 import BasicChart from "@/views/common/BasicChart";
-import ColumnChart from "@/views/common/ColumnChart";
 import RegionStats from "@/views/common/RegionStats";
 import PieChart from "@/views/common/PieChart";
 import InfiniteScroll from "@/views/common/InfiniteScroll";
@@ -151,7 +145,6 @@ export default {
 	components: {
 		BasicChart,
 		WorldMapView,
-		ColumnChart,
 		RegionStats,
 		PieChart,
 		InfiniteScroll

@@ -2,7 +2,9 @@
 	<div class="covid-splashscreen">
 		<div class="loading-wrapper" v-if="!isLoadError">
 			<h1>Covid 19 Watch</h1>
-			<img src="@/assets/covid.png" height="64" width="64" />
+			<div class="animated-image">
+				<img src="@/assets/covid.png" height="64" width="64" />
+			</div>
 			<span>{{msg}}</span>
 			<v-progress-linear rounded color="linkColor" height="6" :value="value"></v-progress-linear>
 		</div>
@@ -86,16 +88,34 @@ export default {
 		flex-direction: column;
 
 		h1 {
-			color: var(--link-color);
+			color: #fff;
 			font-weight: 400;
 			font-size: 32px;
 			margin: 0 0 16px;
+		}
+
+		.animated-image {
+			height: 64px;
+			width: 64px;
+			position: relative;
+			img {
+				position: absolute;
+				right: 0;
+				top: 0;
+				animation: spin 24s linear infinite;
+			}
 		}
 
 		span {
 			margin: 32px 0 8px 0;
 			font-size: 11px;
 			color: #b0bec5;
+		}
+	}
+
+	@keyframes spin {
+		100% {
+			transform: rotate(360deg);
 		}
 	}
 }

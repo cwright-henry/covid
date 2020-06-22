@@ -5,48 +5,22 @@
 			<h1>
 				Covid 19 Watch
 				<span>Last Updated: {{coverage.lastestDate | date-long}}</span>
+				<img src="@/assets/covid.png" height="36" width="36" />
 			</h1>
-			<ul>
-				<li class="mr-8">
-					<label>Countries</label>
-					<div>{{coverage.numCountries | number(0)}}</div>
-				</li>
-				<li class="mr-8">
-					<label>Population</label>
-					<div>{{coverage.population | number(0)}}</div>
-				</li>
-				<li class="mr-8">
-					<label>Confirmed</label>
-					<div>
-						{{coverage.stats.totalConfirmed | number(0)}}
-						<span>{{(coverage.stats.totalConfirmed / coverage.population) * 100 | number(2)}}%</span>
-					</div>
-				</li>
-				<li class="mr-8">
-					<label>Recovered</label>
-					<div>
-						{{coverage.stats.totalRecovered | number(0)}}
-						<span>{{(coverage.stats.totalRecovered / coverage.stats.totalConfirmed) * 100 | number(2)}}%</span>
-					</div>
-				</li>
-				<li>
-					<label>Fatalities</label>
-					<div>
-						{{coverage.stats.totalDeaths | number(0)}}
-						<span>{{(coverage.stats.totalDeaths / coverage.stats.totalConfirmed) * 100 | number(2)}}%</span>
-					</div>
-				</li>
-			</ul>
+			<RegionStats :region="coverage" isSlim />
 		</div>
-		<v-spacer></v-spacer>
 	</v-app-bar>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import EventBus from "@/events";
+import RegionStats from "@/views/common/RegionStats";
 
 export default {
+	components: {
+		RegionStats
+	},
 	computed: {
 		...mapState(["coverage"])
 	},
@@ -64,38 +38,27 @@ export default {
 	align-items: flex-start;
 	flex-direction: column;
 	justify-content: center;
+	width: 100%;
 	h1 {
 		font-size: 28px;
 		font-weight: 400;
 		margin: 4px 0;
+		position: relative;
+		width: 100%;
 		span {
 			font-size: 13px;
 		}
+		img {
+			position: absolute;
+			right: 4px;
+			top: 12px;
+			animation: spin 24s linear infinite;
+		}
 	}
-	ul {
-		display: flex;
-		margin: 8px 0 0 0;
-		li {
-			display: flex;
-			flex-direction: column;
-			border-right: 1px solid #757575;
-			padding: 0 24px 0 0;
-			label {
-				font-size: 13px;
-				color: var(--app-header-color);
-			}
-			div {
-				font-size: 18px;
-				span {
-					margin: 0 0 0 4px;
-					font-size: 13px;
-				}
-			}
 
-			&:last-child {
-				border-right: none;
-				padding: 0 0 0 0;
-			}
+	@keyframes spin {
+		100% {
+			transform: rotate(360deg);
 		}
 	}
 }
