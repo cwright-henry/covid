@@ -69,13 +69,8 @@ export default {
 	data() {
 		return {
 			options: options(this),
-			ref: `covid-chart-${uuid()}`
+			ref: `covid-piechart-${uuid()}`
 		};
-	},
-	watch: {
-		regions() {
-			this.render();
-		}
 	},
 	mounted() {
 		this.render();

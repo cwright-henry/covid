@@ -1,6 +1,11 @@
 <template>
 	<v-app>
-		<SplashScreen v-if="isLoading" :isLoadError="isLoadError"></SplashScreen>
+		<SplashScreen
+			v-if="isLoading"
+			:isLoading="isLoading"
+			:isRendering="isRendering"
+			:isLoadError="isLoadError"
+		></SplashScreen>
 		<template v-else>
 			<AppBar />
 			<NavigationBar />
@@ -33,12 +38,12 @@
 
 <script>
 import { mapState } from "vuex";
-
 import AppBar from "@/views/AppBar";
 import NavigationBar from "@/views/NavigationBar";
 import SplashScreen from "@/views/SplashScreen";
 import EventBus from "@/events";
 import { getCoverage } from "@/utils";
+import CoverageWorker from "@/utils/utils.worker";
 
 export default {
 	name: "App",
@@ -54,7 +59,9 @@ export default {
 			left: false,
 			right: false,
 			transitionName: null,
-			isLoadError: false
+			isLoadError: false,
+			isRendering: false,
+			isLoading: true
 		};
 	},
 
@@ -63,12 +70,25 @@ export default {
 		NavigationBar,
 		SplashScreen
 	},
+	async created() {
+		const worker = await new CoverageWorker();
+		try {
+			this.isLoading = true;
+			const { countries, coverage, regions } = await worker.getAll();
+			this.isRendering = true;
+			// Allow time for the splash screen to update
+			// Why does not nexttick work???
+			setTimeout(() => {
+				this.$store.commit("setData", Object.freeze(countries));
+				this.$store.commit("setCoverage", Object.freeze(coverage));
+				this.$store.commit("setRegions", Object.freeze(regions));
+				this.isLoading = false;
+			}, 1000);
+		} catch (error) {
+			this.$root.gaExperience("error", error);
+			this.isLoadError = true;
+		}
 
-	computed: {
-		...mapState(["isLoading"])
-	},
-
-	created() {
 		this.$router.beforeEach((to, from, next) => {
 			if (from.name === "country" && to.name === "provinces") {
 				this.transitionName = "slide-left";
@@ -80,20 +100,6 @@ export default {
 
 			next();
 		});
-
-		try {
-			this.$store.commit("isLoading", true);
-			this.$nextTick(async () => {
-				const { countries, coverage, regions } = await getCoverage();
-				this.$store.commit("setData", Object.freeze(countries));
-				this.$store.commit("setCoverage", Object.freeze(coverage));
-				this.$store.commit("setRegions", Object.freeze(regions));
-				this.$store.commit("isLoading", false);
-			});
-		} catch (error) {
-			console.log(error);
-			this.isLoadError = true;
-		}
 	}
 };
 </script>
@@ -115,6 +121,9 @@ ul {
 	--nav-region-header-color: #e1f5fe;
 	--section-header-color: #b3e5fc;
 	--link-color: #64b5f6;
+}
+[v-cloak] {
+	display: none;
 }
 .covid-link {
 	text-decoration: none;

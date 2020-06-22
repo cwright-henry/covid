@@ -6,6 +6,10 @@
 import { mapState } from "vuex";
 import { uuid } from "@/utils";
 
+/**
+ * Taking the forward and backward 3 seems to be the way to
+ * Taking the previous 7 presents a lag
+ */
 const SMA_AVG = data => {
 	const moveMean = [];
 
@@ -134,8 +138,7 @@ export default {
 	data() {
 		return {
 			options: options(this),
-			ref: `covid-chart-${uuid()}`,
-			isRendered: false
+			ref: `covid-basicchart-${uuid()}`
 		};
 	},
 	watch: {

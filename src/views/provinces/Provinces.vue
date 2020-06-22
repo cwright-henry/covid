@@ -10,33 +10,7 @@
 					<h1>{{country.countryName}}</h1>
 				</div>
 			</header>
-			<ul class="covid-provinces--info">
-				<li class="mr-3">
-					<label>Population</label>
-					<div>{{country.population | number(0)}}</div>
-				</li>
-				<li class="mr-3">
-					<label>Confirmed</label>
-					<div>
-						{{country.series.stats.totalConfirmed | number(0)}}
-						<span>{{(country.series.stats.totalConfirmed / country.population) * 100 | number(2)}}%</span>
-					</div>
-				</li>
-				<li class="mr-3">
-					<label>Recovered</label>
-					<div>
-						{{country.series.stats.totalRecovered | number(0)}}
-						<span>{{(country.series.stats.totalRecovered / country.series.stats.totalConfirmed) * 100 | number(2)}}%</span>
-					</div>
-				</li>
-				<li class="mr-3">
-					<label>Fatalities</label>
-					<div>
-						{{country.series.stats.totalDeaths | number(0)}}
-						<span>{{(country.series.stats.totalDeaths / country.series.stats.totalConfirmed) * 100 | number(2)}}%</span>
-					</div>
-				</li>
-			</ul>
+			<RegionStats :region="country" />
 			<ProvinceMapView :country="country" :local="local" class="mb-8" />
 			<ProvinceListView :country="country" :local="local" />
 		</div>
@@ -48,6 +22,7 @@ import { mapGetters } from "vuex";
 import ProvinceMapView from "./ProvinceMapView";
 import { getLocalProvince } from "@/utils";
 import ProvinceListView from "./ProvinceListView";
+import RegionStats from "@/views/common/RegionStats";
 
 export default {
 	props: {
@@ -71,7 +46,8 @@ export default {
 	},
 	components: {
 		ProvinceMapView,
-		ProvinceListView
+		ProvinceListView,
+		RegionStats
 	},
 	computed: {
 		...mapGetters(["findCountry"]),

@@ -71,8 +71,8 @@
 				</div>
 			</div>
 			<h1 class="mt-4 ml-1">Continents</h1>
-			<ul class="covid-world--regions">
-				<li v-for="region of regions" :key="region.uuid">
+			<transition-group tag="ul" @enter="enter" :css="false" class="covid-world--regions">
+				<li v-for="region of scrollableRegions" :key="region.uuid">
 					<div class="covid-world--charts">
 						<h1>
 							{{region.name}} Daily Confirmed
@@ -116,7 +116,8 @@
 						</ul>
 					</div>
 				</li>
-			</ul>
+			</transition-group>
+			<InfiniteScroll :hasNext="scrollable" @loadmore="loadMore" />
 		</div>
 	</article>
 </template>
@@ -128,18 +129,34 @@ import BasicChart from "@/views/common/BasicChart";
 import ColumnChart from "@/views/common/ColumnChart";
 import RegionStats from "@/views/common/RegionStats";
 import PieChart from "@/views/common/PieChart";
-import { findColor, objectSorter, lightenDarkenColor } from "@/utils";
+import InfiniteScroll from "@/views/common/InfiniteScroll";
+import {
+	findColor,
+	objectSorter,
+	lightenDarkenColor,
+	animation
+} from "@/utils";
 
 const valueSorter = objectSorter("value", "asc");
+const SCROLL_AMOUNT = 1;
 
 export default {
+	data() {
+		return {
+			scrollAmount: 0,
+			ANIMATION_IN: "animate__fadeInUp",
+			ANIMATION_TIME: "1.0s"
+		};
+	},
 	components: {
 		BasicChart,
 		WorldMapView,
 		ColumnChart,
 		RegionStats,
-		PieChart
+		PieChart,
+		InfiniteScroll
 	},
+	mixins: [animation],
 	computed: {
 		...mapState(["coverage", "data", "regions"]),
 		regionData() {
@@ -167,6 +184,15 @@ export default {
 			fatalities.sort(valueSorter);
 
 			return { confirmed, recovered, fatalities };
+		},
+		scrollableRegions() {
+			if (this.scrollAmount === 0) {
+				return [];
+			}
+			return this.regions.slice(0, this.scrollAmount);
+		},
+		scrollable() {
+			return this.scrollAmount < this.regions.length;
 		}
 	},
 	methods: {
@@ -186,9 +212,11 @@ export default {
 				});
 			}
 
-			confirmed.sort(valueSorter);
+			return confirmed.sort(valueSorter);
+		},
 
-			return confirmed;
+		loadMore() {
+			this.scrollAmount += SCROLL_AMOUNT;
 		}
 	}
 };

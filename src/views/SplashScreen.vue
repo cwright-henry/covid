@@ -1,11 +1,10 @@
 <template>
 	<div class="covid-splashscreen">
-		<div id="loading-wrapper" v-if="!isLoadError">
-			<div id="loading-text">
-				<span>Covid 19 Watch</span>
-				<span>{{status}}</span>
-			</div>
-			<div id="loading-content"></div>
+		<div class="loading-wrapper" v-if="!isLoadError">
+			<h1>Covid 19 Watch</h1>
+			<img src="@/assets/covid.png" height="64" width="64" />
+			<span>{{msg}}</span>
+			<v-progress-linear rounded color="linkColor" height="6" :value="value"></v-progress-linear>
 		</div>
 		<div v-else>
 			<v-alert icon="mdi-refresh-circle" prominent text color="warning" type="info">
@@ -22,12 +21,50 @@ export default {
 		isLoadError: {
 			type: Boolean,
 			default: false
+		},
+		isLoading: {
+			type: Boolean,
+			default: false
+		},
+		isRendering: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {
 		return {
-			status: "Loading Data..."
+			value: 0,
+			interval: null,
+			msg: "Loading Data Sources..."
 		};
+	},
+	watch: {
+		isLoadError() {
+			clearInterval(this.interval);
+		},
+		isRendering: {
+			handler(value) {
+				if (value) {
+					this.msg = "Rendering Application...";
+					this.value = 100;
+				}
+			},
+			immediate: true
+		},
+		isLoading(val) {
+			if (!val) {
+				clearInterval(this.interval);
+			}
+		}
+	},
+	mounted() {
+		// Whoops main thred is blocked
+		this.interval = setInterval(() => {
+			this.value += 100 / 300;
+			if (this.value >= 100) {
+				clearInterval(this.interval);
+			}
+		}, 100);
 	}
 };
 </script>
@@ -40,56 +77,25 @@ export default {
 	align-items: center;
 	justify-content: center;
 
-	#loading-text {
-		color: #fff176;
-		width: 100px;
-		height: 30px;
-		text-align: center;
-		font-family: "PT Sans Narrow", sans-serif;
-		font-size: 20px;
-		span:nth-child(1) {
-			font-size: 18px;
-			display: block;
-		}
-		span:nth-child(2) {
-			font-size: 13px;
-			display: block;
-		}
-	}
+	.loading-wrapper {
+		max-width: 400px;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
 
-	#loading-content {
-		display: block;
-		position: relative;
-		left: 50%;
-		top: 50%;
-		width: 170px;
-		height: 170px;
-		margin: -85px 0 0 -85px;
-		border: 3px solid #f00;
-	}
-
-	#loading-content {
-		border: 3px solid transparent;
-		border-top-color: #2196f3;
-		border-bottom-color: #2196f3;
-		border-radius: 50%;
-		-webkit-animation: loader 2s linear infinite;
-		-moz-animation: loader 2s linear infinite;
-		-o-animation: loader 2s linear infinite;
-		animation: loader 2s linear infinite;
-	}
-
-	@keyframes loader {
-		0% {
-			-webkit-transform: rotate(0deg);
-			-ms-transform: rotate(0deg);
-			transform: rotate(0deg);
+		h1 {
+			color: var(--link-color);
+			font-weight: 400;
+			font-size: 32px;
+			margin: 0 0 16px;
 		}
 
-		100% {
-			-webkit-transform: rotate(360deg);
-			-ms-transform: rotate(360deg);
-			transform: rotate(360deg);
+		span {
+			margin: 32px 0 8px 0;
+			font-size: 11px;
+			color: #b0bec5;
 		}
 	}
 }

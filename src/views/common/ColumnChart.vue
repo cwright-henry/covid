@@ -90,7 +90,7 @@ export default {
 	data() {
 		return {
 			options: options(this),
-			ref: `covid-chart-${uuid()}`
+			ref: `covid-columnchart-${uuid()}`
 		};
 	},
 	watch: {

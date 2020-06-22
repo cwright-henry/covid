@@ -5,12 +5,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
-		isLoading: false,
 		data: [],		/* Frozen - Need to copy it to alter it, even sorting! */
 		coverage: {},	/* Frozen */
 		regions: [],	/* Frozen */
 		currentCountryCode: null,
-		laodingStatus: ''
 	},
 	getters: {
 		findCountry: state => countryCode => {
@@ -29,10 +27,6 @@ export default new Vuex.Store({
 		}
 	},
 	mutations: {
-		setLoadingStatus(state, data) {
-			state.laodingStatus = data;
-		},
-
 		setData(state, data) {
 			state.data = data;
 		},
@@ -43,10 +37,6 @@ export default new Vuex.Store({
 
 		setRegions(state, regions) {
 			state.regions = regions;
-		},
-
-		isLoading(state, isLoading) {
-			state.isLoading = isLoading
 		},
 
 		setCurrentCountryCode(state, currentCountryCode) {
