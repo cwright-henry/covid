@@ -13,7 +13,7 @@
 				<BasicChart
 					:ts="province.ts.confirmedDailySeries"
 					chartType="bar"
-					height="250"
+					height="240"
 					:color="findAColor(index)"
 					showSMA
 					:name="`${province.name} Deaths Daily Changge`"
@@ -28,10 +28,10 @@
 import BasicChart from "@/views/common/BasicChart";
 import { animation } from "@/utils";
 import InfiniteScroll from "@/views/common/InfiniteScroll";
-import { findColor, objectSorter } from "@/utils";
+import { findColor, sortCountriesStats } from "@/utils";
 
 const SCROLL_AMOUNT = 8;
-const provinceNameSorter = new objectSorter("name");
+const latestConfirmedSorter = new sortCountriesStats("latestConfirmed", "asc");
 
 export default {
 	props: {
@@ -81,7 +81,7 @@ export default {
 	watch: {
 		country() {
 			this.scrollAmount = SCROLL_AMOUNT;
-			this.country.series.provinces.sort(provinceNameSorter);
+			this.country.series.provinces.sort(latestConfirmedSorter);
 		}
 	},
 	methods: {
@@ -130,6 +130,26 @@ export default {
 						color: var(--section-header-color);
 					}
 				}
+			}
+		}
+	}
+}
+@media screen and (max-width: 1000px) {
+	.covid-country--charts__provinces {
+		ul {
+			li {
+				width: 50%;
+				padding: 12px 0;
+			}
+		}
+	}
+}
+@media screen and (max-width: 500px) {
+	.covid-country--charts__provinces {
+		ul {
+			li {
+				width: 100%;
+				padding: 24px 0;
 			}
 		}
 	}

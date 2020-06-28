@@ -1,5 +1,5 @@
 <template>
-	<highcharts :options="options" :ts="ts" :ref="ref"></highcharts>
+	<highcharts v-resize="onResize" :options="options" :ts="ts" :ref="ref"></highcharts>
 </template>
 
 <script>
@@ -102,6 +102,9 @@ const options = vm => {
 	};
 };
 
+const MIN_HEIGHT = 200;
+const MAX_HEIGHT = 300;
+
 export default {
 	props: {
 		ts: {
@@ -137,8 +140,8 @@ export default {
 	},
 	data() {
 		return {
-			options: options(this),
-			ref: `covid-basicchart-${uuid()}`
+			ref: `covid-basicchart-${uuid()}`,
+			options: options(this)
 		};
 	},
 	watch: {
@@ -148,6 +151,7 @@ export default {
 	},
 	mounted() {
 		this.render();
+		this.onResize();
 	},
 	methods: {
 		render() {
@@ -187,6 +191,19 @@ export default {
 			const chart = this.$refs[this.ref].chart;
 			while (chart.series.length > 0) {
 				chart.series[0].remove(false);
+			}
+		},
+
+		onResize() {
+			const chart = this.$refs[this.ref].chart;
+			if (window.innerWidth < 1000) {
+				chart.setSize(null, MIN_HEIGHT, true);
+			} else {
+				chart.setSize(
+					null,
+					this.height ? parseInt(this.height) : MAX_HEIGHT,
+					true
+				);
 			}
 		}
 	}

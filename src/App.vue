@@ -85,6 +85,7 @@ export default {
 				this.isLoading = false;
 			}, 1000);
 		} catch (error) {
+			console.log(error)
 			this.$root.gaExperience("error", error);
 			this.isLoadError = true;
 		}

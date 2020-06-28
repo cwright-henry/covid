@@ -18,7 +18,7 @@ export default {
 			default: () => {
 				return {
 					root: null,
-					threshold: 0.25
+					threshold: 0
 				};
 			}
 		}
@@ -50,9 +50,12 @@ export default {
 
 <style lang="less">
 aside {
+	width: 100%;
 	.dc-infinite-scroll {
-		margin: 0 auto;
-		width: 200px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
 		height: 48px;
 		padding: 8px 0;
 	}

@@ -1,5 +1,5 @@
 <template>
-	<v-app-bar app fixed clipped-left prominent color="primary">
+	<v-app-bar app fixed clipped-left :prominent="isProminent" color="primary" v-resize="onResize">
 		<v-app-bar-nav-icon color="#fff" @click="toggleNavBar"></v-app-bar-nav-icon>
 		<div class="covid-appbar--header ml-4">
 			<h1>
@@ -18,15 +18,29 @@ import EventBus from "@/events";
 import RegionStats from "@/views/common/RegionStats";
 
 export default {
+	data() {
+		return {
+			windowWidth: 0
+		};
+	},
 	components: {
 		RegionStats
 	},
 	computed: {
-		...mapState(["coverage"])
+		...mapState(["coverage"]),
+		isProminent() {
+			return this.windowWidth > 520;
+		}
+	},
+	mounted() {
+		this.onResize();
 	},
 	methods: {
 		toggleNavBar() {
 			EventBus.$emit("onToggleNavBar");
+		},
+		onResize() {
+			this.windowWidth = window.innerWidth;
 		}
 	}
 };
@@ -59,6 +73,25 @@ export default {
 	@keyframes spin {
 		100% {
 			transform: rotate(360deg);
+		}
+	}
+}
+
+@media screen and (max-width: 1000px) {
+	.covid-appbar--header {
+		h1 {
+			img {
+				display: none;
+			}
+		}
+	}
+}
+@media screen and (max-width: 520px) {
+	.covid-appbar--header {
+		h1 {
+			span {
+				display: none;
+			}
 		}
 	}
 }

@@ -62,7 +62,7 @@ export default {
 	mounted() {
 		// Whoops main thred is blocked
 		this.interval = setInterval(() => {
-			this.value += 100 / 300;
+			this.value += 100 / 330;
 			if (this.value >= 100) {
 				clearInterval(this.interval);
 			}
@@ -80,7 +80,7 @@ export default {
 	justify-content: center;
 
 	.loading-wrapper {
-		max-width: 400px;
+		max-width: 320px;
 		width: 100%;
 		display: flex;
 		align-items: center;

@@ -222,4 +222,17 @@ header {
 		}
 	}
 }
+
+@media screen and (max-width: 800px) {
+	.covid-country--charts {
+		display: flex;
+		margin: 0 0 24px;
+		.covid-country--charts__chart:nth-child(1) {
+			display: none;
+		}
+		.covid-country--charts__chart:nth-child(2) {
+			width: 100%;
+		}
+	}
+}
 </style>

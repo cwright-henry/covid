@@ -6,10 +6,11 @@ class Coverage {
     static COUNTRY_URL = "https://restcountries.eu/rest/v2/all";
     static CASES_URL = "https://api.covid19api.com/all";
     static IRELAND_URL = "https://services1.arcgis.com/eNO7HHeQ3rUcBllm/arcgis/rest/services/Covid19CountyStatisticsHPSCIrelandOpenData/FeatureServer/0/query?where=TimeStampDate%20%3E%3D%20TIMESTAMP%20%272020-04-20%2000%3A00%3A00%27%20&outFields=CountyName,PopulationCensus16,Lat,Long,ConfirmedCovidCases,TimeStampDate&outSR=4326&f=json"
+    static US_POPULATION = "https://datausa.io/api/data?drilldowns=State&measures=Population&year=latest";
 
-    static async parse(countryData, casesData, irelandData) {
+    static async parse(countryData, casesData, irelandData, usStatePopulation) {
         return new Promise(resolve => {
-            const countries = parseWorld(countryData, casesData);
+            const countries = parseWorld(countryData, casesData, usStatePopulation);
             const ireland = parseIreland(irelandData);
             const ieData = countries.find(item => item.countryCode === "IE");
             if (ieData) {
@@ -25,13 +26,14 @@ class Coverage {
     }
 
     static async getAll() {
-        const [countryData, casesData, irelandData] = await Promise.all([
+        const [countryData, casesData, irelandData, usStatePopulation] = await Promise.all([
             load(Coverage.COUNTRY_URL),
             load(Coverage.CASES_URL),
-            load(Coverage.IRELAND_URL)
+            load(Coverage.IRELAND_URL),
+            load(Coverage.US_POPULATION)
         ]);
 
-        return await this.parse(countryData, casesData, irelandData)
+        return await this.parse(countryData, casesData, irelandData, usStatePopulation)
     }
 }
 

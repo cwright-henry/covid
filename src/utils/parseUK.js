@@ -87,6 +87,5 @@ export const parseUK = (locationData, countyData) => {
             }
         }
     }
-    console.log(`total = ${t}`)
     return { provinces: locations, geojson };
 }

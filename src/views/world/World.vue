@@ -102,7 +102,7 @@
 								<BasicChart
 									:ts="subregion.ts.confirmedDailySeries"
 									chartType="bar"
-									height="250"
+									height="240"
 									:color="findAColor(index)"
 									showSMA
 									name="Daily Change"
@@ -216,9 +216,6 @@ export default {
 </script>
 
 <style lang="less">
-.covid-radio {
-	color: red !important;
-}
 .covid-world {
 	display: flex;
 	flex-direction: column;
@@ -246,7 +243,7 @@ export default {
 			border-bottom: 1px solid #424242;
 			background-color: #424242;
 			div {
-				margin: 0 12px 0 0;
+				margin: 0 8px 0 0;
 				font-size: 12px;
 				color: #e0e0e0;
 				span {
@@ -273,7 +270,7 @@ export default {
 			display: flex;
 			flex-wrap: wrap;
 			li {
-				width: 25%;
+				width: 33%;
 				padding: 12px;
 				h2 {
 					font-size: 13px;
@@ -294,6 +291,84 @@ export default {
 							color: var(--section-header-color);
 						}
 					}
+				}
+			}
+		}
+	}
+}
+@media screen and (max-width: 1000px) {
+	.covid-world {
+		.covid-world--charts {
+			.covid-world--charts__chart {
+				display: flex;
+				padding: 16px;
+				> div:nth-child(1) {
+					display: none;
+				}
+				> div:nth-child(2) {
+					width: 100%;
+					height: auto;
+				}
+			}
+		}
+		ul.covid-world--regions {
+			ul.covid-world--subregions {
+				display: flex;
+				flex-wrap: wrap;
+				li {
+					width: 50%;
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 700px) {
+	.covid-world {
+		h1 {
+			font-size: 16px;
+		}
+		.covid-world--charts {
+			h1 {
+				font-size: 13px;
+				color: var(--section-header-color);
+				padding: 4px 8px;
+				div {
+					margin: 0 12px 0 0;
+					font-size: 11px;
+					color: #e0e0e0;
+					span {
+						margin: 0 0 0 2px;
+						font-size: 13px;
+						color: var(--section-header-color);
+					}
+				}
+			}
+		}
+		ul.covid-world--regions {
+			ul.covid-world--subregions {
+				display: flex;
+				flex-wrap: wrap;
+				li {
+					h2 {
+						font-size: 11px;
+						margin: 0 0 2px 8px;
+						div {
+							display: none;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (max-width: 440px) {
+	.covid-world {
+		ul.covid-world--regions {
+			ul.covid-world--subregions {
+				li {
+					width: 100%;
 				}
 			}
 		}

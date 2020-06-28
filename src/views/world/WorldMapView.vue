@@ -290,4 +290,14 @@ section {
 		margin: 0;
 	}
 }
+@media screen and (max-width: 1000px) {
+	section {
+		.covid-map--container {
+			width: 100%;
+		}
+		.covid-map--filters {
+			display: none;
+		}
+	}
+}
 </style>

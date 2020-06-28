@@ -231,4 +231,15 @@ section {
 		margin: 0;
 	}
 }
+
+@media screen and (max-width: 1000px) {
+	section {
+		.covid-province-map--container {
+			width: 100%;
+		}
+		.covid-province-map--filters {
+			display: none;
+		}
+	}
+}
 </style>

@@ -1,18 +1,20 @@
 <template>
-	<ul class="covid-region--stats" :class="{slim: isSlim}">
-		<li v-if="region.numCountries !== undefined">
+	<ul class="covid-region--stats" :class="{slim: isSlim}" v-resize="onResize">
+		<li v-if="region.numCountries !== undefined && showCountries">
 			<label>Countries</label>
 			<div>{{numCountries | number(0)}}</div>
 		</li>
-		<li>
+		<li v-if="showPopulation">
 			<label>Population</label>
 			<div>{{population | number(0)}}</div>
 		</li>
-		<li>
+		<li v-if="showPerCapita">
 			<label>Per Capita</label>
 			<div>
-				<span>{{perCapita | number(0)}}</span>
-				<span class="small">per 100,000</span>
+				<nobr>
+					<span>{{perCapita | number(0)}}</span>
+					<span class="small">per 100,000</span>
+				</nobr>
 			</div>
 		</li>
 		<li>
@@ -50,6 +52,14 @@ export default {
 			type: Boolean,
 			default: false
 		}
+	},
+	data() {
+		return {
+			windowWidth: 0
+		};
+	},
+	mounted() {
+		this.onResize();
 	},
 	computed: {
 		numCountries() {
@@ -100,6 +110,20 @@ export default {
 				? this.region.series.stats
 				: this.region.stats;
 			return (stats.totalDeaths / stats.totalConfirmed) * 100;
+		},
+		showPopulation() {
+			return this.windowWidth > 920;
+		},
+		showPerCapita() {
+			return this.windowWidth > 760;
+		},
+		showCountries() {
+			return this.windowWidth > 610;
+		}
+	},
+	methods: {
+		onResize() {
+			this.windowWidth = window.innerWidth;
 		}
 	}
 };
@@ -148,6 +172,11 @@ ul.covid-region--stats {
 				border-right: none;
 			}
 		}
+	}
+}
+@media screen and (max-width: 520px) {
+	ul.covid-region--stats {
+		display: none;
 	}
 }
 </style>

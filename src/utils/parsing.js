@@ -27,7 +27,7 @@ const findReplacementName = name => {
 	return replacement ? replacement.shortName : name;
 }
 
-export const parseWorld = (countries, cases) => {
+export const parseWorld = (countries, cases, usStatePopulation) => {
 	const data = [];
 	for (const country of countries) {
 		const entries = cases.filter(
@@ -54,7 +54,8 @@ export const parseWorld = (countries, cases) => {
 					: "Other",
 				series: createdSeriesForCountry(
 					entries,
-					country.alpha2Code
+					country.alpha2Code,
+					usStatePopulation
 				)
 			};
 			if (item.series.provinces.length > 0) {
@@ -257,7 +258,7 @@ const createSeriesData = (series) => {
  * @param {*} entries 
  * @param {*} countryCode 
  */
-const createdSeriesForCountry = (entries, countryCode) => {
+const createdSeriesForCountry = (entries, countryCode, usStatePopulation) => {
 	const series = {
 		data: [],		/* Get Garbage collected at the end of day */
 		provinces: []
@@ -360,6 +361,15 @@ const createdSeriesForCountry = (entries, countryCode) => {
 		for (let j = 0; j < series.provinces.length; j++) {
 			for (let x = 0; x < series.provinces[j].data.length; x++) {
 				merge(series.data, series.provinces[j].data[x]);
+			}
+		}
+	}
+
+	if (countryCode === 'US') {
+		for (let province of series.provinces) {
+			const state = usStatePopulation.data.find(item => item.State == province.name)
+			if (state) {
+				province.population = state.Population;
 			}
 		}
 	}
