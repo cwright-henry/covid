@@ -72,6 +72,11 @@ export default {
 			ref: `covid-piechart-${uuid()}`
 		};
 	},
+	watch: {
+		regions() {
+			this.render();
+		}
+	},
 	mounted() {
 		this.render();
 	},
@@ -79,8 +84,8 @@ export default {
 		render() {
 			const chart = this.$refs[this.ref].chart;
 			if (this.regions.length > 0) {
-				this.$nextTick(() => {
-					this.clearSeries();
+				this.clearSeries();
+				setTimeout(() => {
 					const slices = this.regions.map(item => ({
 						name: item.name,
 						y: item.value,
@@ -91,7 +96,7 @@ export default {
 						name: this.name
 					});
 					chart.reflow();
-				});
+				}, 400); // Synchronize with transitions else main thread will be blocked
 			}
 		},
 

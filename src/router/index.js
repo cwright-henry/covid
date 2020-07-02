@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import World from '@/views/world/World'
+import Region from '@/views/region/Region'
 import Country from '@/views/country/Country'
 import Provinces from '@/views/provinces/Provinces'
 
@@ -15,6 +16,15 @@ const routes = [
 		path: '/world',
 		name: 'world',
 		component: World,
+		meta: {
+			yPos: 0
+		}
+	},
+	{
+		path: '/world/:region',
+		name: 'region',
+		component: Region,
+		props: (route) => ({ regionCode: route.params.region })
 	},
 	{
 		path: '/country/:country',
@@ -48,10 +58,17 @@ const router = new VueRouter({
 			position = savedPosition
 		}
 
+		if (to.name === 'world') {
+			position = { x: 0, y: to.meta.yPos }
+		}
+		else {
+			return position;
+		}
+
 		return new Promise((resolve) => {
 			setTimeout(() => {
 				resolve(position)
-			}, 100)
+			}, 400)
 		})
 	},
 

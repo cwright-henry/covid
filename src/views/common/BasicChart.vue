@@ -157,8 +157,8 @@ export default {
 		render() {
 			const chart = this.$refs[this.ref].chart;
 			if (this.ts.length > 0) {
-				this.$nextTick(() => {
-					this.clearSeries();
+				this.clearSeries();
+				setTimeout(() => {
 					chart.addSeries({
 						type: this.chartType,
 						color: this.color,
@@ -183,7 +183,7 @@ export default {
 						});
 					}
 					chart.reflow();
-				});
+				}, 400); // Synchronize with transitions else main thread will be blocked
 			}
 		},
 

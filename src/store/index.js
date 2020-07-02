@@ -15,6 +15,17 @@ export default new Vuex.Store({
 			return state.data.find(item => item.countryCode === countryCode);
 		},
 
+		findRegion: state => regionCode => {
+			let subregion = null;
+			for (const region of state.regions) {
+				subregion = region.subRegions.find(item => item.subRegion === regionCode);
+				if (subregion) {
+					break;
+				}
+			}
+			return subregion;
+		},
+
 		findCountryList: state => {
 			return state.data.map(country => {
 				return {

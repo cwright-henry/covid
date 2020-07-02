@@ -83,15 +83,20 @@ export default {
 				this.$store.commit("setCoverage", Object.freeze(coverage));
 				this.$store.commit("setRegions", Object.freeze(regions));
 				this.isLoading = false;
+				this.isRendering = false;
 			}, 1000);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			this.$root.gaExperience("error", error);
 			this.isLoadError = true;
 		}
 
 		this.$router.beforeEach((to, from, next) => {
-			if (from.name === "country" && to.name === "provinces") {
+			if (from.name === "world" && to.name === "region") {
+				this.transitionName = "slide-left";
+			} else if (from.name === "region" && to.name === "world") {
+				this.transitionName = "slide-right";
+			} else if (from.name === "country" && to.name === "provinces") {
 				this.transitionName = "slide-left";
 			} else if (from.name === "provinces" && to.name === "country") {
 				this.transitionName = "slide-right";
@@ -109,7 +114,7 @@ export default {
 html,
 body {
 	min-height: 100%;
-	scroll-behavior: smooth;
+	scroll-behavior: auto;
 	background-color: #121212;
 }
 ul {
@@ -134,10 +139,8 @@ ul {
 .covid-perspective {
 	position: relative;
 	max-width: 1750px;
-	width: 100%;
 	margin: 0 auto;
 	perspective: 1200px;
-	height: 100%;
 	.covid-page {
 		width: 100%;
 		display: block;
@@ -148,6 +151,7 @@ ul {
 		backface-visibility: hidden;
 		transform: translate3d(0, 0, 0);
 		transform-style: preserve-3d;
+		will-change: transform, opacity;
 		.covid-sheet {
 			width: 100%;
 			background-color: #212121;
@@ -173,22 +177,24 @@ ul {
 .slide-left-leave-active,
 .slide-right-enter-active,
 .slide-right-leave-active {
-	transition-duration: 0.475s;
+	transition-duration: 0.375s;
 	transition-property: all;
 	transition-timing-function: cubic-bezier(0.55, 0, 0.1, 1);
 	overflow: hidden;
+	position: absolute;
+	width: 100%;
 }
 
 .slide-left-enter,
 .slide-right-leave-active {
 	opacity: 0;
-	transform: translate(100%, 0) !important;
+	transform: translate(80%, 0) !important;
 }
 
 .slide-left-leave-active,
 .slide-right-enter {
 	opacity: 0;
 	max-width: 1750px;
-	transform: translate(-100%, 0) !important;
+	transform: translate(-80%, 0) !important;
 }
 </style>

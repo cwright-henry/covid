@@ -97,6 +97,9 @@
 									<div>
 										Latest
 										<span>{{subregion.stats.latestConfirmed | number(0)}}</span>
+										<router-link :to="`/world/${subregion.subRegion}`" title="Explore Region">
+											<v-icon size="18" color="linkColor">mdi-arrow-right-bold</v-icon>
+										</router-link>
 									</div>
 								</h2>
 								<BasicChart
@@ -188,6 +191,14 @@ export default {
 			return this.scrollAmount < this.regions.length;
 		}
 	},
+	beforeRouteLeave(to, from, next) {
+		if (from.name === "world" && to.name === "region") {
+			from.meta.yPos = document.documentElement.scrollTop;
+		} else {
+			from.meta.yPos = 0;
+		}
+		next();
+	},
 	methods: {
 		findAColor(index) {
 			return findColor(index + 1);
@@ -201,7 +212,7 @@ export default {
 				confirmed.push({
 					name: region.subRegion,
 					value: region.stats.latestConfirmed,
-					color: lightenDarkenColor(this.findAColor(index++), -40)
+					color: lightenDarkenColor(this.findAColor(index++), -10)
 				});
 			}
 
@@ -280,13 +291,15 @@ export default {
 					margin: 0 0 4px 12px;
 					display: flex;
 					justify-content: space-between;
-					align-items: baseline;
+					align-items: center;
 					div {
-						margin: 0 16px 0 0;
+						margin: 0 8px 0 0;
 						font-size: 12px;
 						color: #e0e0e0;
+						display: flex;
+						align-items: center;
 						span {
-							margin: 0 0 0 2px;
+							margin: 0 4px 0 4px;
 							font-size: 14px;
 							color: var(--section-header-color);
 						}
