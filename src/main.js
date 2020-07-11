@@ -8,6 +8,7 @@ import Highcharts from 'highcharts'
 import HighchartsVue from 'highcharts-vue'
 import { GA, numberFormat, dateShortFormat, dateLongFormat, dateDayFormat } from "@/utils";
 
+
 Highcharts.createElement('link', {
 	href: 'https://fonts.googleapis.com/css?family=Unica+One',
 	rel: 'stylesheet',

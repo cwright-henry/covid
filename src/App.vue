@@ -9,7 +9,7 @@
 		<template v-else>
 			<AppBar />
 			<NavigationBar />
-			<v-content>
+			<v-main>
 				<v-container fluid>
 					<div class="covid-perspective">
 						<transition :name="transitionName">
@@ -19,7 +19,7 @@
 						</transition>
 					</div>
 				</v-container>
-			</v-content>
+			</v-main>
 			<v-snackbar
 				v-model="msg"
 				:top="top"
@@ -99,6 +99,10 @@ export default {
 			} else if (from.name === "country" && to.name === "provinces") {
 				this.transitionName = "slide-left";
 			} else if (from.name === "provinces" && to.name === "country") {
+				this.transitionName = "slide-right";
+			} else if (from.name === "country" && to.name === "compare") {
+				this.transitionName = "slide-left";
+			} else if (from.name === "compare" && to.name === "country") {
 				this.transitionName = "slide-right";
 			} else {
 				this.transitionName = "fade";

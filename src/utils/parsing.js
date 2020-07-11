@@ -17,7 +17,8 @@ const replacements = [
 	{ longName: "Macedonia (the former Yugoslav Republic of)", shortName: 'Macedonia' },
 	{ longName: "United Kingdom of Great Britain and Northern Ireland", shortName: 'United Kingdom' },
 	{ longName: "United States of America", shortName: 'United States' },
-	{ longName: "Venezuela (Bolivarian Republic of)", shortName: 'Venezuela' }
+	{ longName: "Venezuela (Bolivarian Republic of)", shortName: 'Venezuela' },
+	{ longName: "Ireland", shortName: 'Republic of Ireland' }
 ];
 
 const statsSorter = sortCountriesStats('latestConfirmed', 'asc');

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import World from '@/views/world/World'
 import Region from '@/views/region/Region'
 import Country from '@/views/country/Country'
+import Compare from '@/views/country/CountryCompare'
 import Provinces from '@/views/provinces/Provinces'
 
 Vue.use(VueRouter)
@@ -30,6 +31,12 @@ const routes = [
 		path: '/country/:country',
 		name: 'country',
 		component: Country,
+		props: (route) => ({ countryCode: route.params.country })
+	},
+	{
+		path: '/country/:country/compare',
+		name: 'compare',
+		component: Compare,
 		props: (route) => ({ countryCode: route.params.country })
 	},
 	{

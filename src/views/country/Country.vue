@@ -7,15 +7,20 @@
 					<h1>{{country.countryName}}</h1>
 				</div>
 				<v-spacer></v-spacer>
-				<v-btn
-					v-if="country.series.provinces.length > 0"
-					color="#f2f2f2"
-					text
-					:to="`/country/${countryCode}/provinces`"
-				>
-					Explore
-					<v-icon size="20" color="linkColor" right>mdi-arrow-right-bold-circle</v-icon>
-				</v-btn>
+				<div class="covid-country--nav-btns">
+					<div class="covid-country--nav-btn mr-4" v-if="country.series.provinces.length > 0">
+						<router-link :to="`/country/${countryCode}/provinces`" class="covid-link">
+							<label class="mr-1">{{country.series.provinces.length | number(0)}} {{local.provinceName}}</label>
+							<v-icon color="linkColor">mdi-arrow-right-bold</v-icon>
+						</router-link>
+					</div>
+					<div class="covid-country--nav-btn" v-if="country.borders.length > 0">
+						<router-link :to="`/country/${countryCode}/compare`" class="covid-link">
+							<label class="mr-1">{{country.borders.length | number(0)}} Bordered Countries</label>
+							<v-icon color="linkColor">mdi-arrow-right-bold</v-icon>
+						</router-link>
+					</div>
+				</div>
 			</header>
 			<RegionStats :region="country" />
 			<div class="covid-country--charts">
@@ -125,6 +130,7 @@ export default {
 	data() {
 		return {
 			country: {
+				borders: [],
 				series: {
 					data: [],
 					provinces: [],
@@ -166,7 +172,10 @@ export default {
 	},
 	methods: {
 		loadData() {
-			this.$store.commit("setCurrentCountryCode", this.countryCode);
+			this.$store.commit(
+				"setCurrentCountryCode",
+				this.countryCode
+			); /* Used by Navigation */
 			this.country = Object.freeze(this.findCountry(this.countryCode));
 		}
 	}
@@ -174,11 +183,29 @@ export default {
 </script>
 
 <style lang="less" scoped>
-header {
+.covid-country--nav-btns {
 	display: flex;
 	align-items: center;
+	.covid-country--nav-btn {
+		display: flex;
+		align-items: center;
+		label {
+			font-size: 13px;
+			margin: 2px 0 0 0;
+			color: #e0e0e0;
+			cursor: pointer;
+		}
+		&:first-child {
+			border-right: 1px solid #616161;
+			padding: 0 12px 0 0;
+		}
+	}
+}
+header {
+	display: flex;
+	align-items: flex-start;
 	justify-content: space-between;
-	margin: 0 0 12px 0;
+	margin: 0 0 4px 0;
 	.covid-country--title {
 		display: flex;
 		align-items: center;

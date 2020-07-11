@@ -9,7 +9,7 @@
 			<div>{{population | number(0)}}</div>
 		</li>
 		<li v-if="showPerCapita">
-			<label>Per Capita</label>
+			<label>Per Capita Confirmed</label>
 			<div>
 				<nobr>
 					<span>{{perCapita | number(0)}}</span>

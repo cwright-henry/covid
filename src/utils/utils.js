@@ -56,6 +56,8 @@ export const uuid = () => {
 /**
  * https://css-tricks.com/snippets/javascript/lighten-darken-color/
  * 
+ * Note: not very effecctive!!
+ * 
  * @param {*} col 
  * @param {*} amt 
  */
@@ -88,4 +90,19 @@ export const lightenDarkenColor = (col, amt) => {
     return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16);
 
 }
+
+/**
+ * Create a per capita timeseries
+ *
+ * @param {*} arr
+ * @param {*} population
+ */
+export const createPerCapita = (arr, population) => {
+    if (population) {
+        return arr.map(item => {
+            return [item[0], (item[1] / population) * 100000];
+        });
+    }
+    return arr;
+};
 

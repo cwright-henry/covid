@@ -5,14 +5,18 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
-		data: [],		/* Frozen - Need to copy it to alter it, even sorting! */
-		coverage: {},	/* Frozen */
-		regions: [],	/* Frozen */
-		currentCountryCode: null,
+		data: [],					/* Frozen - Need to copy it to alter it, even sorting! */
+		coverage: {},				/* Frozen */
+		regions: [],				/* Frozen */
+		currentCountryCode: null, 	/* Used between Navigator and Country */
 	},
 	getters: {
 		findCountry: state => countryCode => {
 			return state.data.find(item => item.countryCode === countryCode);
+		},
+
+		findCountry3: state => countryCode3 => {
+			return state.data.find(item => item.countryCode3 === countryCode3);
 		},
 
 		findRegion: state => regionCode => {
