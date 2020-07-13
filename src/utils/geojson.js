@@ -90,32 +90,32 @@ export const createGeoJsonHistoryForCountries = countries => {
         const latestFatalities = createFeatureCollection();
 
         for (const country of countries) {
-            if (country.series.ts.confirmedSeries[i][1] > 0) {
+            if (country.series.ts.confirmedSeries[i] && country.series.ts.confirmedSeries[i][1] > 0) {
                 totalConfirmed.features.push(createFeature(country, {
                     totalConfirmed: country.series.ts.confirmedSeries[i][1]
                 }))
             }
-            if (country.series.ts.recoveredSeries[i][1] > 0) {
+            if (country.series.ts.recoveredSeries[i] && country.series.ts.recoveredSeries[i][1] > 0) {
                 totalRecovered.features.push(createFeature(country, {
                     totalRecovered: country.series.ts.recoveredSeries[i][1]
                 }))
             }
-            if (country.series.ts.deathSeries[i][1] > 0) {
+            if (country.series.ts.deathSeries[i] && country.series.ts.deathSeries[i][1] > 0) {
                 totalFatalities.features.push(createFeature(country, {
                     totalFatalities: country.series.ts.deathSeries[i][1]
                 }))
             }
-            if (country.series.ts.confirmedDailySeries[i - 1][1] > 0) {
+            if (country.series.ts.confirmedDailySeries[i - 1] && country.series.ts.confirmedDailySeries[i - 1][1] > 0) {
                 latestConfirmed.features.push(createFeature(country, {
                     latestConfirmed: country.series.ts.confirmedDailySeries[i - 1][1]
                 }))
             }
-            if (country.series.ts.recoveredDailySeries[i - 1][1] > 0) {
+            if (country.series.ts.recoveredDailySeries[i - 1] && country.series.ts.recoveredDailySeries[i - 1][1] > 0) {
                 latestRecovered.features.push(createFeature(country, {
                     latestRecovered: country.series.ts.recoveredDailySeries[i - 1][1]
                 }))
             }
-            if (country.series.ts.deathDailySeries[i - 1][1] > 0) {
+            if (country.series.ts.deathDailySeries[i - 1] && country.series.ts.deathDailySeries[i - 1][1] > 0) {
                 latestFatalities.features.push(createFeature(country, {
                     latestFatalities: country.series.ts.deathDailySeries[i - 1][1]
                 }))
