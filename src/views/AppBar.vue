@@ -4,7 +4,7 @@
 		<div class="covid-appbar--header ml-4">
 			<h1>
 				Covid 19 Watch
-				<span>Last Updated: {{coverage.lastestDate | date-long}}</span>
+				<span>Last Update: {{coverage.lastestDate | date-long}}</span>
 				<img src="@/assets/covid.png" height="36" width="36" />
 			</h1>
 			<RegionStats :region="coverage" isSlim />
@@ -61,6 +61,7 @@ export default {
 		width: 100%;
 		span {
 			font-size: 13px;
+			margin:0 0 0 8px;
 		}
 		img {
 			position: absolute;

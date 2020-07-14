@@ -4,7 +4,10 @@
 			<header>
 				<div class="covid-country--title">
 					<img :src="country.flag" width="36" class="mr-3" />
-					<h1>{{country.countryName}}</h1>
+					<h1>
+						{{country.countryName}}
+						<span>Last Update: {{lastUpdate | date-long}}</span>
+					</h1>
 				</div>
 				<v-spacer></v-spacer>
 				<div class="covid-country--nav-btns">
@@ -160,6 +163,18 @@ export default {
 
 		local() {
 			return getLocalProvince(this.countryCode);
+		},
+
+		lastUpdate() {
+			if (
+				this.country.series.ts.confirmedSeries &&
+				this.country.series.ts.confirmedSeries.length > 0
+			) {
+				return this.country.series.ts.confirmedSeries[
+					this.country.series.ts.confirmedSeries.length - 1
+				][0];
+			}
+			return "";
 		}
 	},
 	mounted() {
@@ -212,6 +227,11 @@ header {
 		h1 {
 			font-size: 24px;
 			font-weight: 400;
+			span {
+				margin: 0 0 0 8px;
+				font-size: 11px;
+				font-weight: 400;
+			}
 		}
 	}
 }
