@@ -94,13 +94,11 @@
 							<li v-for="(subregion, index) of region.subRegions" :key="subregion.uuid">
 								<h2>
 									{{subregion.subRegion}}
-									<div>
+									<router-link :to="`/world/${subregion.subRegion}`" title="Explore Region">
 										Latest
 										<span>{{subregion.stats.latestConfirmed | number(0)}}</span>
-										<router-link :to="`/world/${subregion.subRegion}`" title="Explore Region">
-											<v-icon size="18" color="linkColor">mdi-arrow-right-bold</v-icon>
-										</router-link>
-									</div>
+										<v-icon size="18" color="linkColor">mdi-arrow-right-bold</v-icon>
+									</router-link>
 								</h2>
 								<BasicChart
 									:ts="subregion.ts.confirmedDailySeries"
@@ -292,14 +290,15 @@ export default {
 					display: flex;
 					justify-content: space-between;
 					align-items: center;
-					div {
+					a {
 						margin: 0 8px 0 0;
 						font-size: 12px;
 						color: #e0e0e0;
 						display: flex;
 						align-items: center;
+						text-decoration: none;
 						span {
-							margin: 0 4px 0 4px;
+							margin: 0 4px 0 6px;
 							font-size: 14px;
 							color: var(--section-header-color);
 						}
