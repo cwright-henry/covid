@@ -90,7 +90,5 @@ export const parseIreland = data => {
         }
     }
 
-    console.log(counties)
-
     return { provinces: counties, population, geojson };
 }
