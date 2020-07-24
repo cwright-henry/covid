@@ -1,4 +1,4 @@
-import { uuid } from './utils'
+import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000 } from './utils'
 import { createGeoJsonForCountry, createGeoJsonHistoryForCountries } from './geojson'
 import { sortCountriesStats } from './sorting'
 
@@ -62,7 +62,7 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 			if (item.series.provinces.length > 0) {
 				item.geojson = createGeoJsonForCountry(item)
 			}
-			data.push(item)
+			data.push(item);
 		}
 	}
 	return data;
@@ -514,4 +514,30 @@ export const createSeriesRegion = (countries) => {
 	}
 
 	return regions;
+}
+
+export const create14DayCumulativeForCountries = (countries) => {
+	for (const country of countries) {
+		const country14Day = cumulative_number_for_14_days_of_COVID_19_cases_per_100000(country.series.ts.confirmedDailySeries, country.population);
+		country.series.ts.confirmed14Day = country14Day;
+		country.series.stats.latestConfirmed14Day = country14Day[country14Day.length - 1][1];
+		for (const province of country.series.provinces) {
+			const province14Day = cumulative_number_for_14_days_of_COVID_19_cases_per_100000(province.ts.confirmedDailySeries, province.population);
+			province.ts.confirmed14Day = province14Day;
+			province.stats.latestConfirmed14Day = province14Day[province14Day.length - 1][1];
+		}
+	}
+}
+
+export const create14DayCumulativeForRegions = (regions) => {
+	for (const region of regions) {
+		const region14Day = cumulative_number_for_14_days_of_COVID_19_cases_per_100000(region.ts.confirmedDailySeries, region.population);
+		region.ts.confirmed14Day = region14Day;
+		region.stats.latestConfirmed14Day = region14Day[region14Day.length - 1][1];
+		for (const subRegion of region.subRegions) {
+			const subRegion14Day = cumulative_number_for_14_days_of_COVID_19_cases_per_100000(subRegion.ts.confirmedDailySeries, subRegion.population);
+			subRegion.ts.confirmed14Day = subRegion14Day;
+			subRegion.stats.latestConfirmed14Day = subRegion14Day[subRegion14Day.length - 1][1];
+		}
+	}
 }

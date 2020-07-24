@@ -106,3 +106,20 @@ export const createPerCapita = (arr, population) => {
     return arr;
 };
 
+/**
+ * 14 Day average of cumulative confirmed cases
+ * 
+ * @param {*} arr 
+ * @param {*} population 
+ */
+export const cumulative_number_for_14_days_of_COVID_19_cases_per_100000 = (arr, population) => {
+    const cumulative = [];
+    for (let i = 13; i < arr.length; i++) {
+        const count = arr[i][1] + arr[i - 1][1] + arr[i - 2][1] + arr[i - 3][1] + arr[i - 4][1] + arr[i - 5][1] + arr[i - 6][1] + arr[i - 7][1]
+            + arr[i - 8][1] + arr[i - 9][1] + arr[i - 10][1] + arr[i - 11][1] + arr[i - 12][1] + arr[i - 13][1];
+        cumulative.push([arr[i][0], (count / population) * 100000]);
+    }
+
+    return cumulative;
+}
+
