@@ -11,7 +11,9 @@
 		<div v-else>
 			<v-alert icon="mdi-refresh-circle" prominent text color="warning" type="info">
 				Oops, there was a problem loading data sources -
-				<strong>try refreshing the page</strong>
+				<strong
+					@click="reload()"
+				>try refreshing the page</strong>
 			</v-alert>
 		</div>
 	</div>
@@ -22,22 +24,22 @@ export default {
 	props: {
 		isLoadError: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		isLoading: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		isRendering: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 	data() {
 		return {
 			value: 0,
 			interval: null,
-			msg: "Loading Data Sources..."
+			msg: "Loading Data Sources...",
 		};
 	},
 	watch: {
@@ -51,23 +53,36 @@ export default {
 					this.value = 100;
 				}
 			},
-			immediate: true
+			immediate: true,
 		},
 		isLoading(val) {
 			if (!val) {
 				clearInterval(this.interval);
 			}
-		}
+		},
 	},
 	mounted() {
 		// Whoops main thred is blocked
+		let divider = 330;
 		this.interval = setInterval(() => {
-			this.value += 100 / 330;
+			this.value += 100 / divider;
+			if (this.value > 80) {
+				divider = 1000;
+			}
+			if (this.value > 90) {
+				divider = 10000;
+			}
 			if (this.value >= 100) {
 				clearInterval(this.interval);
 			}
 		}, 100);
-	}
+	},
+
+	methods: {
+		reload() {
+			window.location.reload(false);
+		},
+	},
 };
 </script>
 

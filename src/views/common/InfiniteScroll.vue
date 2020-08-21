@@ -11,21 +11,21 @@ export default {
 	props: {
 		hasNext: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		options: {
 			type: Object,
 			default: () => {
 				return {
 					root: null,
-					threshold: 0
+					threshold: 0,
 				};
-			}
-		}
+			},
+		},
 	},
 	data() {
 		return {
-			observer: null
+			observer: null,
 		};
 	},
 	mounted() {
@@ -40,11 +40,11 @@ export default {
 	methods: {
 		loadMore() {
 			this.$emit("loadmore");
-		}
+		},
 	},
 	destroyed() {
 		this.observer.disconnect();
-	}
+	},
 };
 </script>
 
