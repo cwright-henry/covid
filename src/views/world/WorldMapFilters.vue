@@ -7,29 +7,38 @@
 					<v-radio hide-details label="Popluation" value="population" color="linkColor"></v-radio>
 					<span>{{coverage.population | number(0)}}</span>
 				</div>
+				<label>Confirmed</label>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Latest Confirmed" value="latestConfirmed" color="linkColor"></v-radio>
+					<v-radio hide-details label="Latest" value="latestConfirmed" color="linkColor"></v-radio>
 					<span>{{coverage.stats.latestConfirmed | number(0)}}</span>
 				</div>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Latest Recovered" value="latestRecovered" color="linkColor"></v-radio>
-					<span>{{coverage.stats.latestRecovered | number(0)}}</span>
+					<v-radio hide-details label="Total" value="totalConfirmed" color="linkColor"></v-radio>
+					<span>{{coverage.stats.totalConfirmed | number(0)}}</span>
 				</div>
+				<label>Fatalities</label>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Latest Fatalities" value="latestFatalities" color="linkColor"></v-radio>
+					<v-radio hide-details label="Latest" value="latestFatalities" color="linkColor"></v-radio>
 					<span>{{coverage.stats.latestDeaths | number(0)}}</span>
 				</div>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Total Confirmed" value="totalConfirmed" color="linkColor"></v-radio>
-					<span>{{coverage.stats.totalConfirmed | number(0)}}</span>
-				</div>
-				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Total Recovered" value="totalRecovered" color="linkColor"></v-radio>
-					<span>{{coverage.stats.totalRecovered | number(0)}}</span>
-				</div>
-				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Total Fatalities" value="totalFatalities" color="linkColor"></v-radio>
+					<v-radio hide-details label="Total" value="totalFatalities" color="linkColor"></v-radio>
 					<span>{{coverage.stats.totalDeaths | number(0)}}</span>
+				</div>
+				<label>Per Capita Confirmed</label>
+				<div class="covid-map--filters__radio">
+					<v-radio hide-details label="Latest" value="latestConfirmed14Day" color="linkColor"></v-radio>
+					<span>
+						{{coverage.stats.latestConfirmed14Day | number(0)}}
+						<span>per 100,000</span>
+					</span>
+				</div>
+				<div class="covid-map--filters__radio">
+					<v-radio hide-details label="Total" value="totalConfirmed14Day" color="linkColor"></v-radio>
+					<span>
+						{{coverage.stats.totalConfirmed14Day | number(0)}}
+						<span>per 100,000</span>
+					</span>
 				</div>
 			</div>
 		</div>
@@ -43,37 +52,42 @@ export default {
 		coverage: {
 			type: Object,
 			default: () => ({
-				stats: {}
-			})
-		}
+				stats: {},
+			}),
+		},
 	},
 	mounted() {
-		EventBus.$on("onNavFilterChange", filter => {
+		EventBus.$on("onNavFilterChange", (filter) => {
 			this.filter = filter;
 		});
 	},
 	data() {
 		return {
-			filter: "latestConfirmed"
+			filter: "latestConfirmed",
 		};
 	},
 	watch: {
 		filter() {
 			this.$emit("onFilterChange", this.filter);
 			EventBus.$emit("onWorldMapFilterChange", this.filter);
-		}
-	}
+		},
+	},
 };
 </script>
 
 <style lang="less" scoped>
 .covid-map-filters {
-	h1 {
+	h1,
+	label {
 		font-size: 16px;
 		text-transform: uppercase;
 		font-weight: 300;
 		color: var(--section-header-color);
 		margin: 0 0 8px 8px;
+	}
+	label {
+		font-size: 15px;
+		text-transform: none;
 	}
 	.covid-map--filters__radio {
 		display: flex;
@@ -81,12 +95,17 @@ export default {
 		align-items: center;
 		max-width: 320px;
 		width: 100%;
-		padding: 4px 0px 0 8px;
+		padding: 0px 8px 0 12px;
 		span {
 			font-size: 16px;
 			margin: 0 0 4px;
 			color: var(--section-header-color);
 			font-weight: 300;
+			color: #fff;
+			span {
+				margin: 0 0 0 4px;
+				font-size: 11px;
+			}
 		}
 	}
 }

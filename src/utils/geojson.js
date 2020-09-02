@@ -30,14 +30,14 @@ const createFeature = (region, stats) => {
             countryCode: region.countryCode || '',
             totalConfirmed: numberFormat(stats.totalConfirmed || 0, 0),
             totalConfirmedRaw: stats.totalConfirmed || 0,
-            totalRecovered: numberFormat(stats.totalRecovered || 0, 0),
-            totalRecoveredRaw: stats.totalRecovered || 0,
+            totalConfirmed14Day: numberFormat(stats.totalConfirmed14Day || 0, 0),
+            totalConfirmed14DayRaw: stats.totalConfirmed14Day || 0,
             totalFatalities: numberFormat(stats.totalFatalities || 0, 0),
             totalFatalitiesRaw: stats.totalFatalities || 0,
             latestConfirmed: numberFormat(stats.latestConfirmed || 0, 0),
             latestConfirmedRaw: stats.latestConfirmed || 0,
-            latestRecovered: numberFormat(stats.latestRecovered || 0, 0),
-            latestRecoveredRaw: stats.latestRecovered || 0,
+            latestConfirmed14Day: numberFormat(stats.latestConfirmed14Day || 0, 0),
+            latestConfirmed14DayRaw: stats.latestConfirmed14Day || 0,
             latestFatalities: numberFormat(stats.latestFatalities || 0, 0),
             latestFatalitiesRaw: stats.latestFatalities || 0
         },
@@ -83,10 +83,10 @@ export const createGeoJsonHistoryForCountries = countries => {
     const baseSeeries = countries[0].series.ts.confirmedSeries;
     for (let i = 1; i < baseSeeries.length; i++) {
         const totalConfirmed = createFeatureCollection();
-        const totalRecovered = createFeatureCollection();
+        const totalConfirmed14Day = createFeatureCollection();
         const totalFatalities = createFeatureCollection();
         const latestConfirmed = createFeatureCollection();
-        const latestRecovered = createFeatureCollection();
+        const latestConfirmed14Day = createFeatureCollection();
         const latestFatalities = createFeatureCollection();
 
         for (const country of countries) {
@@ -94,10 +94,9 @@ export const createGeoJsonHistoryForCountries = countries => {
                 totalConfirmed.features.push(createFeature(country, {
                     totalConfirmed: country.series.ts.confirmedSeries[i][1]
                 }))
-            }
-            if (country.series.ts.recoveredSeries[i] && country.series.ts.recoveredSeries[i][1] > 0) {
-                totalRecovered.features.push(createFeature(country, {
-                    totalRecovered: country.series.ts.recoveredSeries[i][1]
+
+                totalConfirmed14Day.features.push(createFeature(country, {
+                    totalConfirmed14Day: (country.series.ts.confirmedSeries[i][1] / country.population) * 100000
                 }))
             }
             if (country.series.ts.deathSeries[i] && country.series.ts.deathSeries[i][1] > 0) {
@@ -110,9 +109,9 @@ export const createGeoJsonHistoryForCountries = countries => {
                     latestConfirmed: country.series.ts.confirmedDailySeries[i - 1][1]
                 }))
             }
-            if (country.series.ts.recoveredDailySeries[i - 1] && country.series.ts.recoveredDailySeries[i - 1][1] > 0) {
-                latestRecovered.features.push(createFeature(country, {
-                    latestRecovered: country.series.ts.recoveredDailySeries[i - 1][1]
+            if (country.series.ts.confirmed14DaySeries[i - 1] && country.series.ts.confirmed14DaySeries[i - 1][1] > 0) {
+                latestConfirmed14Day.features.push(createFeature(country, {
+                    latestConfirmed14Day: country.series.ts.confirmed14DaySeries[i - 1][1]
                 }))
             }
             if (country.series.ts.deathDailySeries[i - 1] && country.series.ts.deathDailySeries[i - 1][1] > 0) {
@@ -122,12 +121,12 @@ export const createGeoJsonHistoryForCountries = countries => {
             }
         }
         totalConfirmed.features.sort(totalConfirmedSorter)
-        totalRecovered.features.sort(totalRecoveredSorter)
+        totalConfirmed14Day.features.sort(totalRecoveredSorter)
         totalFatalities.features.sort(totalFatalitiesSorter)
         latestConfirmed.features.sort(lastConfirmedSorter)
-        latestRecovered.features.sort(latestRecoveredSorter)
+        latestConfirmed14Day.features.sort(latestRecoveredSorter)
         latestFatalities.features.sort(latestFatalitiesSorter)
-        history.push({ date: baseSeeries[i][0], totalConfirmed, totalRecovered, totalFatalities, latestConfirmed, latestRecovered, latestFatalities })
+        history.push({ date: baseSeeries[i][0], totalConfirmed, totalConfirmed14Day, totalFatalities, latestConfirmed, latestConfirmed14Day, latestFatalities })
     }
 
     return history;

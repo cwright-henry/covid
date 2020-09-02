@@ -14,9 +14,9 @@ class Coverage {
             const ireland = parseIreland(irelandData);
             const ieData = countries.find(item => item.countryCode === "IE");
             if (ieData) {
-                ieData.geojson = ireland.geojson;
-                ieData.population = ireland.population;
-                ieData.series.provinces = ireland.provinces;
+                // ieData.geojson = ireland.geojson;
+                ieData.population = 4937786 // ireland.population;
+                // ieData.series.provinces = ireland.provinces;
             }
 
             const coverage = createSeriesCoverage(countries);

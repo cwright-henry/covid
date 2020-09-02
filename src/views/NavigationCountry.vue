@@ -14,6 +14,7 @@
 				<div class="covid-nav-countries--rank">
 					<img :src="country.flag" width="28" height="14" class="mx-2" />
 					<span v-if="hasRank">{{index + 1}}</span>
+					<v-icon :class="{'up': isCovidIncreasing(country), 'pad': !hasRank}">mdi-play</v-icon>
 				</div>
 				<div class="covid-nav-countries--country__info">
 					<h2 :title="country.countryName">
@@ -21,27 +22,28 @@
 						<span>{{filterType === 'totals' ? "Total" : "Latest"}}</span>
 					</h2>
 					<ul>
-						<li class="mr-3">
+						<li class="mr-2">
 							<label>Population</label>
 							<span :class="{isHighlighted : isPopulationSelected}">{{country.population | number(0)}}</span>
 						</li>
-						<li class="mr-3">
+						<li class="mr-2">
 							<label>Confirmed</label>
 							<span
 								:class="{isHighlighted : isConfirmedSelected}"
 							>{{filterType === 'totals' ? country.series.stats.totalConfirmed : country.series.stats.latestConfirmed | number(0)}}</span>
 						</li>
-						<li class="mr-3">
-							<label>Recovered</label>
-							<span
-								:class="{isHighlighted : isRecoveredSelected}"
-							>{{filterType === 'totals' ? country.series.stats.totalRecovered : country.series.stats.latestRecovered | number(0)}}</span>
-						</li>
-						<li>
+						<li class="mr-2">
 							<label>Fatalities</label>
 							<span
 								:class="{isHighlighted : isFatalitiesSelected}"
 							>{{filterType === 'totals' ? country.series.stats.totalDeaths : country.series.stats.latestDeaths | number(0)}}</span>
+						</li>
+						<li>
+							<label>Per Capita Confirmed</label>
+							<span :class="{isHighlighted : isPerCapitaelected}">
+								{{filterType === 'totals' ? country.series.stats.totalConfirmed14Day : country.series.stats.latestConfirmed14Day | number(0)}}
+								<span>per 100,000</span>
+							</span>
 						</li>
 					</ul>
 				</div>
@@ -59,20 +61,20 @@ export default {
 	props: {
 		countries: {
 			type: Array,
-			default: () => []
+			default: () => [],
 		},
 		scroll: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		filter: {
 			type: String,
-			default: null
+			default: null,
 		},
 		search: {
 			type: String,
-			default: null
-		}
+			default: null,
+		},
 	},
 	mixins: [animation],
 	computed: {
@@ -84,11 +86,11 @@ export default {
 				case "subregion":
 				case "population":
 				case "totalConfirmed":
-				case "totalRecovered":
+				case "totalConfirmed14Day":
 				case "totalFatalities":
 					return "totals";
 				case "latestConfirmed":
-				case "latestRecovered":
+				case "latestConfirmed14Day":
 				case "latestFatalities":
 					return "latest";
 			}
@@ -105,10 +107,10 @@ export default {
 					return false;
 				case "population":
 				case "totalConfirmed":
-				case "totalRecovered":
+				case "totalConfirmed14Day":
 				case "totalFatalities":
 				case "latestConfirmed":
-				case "latestRecovered":
+				case "latestConfirmed14Day":
 				case "latestFatalities":
 					return true;
 			}
@@ -124,10 +126,10 @@ export default {
 				this.filter === "latestConfirmed"
 			);
 		},
-		isRecoveredSelected() {
+		isPerCapitaelected() {
 			return (
-				this.filter === "totalRecovered" ||
-				this.filter === "latestRecovered"
+				this.filter === "totalConfirmed14Day" ||
+				this.filter === "latestConfirmed14Day"
 			);
 		},
 		isFatalitiesSelected() {
@@ -135,14 +137,14 @@ export default {
 				this.filter === "totalFatalities" ||
 				this.filter === "latestFatalities"
 			);
-		}
+		},
 	},
 	watch: {
 		scroll: {
-			handler: function() {
+			handler: function () {
 				this.scrollIntoView();
-			}
-		}
+			},
+		},
 	},
 	methods: {
 		scrollIntoView() {
@@ -155,12 +157,16 @@ export default {
 					current[0].scrollIntoView({
 						behavior: "smooth",
 						block: "center",
-						inline: "nearest"
+						inline: "nearest",
 					});
 				}
 			});
-		}
-	}
+		},
+
+		isCovidIncreasing(country) {
+			return country.series.stats.slope > 0;
+		},
+	},
 };
 </script>
 
@@ -181,6 +187,19 @@ ul.covid-nav-countries {
 				display: inline-block;
 				margin: 8px 0 0 0;
 			}
+			i {
+				margin: -4px 0 0 0;
+				z-index: -1;
+				color: #4caf50;
+				transform: rotate(90deg);
+				&.up {
+					color: #f44336;
+					transform: rotate(-90deg);
+				}
+				&.pad {
+					margin: 12px 0 0 0;
+				}
+			}
 		}
 		.covid-nav-countries--country {
 			display: flex;
@@ -192,7 +211,7 @@ ul.covid-nav-countries {
 					white-space: nowrap;
 					overflow: hidden;
 					text-overflow: ellipsis;
-					width: 220px;
+					width: 260px;
 					margin: 0 0 2px 0;
 					font-weight: 500;
 					span {
@@ -216,6 +235,10 @@ ul.covid-nav-countries {
 						}
 						span.isHighlighted {
 							color: var(--section-header-color);
+						}
+						span span {
+							font-size: 9px;
+							color: #e0e0e0;
 						}
 					}
 				}

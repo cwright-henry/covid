@@ -1,6 +1,7 @@
 import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000 } from './utils'
 import { createGeoJsonForCountry, createGeoJsonHistoryForCountries } from './geojson'
 import { sortCountriesStats } from './sorting'
+import { numberFormat } from './format'
 
 /**
  * Replace long names with shorter - this helps the map
@@ -56,7 +57,8 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 				series: createdSeriesForCountry(
 					entries,
 					country.alpha2Code,
-					usStatePopulation
+					usStatePopulation,
+					country.population
 				)
 			};
 			if (item.series.provinces.length > 0) {
@@ -132,37 +134,117 @@ export const createSeriesCoverage = countries => {
 		merge(coverage.ts.deathDailySeries, country.series.ts.deathDailySeries);
 
 		// lastest Date
-		coverage.lastestDate = country.series.ts.confirmedSeries[country.series.ts.confirmedSeries.length - 1][0];
+		coverage.lastestDate = ""
+		if (country.series.ts.confirmedSeries.length > 0) {
+			coverage.lastestDate = country.series.ts.confirmedSeries[country.series.ts.confirmedSeries.length - 1][0];
+		}
 	}
+
+	coverage.ts.confirmed14DaySeries = create14DayPer100k(coverage.population, coverage.ts.confirmedDailySeries);
+	coverage.stats.latestConfirmed14Day = getLatestFromSeries(coverage.ts.confirmed14DaySeries);
+	coverage.stats.totalConfirmed14Day = (coverage.stats.totalConfirmed / coverage.population) * 100000;
 
 	coverage.history = createGeoJsonHistoryForCountries(countries)
 	return coverage;
+}
+
+/**
+ * Can only tell increasing or decreasing slope
+ * 
+ * @param {*} data 
+ */
+const getSlope = data => {
+	let sum = [0, 0, 0, 0, 0], n = 0;
+	if (data.length > 2) {
+		for (; n < data.length; n++) {
+			if (data[n][1]) {
+				sum[0] += data[n][0];
+				sum[1] += data[n][1];
+				sum[2] += data[n][0] * data[n][0];
+				sum[3] += data[n][0] * data[n][1];
+				sum[4] += data[n][1] * data[n][1];
+			}
+		}
+		return (n * sum[3] - sum[0] * sum[1]) / (n * sum[2] - sum[0] * sum[0]);
+	}
+	return 0;
+}
+
+/**
+ * Create daily series from cumalitive series
+ */
+const createDailySeries = series => {
+	const dailySeries = [];
+	for (let i = 1; i < series.length; i++) {
+		const date = series[i][0];
+		const diff = series[i][1] - series[i - 1][1];
+		dailySeries.push([date, diff > 0 ? diff : 0]);
+	}
+	return dailySeries;
+}
+
+/**
+ * Covid-19 confirmed, recovered, fatalities per 100,000 people over the past 14 days.
+ */
+const create14DayPer100k = (population, series) => {
+	const incidences = []
+	if (series.length > 14) {
+		for (let i = 0; i < 14; i++) {
+			incidences.push([1, 0.1]);
+		}
+		for (let i = 0; i < series.length - 14; i++) {
+			const subset = series.slice(i, 14 + i); // End not included
+			const average = (subset.reduce((a, b) => a + b[1], 0) / population) * 100000;
+			incidences.push([series[14 - 1 + i][0], average])
+		}
+	}
+	return incidences;
+}
+
+/**
+ * Retrieve latest from series
+ */
+const getLatestFromSeries = series => {
+	if (series.length > 0) {
+		return series[series.length - 1][1];
+	}
+	return 0;
+}
+
+/**
+ * Taking the forward and backward 3 seems to be the way to
+ * Taking the previous 7 presents a lag
+ */
+const SMA_AVG = data => {
+	const moveMean = [];
+
+	for (var i = 3; i < data.length - 3; i++) {
+		var mean =
+			(data[i][1] +
+				data[i - 1][1] +
+				data[i - 2][1] +
+				data[i - 3][1] +
+				data[i + 1][1] +
+				data[i + 2][1] +
+				data[i + 3][1]) /
+			7.0;
+		moveMean.push([data[i][0], mean]);
+	}
+
+	return moveMean;
 };
 
 /**
  * Creates timeseries, latest and totals for confirmed, recovered and fatalities.
  * Assumes that dates are ordered - is this correct?
  * 
- * @param {*} series Either a country. province or city
+ * @param {*} series Either a country or province
  */
-const createSeriesData = (series) => {
-	// Timeseries
+const createSeriesData = (series, population) => {
+	// Total Timeseries
 	const confirmedSeries = [];
 	const recoveredSeries = [];
 	const deathSeries = [];
-	const confirmedDailySeries = [];
-	const recoveredDailySeries = [];
-	const deathDailySeries = [];
-
-	// Latest Figures
-	let latestConfirmed = 0;
-	let latestRecovered = 0;
-	let latestDeaths = 0;
-
-	// Total Figures
-	let totalConfirmed = 0;
-	let totalRecovered = 0;
-	let totalDeaths = 0;
 
 	// Create cummalative timeseries -
 	// If there is a missing data item in the series it can really screw things
@@ -183,55 +265,27 @@ const createSeriesData = (series) => {
 		prevDeaths = currentDeaths;
 	}
 
-	// Create totals
-	if (confirmedSeries.length > 0) {
-		totalConfirmed = confirmedSeries[confirmedSeries.length - 1][1];
-	}
-	if (recoveredSeries.length > 0) {
-		totalRecovered = recoveredSeries[recoveredSeries.length - 1][1];
-	}
-	if (deathSeries.length > 0) {
-		totalDeaths = deathSeries[deathSeries.length - 1][1];
-	}
+	const totalConfirmed = getLatestFromSeries(confirmedSeries);
+	const totalRecovered = getLatestFromSeries(recoveredSeries);
+	const totalDeaths = getLatestFromSeries(deathSeries);
 
-	// Create daily time series and latest figures
-	for (let i = 1; i < confirmedSeries.length; i++) {
-		const date = confirmedSeries[i][0];
-		const diff =
-			confirmedSeries[i][1] -
-			confirmedSeries[i - 1][1];
-		confirmedDailySeries.push([date, diff > 0 ? diff : 0]);
-	}
-	if (confirmedDailySeries.length > 0) {
-		latestConfirmed = confirmedDailySeries[
-			confirmedDailySeries.length - 1
-		][1];
-	}
+	const confirmedDailySeries = createDailySeries(confirmedSeries);
+	const recoveredDailySeries = createDailySeries(recoveredSeries);
+	const deathDailySeries = createDailySeries(deathSeries);
 
-	for (let i = 1; i < recoveredSeries.length; i++) {
-		const date = recoveredSeries[i][0];
-		const diff =
-			recoveredSeries[i][1] -
-			recoveredSeries[i - 1][1];
-		recoveredDailySeries.push([date, diff]);
-	}
-	if (recoveredDailySeries.length > 0) {
-		latestRecovered = recoveredDailySeries[
-			recoveredDailySeries.length - 1
-		][1];
-	}
+	const latestConfirmed = getLatestFromSeries(confirmedDailySeries);
+	const latestDeaths = getLatestFromSeries(deathDailySeries);
+	const latestRecovered = getLatestFromSeries(recoveredDailySeries);
 
-	for (let i = 1; i < deathSeries.length; i++) {
-		const date = deathSeries[i][0];
-		const diff =
-			deathSeries[i][1] - deathSeries[i - 1][1];
-		deathDailySeries.push([date, diff]);
-	}
-	if (deathDailySeries.length > 0) {
-		latestDeaths = deathDailySeries[
-			deathDailySeries.length - 1
-		][1];
-	}
+	const confirmed14DaySeries = create14DayPer100k(population, confirmedDailySeries);
+	const latestConfirmed14Day = getLatestFromSeries(confirmed14DaySeries);
+
+	const sma = SMA_AVG(confirmedDailySeries)
+
+	const len = sma.length;
+	const slope = getSlope(sma.slice(len - 14, len));
+
+	const totalConfirmed14Day = (totalConfirmed / population) * 100000;
 
 	return {
 		ts: {
@@ -241,6 +295,7 @@ const createSeriesData = (series) => {
 			confirmedDailySeries,
 			recoveredDailySeries,
 			deathDailySeries,
+			confirmed14DaySeries
 		},
 		stats: {
 			latestConfirmed,
@@ -249,6 +304,9 @@ const createSeriesData = (series) => {
 			totalConfirmed,
 			totalRecovered,
 			totalDeaths,
+			latestConfirmed14Day,
+			totalConfirmed14Day,
+			slope
 		}
 	}
 }
@@ -259,9 +317,9 @@ const createSeriesData = (series) => {
  * @param {*} entries 
  * @param {*} countryCode 
  */
-const createdSeriesForCountry = (entries, countryCode, usStatePopulation) => {
+const createdSeriesForCountry = (entries, countryCode, usStatePopulation, population) => {
 	const series = {
-		data: [],		/* Get Garbage collected at the end of day */
+		data: [],		/* Garbage collected at the end of day */
 		provinces: []
 	};
 
@@ -367,7 +425,7 @@ const createdSeriesForCountry = (entries, countryCode, usStatePopulation) => {
 	}
 
 	if (countryCode === 'US') {
-		for (let province of series.provinces) {
+		for (const province of series.provinces) {
 			const state = usStatePopulation.data.find(item => item.State == province.name)
 			if (state) {
 				province.population = state.Population;
@@ -375,12 +433,12 @@ const createdSeriesForCountry = (entries, countryCode, usStatePopulation) => {
 		}
 	}
 
-	Object.assign(series, createSeriesData(series.data))
+	Object.assign(series, createSeriesData(series.data, population))
 	delete series.data;
-	for (let province of series.provinces) {
-		Object.assign(province, createSeriesData(province.data))
+	for (const province of series.provinces) {
+		Object.assign(province, createSeriesData(province.data, province.population))
 		delete province.data;
-		for (let city of province.cities) {
+		for (const city of province.cities) {
 			delete city.data;
 		}
 	}

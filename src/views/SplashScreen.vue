@@ -8,12 +8,17 @@
 			<span>{{msg}}</span>
 			<v-progress-linear rounded color="linkColor" height="6" :value="value"></v-progress-linear>
 		</div>
-		<div v-else>
-			<v-alert icon="mdi-refresh-circle" prominent text color="warning" type="info">
+		<div v-else @click="reload()">
+			<v-alert
+				icon="mdi-refresh-circle"
+				prominent
+				text
+				color="warning"
+				type="info"
+				class="covid-splashscreen--alert"
+			>
 				Oops, there was a problem loading data sources -
-				<strong
-					@click="reload()"
-				>try refreshing the page</strong>
+				<strong>try refreshing the page</strong>
 			</v-alert>
 		</div>
 	</div>
@@ -93,6 +98,10 @@ export default {
 	height: 100vh;
 	align-items: center;
 	justify-content: center;
+
+	.covid-splashscreen--alert {
+		cursor: pointer;
+	}
 
 	.loading-wrapper {
 		max-width: 320px;

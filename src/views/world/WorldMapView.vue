@@ -6,7 +6,7 @@
 		<div class="covid-map--filters">
 			<WorldMapFilters :coverage="coverage" @onFilterChange="onFilterChange" />
 			<WorldMapSlider
-				class="mt-6"
+				class="mt-4"
 				:currentFilter="filter"
 				:coverage="coverage"
 				@coverageChange="coverageChange"
@@ -26,13 +26,13 @@ export default {
 			type: Object,
 			default: () => ({
 				stats: {},
-				history: []
-			})
-		}
+				history: [],
+			}),
+		},
 	},
 	components: {
 		WorldMapFilters,
-		WorldMapSlider
+		WorldMapSlider,
 	},
 	data() {
 		return {
@@ -44,11 +44,11 @@ export default {
 				zoom: 1,
 				bearing: 0,
 				pitch: 0,
-				antialias: true
+				antialias: true,
 			},
 			mapLoaded: false,
 			filter: "latestConfirmed",
-			counter: 0
+			counter: 0,
 		};
 	},
 	created() {
@@ -64,7 +64,7 @@ export default {
 			zoom: this.viewState.zoom,
 			pitch: this.viewState.pitch,
 			bearing: this.viewState.bearing,
-			antialias: this.viewState.antialias
+			antialias: this.viewState.antialias,
 		});
 
 		this.map.on("load", () => {
@@ -79,12 +79,12 @@ export default {
 
 		mapLoaded() {
 			this.setDataSource();
-		}
+		},
 	},
 	computed: {
 		lastDate() {
 			return this.coverage.history.length - 1;
-		}
+		},
 	},
 	methods: {
 		coverageChange(current) {
@@ -112,7 +112,7 @@ export default {
 				"concat",
 				["to-string", ["get", "name"]],
 				"\n",
-				["to-string", ["get", this.filter]]
+				["to-string", ["get", this.filter]],
 			]);
 
 			switch (this.filter) {
@@ -131,18 +131,18 @@ export default {
 						500,
 						"#FFF176",
 						1000,
-						"#F44336"
+						"#F44336",
 					]);
 					break;
-				case "latestRecovered":
+				case "latestConfirmed14Day":
 					this.map.setPaintProperty("coverage-labels", "text-color", [
 						"interpolate",
 						["cubic-bezier", 0, 0.5, 1, 0.5],
-						["get", "latestRecoveredRaw"],
+						["get", "latestConfirmed14DayRaw"],
+						10,
+						"#FFF176",
 						100,
-						"#C8E6C9",
-						2000,
-						"#4CAF50"
+						"#F44336",
 					]);
 					break;
 				case "latestFatalities":
@@ -153,7 +153,7 @@ export default {
 						0,
 						"#FFF176",
 						10,
-						"#F44336"
+						"#F44336",
 					]);
 					break;
 				case "totalConfirmed":
@@ -164,18 +164,18 @@ export default {
 						1000,
 						"#FFF176",
 						50000,
-						"#F44336"
+						"#F44336",
 					]);
 					break;
-				case "totalRecovered":
+				case "totalConfirmed14Day":
 					this.map.setPaintProperty("coverage-labels", "text-color", [
 						"interpolate",
 						["cubic-bezier", 0, 0.5, 1, 0.5],
-						["get", "totalRecoveredRaw"],
-						100,
-						"#C8E6C9",
-						2000,
-						"#4CAF50"
+						["get", "totalConfirmed14DayRaw"],
+						500,
+						"#FFF176",
+						1000,
+						"#F44336",
 					]);
 					break;
 				case "totalFatalities":
@@ -186,7 +186,7 @@ export default {
 						10,
 						"#FFF176",
 						1000,
-						"#F44336"
+						"#F44336",
 					]);
 					break;
 			}
@@ -197,8 +197,8 @@ export default {
 				type: "geojson",
 				data: {
 					type: "FeatureCollection",
-					features: []
-				}
+					features: [],
+				},
 			});
 
 			this.map.addLayer({
@@ -208,8 +208,8 @@ export default {
 				paint: {
 					"circle-radius": 3,
 					"circle-opacity": 0.75,
-					"circle-color": "#B3E5FC"
-				}
+					"circle-color": "#B3E5FC",
+				},
 			});
 
 			this.map.addLayer({
@@ -221,10 +221,10 @@ export default {
 						"concat",
 						["to-string", ["get", "name"]],
 						"\n",
-						["to-string", ["get", "latestConfirmed"]]
+						["to-string", ["get", "latestConfirmed"]],
 					],
 					"text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
-					"text-size": 11
+					"text-size": 11,
 				},
 				paint: {
 					"text-color": [
@@ -234,14 +234,14 @@ export default {
 						500,
 						"#FFF176",
 						1000,
-						"#F44336"
-					]
-				}
+						"#F44336",
+					],
+				},
 			});
 
-			this.map.on("click", "coverage-labels", e => {
+			this.map.on("click", "coverage-labels", (e) => {
 				this.$router.push({
-					path: `/country/${e.features[0].properties.countryCode}`
+					path: `/country/${e.features[0].properties.countryCode}`,
 				});
 			});
 
@@ -252,8 +252,8 @@ export default {
 			this.map.on("mouseleave", "coverage-labels", () => {
 				this.map.getCanvas().style.cursor = "";
 			});
-		}
-	}
+		},
+	},
 };
 </script>
 
@@ -263,7 +263,7 @@ section {
 	flex-wrap: wrap;
 
 	.covid-map--container {
-		width: 75%;
+		flex: 1;
 		height: 500px;
 		position: relative;
 		overflow: hidden;
@@ -276,7 +276,7 @@ section {
 		}
 	}
 	.covid-map--filters {
-		flex: 1;
+		width: 300px;
 		margin: 0 0 0 12px;
 		h1 {
 			font-size: 16px;

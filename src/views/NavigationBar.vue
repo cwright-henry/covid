@@ -1,5 +1,5 @@
 <template>
-	<v-navigation-drawer v-model="drawer" app clipped fixed width="320">
+	<v-navigation-drawer v-model="drawer" app clipped fixed width="350">
 		<div class="covid-nav--top">
 			<div class="covid-nav-world">
 				<router-link to="/world" class="covid-link">
@@ -83,8 +83,8 @@ import EventBus from "@/events";
 const populationSorter = objectSorter("population", "asc");
 const totalConfirmedSorter = sortCountries("totalConfirmed", "asc");
 const latestConfirmedSorter = sortCountries("latestConfirmed", "asc");
-const totalRecoveredSorter = sortCountries("totalRecovered", "asc");
-const latestRecoveredSorter = sortCountries("latestRecovered", "asc");
+const totalConfirmed14DaySorter = sortCountries("totalConfirmed14Day", "asc");
+const latestConfirmed14DaySorter = sortCountries("latestConfirmed14Day", "asc");
 const totalDeathsSorter = sortCountries("totalDeaths", "asc");
 const latestDeathsSorter = sortCountries("latestDeaths", "asc");
 const regionSorter = (countries, subRegion) => {
@@ -102,7 +102,7 @@ const regionSorter = (countries, subRegion) => {
 	const ordered = {};
 	Object.keys(regions)
 		.sort()
-		.forEach(function(key) {
+		.forEach(function (key) {
 			ordered[key] = regions[key];
 		});
 
@@ -120,23 +120,23 @@ export default {
 				{ text: "Sub Region", uuid: "subregion" },
 				{ text: "Total Population", uuid: "population" },
 				{ text: "Latest Confirmed", uuid: "latestConfirmed" },
-				{ text: "Latest Recovered", uuid: "latestRecovered" },
 				{ text: "Latest Fatalities", uuid: "latestFatalities" },
+				{ text: "Latest Per Capita", uuid: "latestConfirmed14Day" },
 				{ text: "Total Confirmed", uuid: "totalConfirmed" },
-				{ text: "Total Recovered", uuid: "totalRecovered" },
-				{ text: "Total Fatalities", uuid: "totalFatalities" }
+				{ text: "Total Fatalities", uuid: "totalFatalities" },
+				{ text: "Total Per Capita", uuid: "totalConfirmed14Day" },
 			],
-			scroll: false
+			scroll: false,
 		};
 	},
 	components: {
-		NavigationCountry
+		NavigationCountry,
 	},
 	mounted() {
 		EventBus.$on("onToggleNavBar", () => {
 			this.drawer = !this.drawer;
 		});
-		EventBus.$on("onWorldMapFilterChange", filter => {
+		EventBus.$on("onWorldMapFilterChange", (filter) => {
 			this.currentFilter = filter;
 		});
 		this.scroll = true;
@@ -154,18 +154,18 @@ export default {
 					.scrollIntoView({
 						behavior: "auto",
 						block: "center",
-						inline: "nearest"
+						inline: "nearest",
 					});
 				this.$root.gaInteraction("Filter Change", filter);
 			});
-		}
+		},
 	},
 	computed: {
 		...mapState(["data"]),
 
 		dataCopy() {
 			const copy = [];
-			this.data.forEach(item => copy.push(item));
+			this.data.forEach((item) => copy.push(item));
 			return copy;
 		},
 
@@ -176,7 +176,7 @@ export default {
 
 			let data = this.dataCopy;
 			if (searchTerm) {
-				data = this.data.filter(item => {
+				data = this.data.filter((item) => {
 					return item.filteredName.indexOf(searchTerm) !== -1;
 				});
 			}
@@ -191,25 +191,25 @@ export default {
 				case "totalConfirmed":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return data.sort(totalConfirmedSorter);
-				case "totalRecovered":
+				case "totalConfirmed14Day":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
-					return data.sort(totalRecoveredSorter);
+					return data.sort(totalConfirmed14DaySorter);
 				case "totalFatalities":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return data.sort(totalDeathsSorter);
 				case "latestConfirmed":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return data.sort(latestConfirmedSorter);
-				case "latestRecovered":
+				case "latestConfirmed14Day":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
-					return data.sort(latestRecoveredSorter);
+					return data.sort(latestConfirmed14DaySorter);
 				case "latestFatalities":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return data.sort(latestDeathsSorter);
 			}
 			return [];
-		}
-	}
+		},
+	},
 };
 </script>
 
@@ -254,6 +254,9 @@ export default {
 .router-link-active {
 	color: var(--link-color) !important;
 	h1 {
+		color: var(--link-color) !important;
+	}
+	span {
 		color: var(--link-color) !important;
 	}
 }
