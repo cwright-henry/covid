@@ -42,7 +42,7 @@
 							<label>Per Capita Confirmed</label>
 							<span :class="{isHighlighted : isPerCapitaelected}">
 								{{filterType === 'totals' ? country.series.stats.totalConfirmed14Day : country.series.stats.latestConfirmed14Day | number(0)}}
-								<span>per 100,000</span>
+								<span>{{filterType === 'totals' ? '/ 100,000' : '/ 100,000 / last 14 Days'}}</span>
 							</span>
 						</li>
 					</ul>

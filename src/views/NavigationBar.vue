@@ -1,5 +1,5 @@
 <template>
-	<v-navigation-drawer v-model="drawer" app clipped fixed width="350">
+	<v-navigation-drawer v-model="drawer" app clipped fixed width="360">
 		<div class="covid-nav--top">
 			<div class="covid-nav-world">
 				<router-link to="/world" class="covid-link">
