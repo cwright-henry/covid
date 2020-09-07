@@ -131,7 +131,7 @@ export default {
 					this.$store.commit("setCoverage", Object.freeze(coverage));
 					this.$store.commit("setRegions", Object.freeze(regions));
 					worker.terminate();
-					// this.$store.commit("isLoaded", true);
+					this.$store.commit("isLoaded", true);
 					break;
 				case "url-download-started":
 					if (event.data.contentId === "COUNTRY_LIST") {
@@ -231,7 +231,7 @@ export default {
 	height: 100vh;
 	align-items: center;
 	justify-content: center;
-	background: center/cover url("/img/background.jpg") no-repeat;
+	background: center/cover url("~@/assets/background.jpg") no-repeat;
 	position: relative;
 
 	.loading-wrapper {
