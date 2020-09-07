@@ -5,6 +5,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
+		isLoaded: false,			/* Status of loading resources */
 		data: [],					/* Frozen - Need to copy it to alter it, even sorting! */
 		coverage: {},				/* Frozen */
 		regions: [],				/* Frozen */
@@ -56,6 +57,10 @@ export default new Vuex.Store({
 
 		setCurrentCountryCode(state, currentCountryCode) {
 			state.currentCountryCode = currentCountryCode;
+		},
+
+		isLoaded(state, isLoaded) {
+			state.isLoaded = isLoaded;
 		}
 	},
 	actions: {

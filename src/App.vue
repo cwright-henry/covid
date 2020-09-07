@@ -1,11 +1,6 @@
 <template>
 	<v-app>
-		<SplashScreen
-			v-if="isLoading"
-			:isLoading="isLoading"
-			:isRendering="isRendering"
-			:isLoadError="isLoadError"
-		></SplashScreen>
+		<SplashScreen v-if="!isLoaded"></SplashScreen>
 		<template v-else>
 			<AppBar />
 			<NavigationBar />
@@ -38,12 +33,10 @@
 
 <script>
 import { mapState } from "vuex";
-import AppBar from "@/views/AppBar";
-import NavigationBar from "@/views/NavigationBar";
-import SplashScreen from "@/views/SplashScreen";
+import AppBar from "@/views/appbar/AppBar";
+import NavigationBar from "@/views/navigation/NavigationBar";
+import SplashScreen from "@/views/splash/SplashScreen";
 import EventBus from "@/events";
-import { getCoverage } from "@/utils";
-import CoverageWorker from "@/utils/utils.worker";
 
 export default {
 	name: "App",
@@ -59,38 +52,17 @@ export default {
 			left: false,
 			right: false,
 			transitionName: null,
-			isLoadError: false,
-			isRendering: false,
-			isLoading: true
 		};
 	},
-
+	computed: {
+		...mapState(["isLoaded"]),
+	},
 	components: {
 		AppBar,
 		NavigationBar,
-		SplashScreen
+		SplashScreen,
 	},
 	async created() {
-		const worker = await new CoverageWorker();
-		try {
-			this.isLoading = true;
-			const { countries, coverage, regions } = await worker.getAll();
-			this.isRendering = true;
-			// Allow time for the splash screen to update
-			// Why does not nexttick work???
-			setTimeout(() => {
-				this.$store.commit("setData", Object.freeze(countries));
-				this.$store.commit("setCoverage", Object.freeze(coverage));
-				this.$store.commit("setRegions", Object.freeze(regions));
-				this.isLoading = false;
-				this.isRendering = false;
-			}, 1000);
-		} catch (error) {
-			console.log(error);
-			this.$root.gaExperience("error", error);
-			this.isLoadError = true;
-		}
-
 		this.$router.beforeEach((to, from, next) => {
 			if (from.name === "world" && to.name === "region") {
 				this.transitionName = "slide-left";
@@ -107,10 +79,9 @@ export default {
 			} else {
 				this.transitionName = "fade";
 			}
-
 			next();
 		});
-	}
+	},
 };
 </script>
 

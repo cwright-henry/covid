@@ -1,12 +1,22 @@
 import { getCoverage } from './coverage'
-
 if (typeof window != "object")
     self.window = self;
 
-export default class CoverageWorker {
-    constructor() {
+/**
+ * See https://github.com/webpack-contrib/worker-loader#config
+ */
+onmessage = async (event) => {
+    try {
+        const results = await getCoverage();
+        postMessage({
+            type: 'complete',
+            results
+        });
     }
-    async getAll() {
-        return getCoverage();
+    catch (error) {
+        postMessage({
+            type: 'error',
+            error
+        });
     }
-}
+};

@@ -3,10 +3,9 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 import { uuid } from "@/utils";
 
-const options = vm => {
+const options = (vm) => {
 	return {
 		chart: {
 			backgroundColor: vm._props.backgroundColor,
@@ -16,41 +15,41 @@ const options = vm => {
 			width: 220,
 			height: 64,
 			style: {
-				overflow: "visible"
+				overflow: "visible",
 			},
-			skipClone: true
+			skipClone: true,
 		},
 		title: {
-			text: ""
+			text: "",
 		},
 		credits: {
-			enabled: false
+			enabled: false,
 		},
 		xAxis: {
 			labels: {
-				enabled: false
+				enabled: false,
 			},
 			title: {
-				text: null
+				text: null,
 			},
 			lineWidth: 0,
 			startOnTick: false,
 			endOnTick: false,
-			tickPositions: []
+			tickPositions: [],
 		},
 		yAxis: {
 			endOnTick: false,
 			startOnTick: false,
 			labels: {
-				enabled: false
+				enabled: false,
 			},
 			title: {
-				text: null
+				text: null,
 			},
-			tickPositions: []
+			tickPositions: [],
 		},
 		legend: {
-			enabled: false
+			enabled: false,
 		},
 		tooltip: {
 			animation: true,
@@ -59,8 +58,8 @@ const options = vm => {
 			split: true,
 			backgroundColor: "#212121",
 			style: {
-				color: "#ffffff"
-			}
+				color: "#ffffff",
+			},
 		},
 		plotOptions: {
 			series: {
@@ -69,26 +68,26 @@ const options = vm => {
 				shadow: false,
 				states: {
 					hover: {
-						lineWidth: 1
-					}
+						lineWidth: 1,
+					},
 				},
 				color: "#2196F3",
 				marker: {
 					radius: 1,
 					states: {
 						hover: {
-							radius: 2
-						}
-					}
+							radius: 2,
+						},
+					},
 				},
 				fillOpacity: 0.15,
-				borderColor: "#fff"
+				borderColor: "#fff",
 			},
 			column: {
 				negativeColor: "#910000",
-				borderColor: "#fff"
-			}
-		}
+				borderColor: "#fff",
+			},
+		},
 	};
 };
 
@@ -96,23 +95,23 @@ export default {
 	props: {
 		ts: {
 			type: Array,
-			default: () => []
+			default: () => [],
 		},
 		backgroundColor: {
 			type: String,
-			default: "rgba(0, 0, 0, 0)"
-		}
+			default: "rgba(0, 0, 0, 0)",
+		},
 	},
 	data() {
 		return {
 			options: options(this),
-			ref: `covid-columnchart-${uuid()}`
+			ref: `covid-columnchart-${uuid()}`,
 		};
 	},
 	watch: {
 		ts() {
 			this.render();
-		}
+		},
 	},
 	mounted() {
 		this.render();
@@ -124,7 +123,7 @@ export default {
 				this.clearSeries();
 				setTimeout(() => {
 					chart.addSeries({
-						data: this.ts
+						data: this.ts,
 					});
 
 					chart.reflow();
@@ -137,7 +136,7 @@ export default {
 			while (chart.series.length > 0) {
 				chart.series[0].remove(false);
 			}
-		}
-	}
+		},
+	},
 };
 </script>

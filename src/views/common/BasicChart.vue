@@ -3,14 +3,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 import { uuid } from "@/utils";
 
 /**
  * Taking the forward and backward 3 seems to be the way to
  * Taking the previous 7 presents a lag
  */
-const SMA_AVG = data => {
+const SMA_AVG = (data) => {
 	const moveMean = [];
 
 	for (var i = 3; i < data.length - 3; i++) {
@@ -29,61 +28,61 @@ const SMA_AVG = data => {
 	return moveMean;
 };
 
-const options = vm => {
+const options = (vm) => {
 	return {
 		chart: {
 			height: vm._props.height,
 			backgroundColor: vm._props.backgroundColor,
 			zoomType: "x",
 			spacingRight: 12,
-			animation: true
+			animation: true,
 		},
 		title: {
-			text: null
+			text: null,
 		},
 		credits: {
-			enabled: false
+			enabled: false,
 		},
 		legend: {
-			enabled: false
+			enabled: false,
 		},
 		tooltip: {},
 		xAxis: {
 			title: {
-				text: ""
+				text: "",
 			},
 			alignTicks: true,
 			type: "datetime",
 			gridLineColor: "#707073",
 			labels: {
 				style: {
-					color: "#E0E0E3"
-				}
-			},
-			lineColor: "#707073",
-			minorGridLineColor: "#505053",
-			tickColor: "#707073",
-			tickWidth: 1
-		},
-		yAxis: {
-			title: {
-				text: ""
-			},
-			labels: {
-				align: "right"
-			},
-			offset: 0,
-			gridLineColor: "#707073",
-			labels: {
-				style: {
-					color: "#E0E0E3"
-				}
+					color: "#E0E0E3",
+				},
 			},
 			lineColor: "#707073",
 			minorGridLineColor: "#505053",
 			tickColor: "#707073",
 			tickWidth: 1,
-			min: 0
+		},
+		yAxis: {
+			title: {
+				text: "",
+			},
+			labels: {
+				align: "right",
+			},
+			offset: 0,
+			gridLineColor: "#707073",
+			labels: {
+				style: {
+					color: "#E0E0E3",
+				},
+			},
+			lineColor: "#707073",
+			minorGridLineColor: "#505053",
+			tickColor: "#707073",
+			tickWidth: 1,
+			min: 0,
 		},
 		series: [],
 		plotOptions: {
@@ -92,13 +91,13 @@ const options = vm => {
 				color: "#2196F3",
 				marker: {
 					enabled: true,
-					radius: 3
-				}
+					radius: 3,
+				},
 			},
 			bar: {
-				opacity: 0.5
-			}
-		}
+				opacity: 0.5,
+			},
+		},
 	};
 };
 
@@ -111,43 +110,43 @@ export default {
 			type: Array,
 			default: () => {
 				return [];
-			}
+			},
 		},
 		chartType: {
 			type: String,
-			default: "line"
+			default: "line",
 		},
 		color: {
 			type: String,
-			default: "#2196F3"
+			default: "#2196F3",
 		},
 		showSMA: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		name: {
 			type: String,
-			default: ""
+			default: "",
 		},
 		height: {
 			type: String,
-			default: "320"
+			default: "320",
 		},
 		backgroundColor: {
 			type: String,
-			default: "rgba(0, 0, 0, 0)"
-		}
+			default: "rgba(0, 0, 0, 0)",
+		},
 	},
 	data() {
 		return {
 			ref: `covid-basicchart-${uuid()}`,
-			options: options(this)
+			options: options(this),
 		};
 	},
 	watch: {
 		ts() {
 			this.render();
-		}
+		},
 	},
 	mounted() {
 		this.render();
@@ -163,7 +162,7 @@ export default {
 						type: this.chartType,
 						color: this.color,
 						data: this.ts,
-						name: this.name
+						name: this.name,
 					});
 
 					if (this.showSMA) {
@@ -175,11 +174,11 @@ export default {
 							lineWidth: 3,
 							color: this.color,
 							marker: {
-								enabled: false
+								enabled: false,
 							},
 							tooltip: {
-								valueDecimals: 0
-							}
+								valueDecimals: 0,
+							},
 						});
 					}
 					chart.reflow();
@@ -205,8 +204,8 @@ export default {
 					true
 				);
 			}
-		}
-	}
+		},
+	},
 };
 </script>
 

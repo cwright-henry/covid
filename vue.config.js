@@ -1,22 +1,25 @@
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/covid/' : '/',
-  "transpileDependencies": [
-    "vuetify"
-  ],
-  configureWebpack: (config) => {
-    config.module.rules = [
-      {
-        test: /\.worker\.js$/i,
-        use: [
-          {
-            loader: 'comlink-loader',
-            options: {
-              singleton: true
-            }
-          }
-        ]
-      },
-      ...config.module.rules
-    ]
-  }
+	publicPath: process.env.NODE_ENV === 'production' ? '/covid/' : '/',
+	"transpileDependencies": [
+		"vuetify"
+	],
+	configureWebpack: (config) => {
+		config.module.rules = [
+			{
+				test: /\.worker\.(c|m)?js$/i,
+				use: [
+					{
+						loader: 'worker-loader',
+					},
+					{
+						loader: 'babel-loader',
+						options: {
+							presets: ['@babel/preset-env'],
+						},
+					},
+				],
+			},
+			...config.module.rules
+		]
+	}
 }

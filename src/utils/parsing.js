@@ -37,6 +37,7 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 		);
 		if (entries.length > 0) {
 			const name = findReplacementName(country.name);
+			const population = country.alpha2Code === 'IE' ? 4937786 : country.population
 			const item = {
 				uuid: uuid(),
 				countryName: name,
@@ -44,7 +45,7 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 				countryCode: country.alpha2Code,
 				countryCode3: country.alpha3Code,
 				flag: country.flag,
-				population: country.population,
+				population,
 				lat: country.latlng[0],
 				lng: country.latlng[1],
 				borders: country.borders,
@@ -58,15 +59,22 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 					entries,
 					country.alpha2Code,
 					usStatePopulation,
-					country.population
+					population
 				)
 			};
 			if (item.series.provinces.length > 0) {
 				item.geojson = createGeoJsonForCountry(item)
 			}
+
+			postMessage({
+				type: 'parse-country',
+			})
 			data.push(item);
 		}
 	}
+	postMessage({
+		type: 'parse-country-finished',
+	})
 	return data;
 }
 

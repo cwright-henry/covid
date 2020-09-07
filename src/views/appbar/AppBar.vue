@@ -5,9 +5,12 @@
 			<h1>
 				Covid 19 Watch
 				<span>Last Update: {{coverage.lastestDate | date-long}}</span>
-				<img src="@/assets/covid.png" height="36" width="36" />
+				<img src="@/assets/covid.png" height="24" width="24" />
 			</h1>
-			<RegionStats :region="coverage" isSlim />
+			<div class="covid-appbar--info">
+				<RegionStats :region="coverage" isSlim />
+				<MemoryUsage v-if="supportsMemory" class="mr-2 mt-2" />
+			</div>
 		</div>
 	</v-app-bar>
 </template>
@@ -16,21 +19,26 @@
 import { mapState } from "vuex";
 import EventBus from "@/events";
 import RegionStats from "@/views/common/RegionStats";
+import MemoryUsage from "./MemoryUsage";
 
 export default {
 	data() {
 		return {
-			windowWidth: 0
+			windowWidth: 0,
 		};
 	},
 	components: {
-		RegionStats
+		RegionStats,
+		MemoryUsage,
 	},
 	computed: {
 		...mapState(["coverage"]),
 		isProminent() {
 			return this.windowWidth > 520;
-		}
+		},
+		supportsMemory() {
+			return window.performance && window.performance.memory;
+		},
 	},
 	mounted() {
 		this.onResize();
@@ -41,8 +49,8 @@ export default {
 		},
 		onResize() {
 			this.windowWidth = window.innerWidth;
-		}
-	}
+		},
+	},
 };
 </script>
 
@@ -61,7 +69,7 @@ export default {
 		width: 100%;
 		span {
 			font-size: 13px;
-			margin:0 0 0 8px;
+			margin: 0 0 0 8px;
 		}
 		img {
 			position: absolute;
@@ -76,6 +84,11 @@ export default {
 			transform: rotate(360deg);
 		}
 	}
+}
+.covid-appbar--info {
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
 }
 
 @media screen and (max-width: 1000px) {

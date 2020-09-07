@@ -1,6 +1,5 @@
 import { load } from '@/services/Api';
 import { parseWorld, createSeriesCoverage, createSeriesRegion } from './parsing'
-import { parseIreland } from './parseIE'
 
 class Coverage {
     static COUNTRY_URL = "https://restcountries.eu/rest/v2/all";
@@ -8,16 +7,9 @@ class Coverage {
     static IRELAND_URL = "https://services1.arcgis.com/eNO7HHeQ3rUcBllm/arcgis/rest/services/Covid19CountyStatisticsHPSCIrelandOpenData/FeatureServer/0/query?where=TimeStampDate%20%3E%3D%20TIMESTAMP%20%272020-05-20%2000%3A00%3A00%27%20&outFields=CountyName,PopulationCensus16,Lat,Long,ConfirmedCovidCases,TimeStampDate&outSR=4326&f=json"
     static US_POPULATION = "https://datausa.io/api/data?drilldowns=State&measures=Population&year=latest";
 
-    static async parse(countryData, casesData, irelandData, usStatePopulation) {
+    static async parse(countryData, casesData, usStatePopulation) {
         return new Promise(resolve => {
             const countries = parseWorld(countryData, casesData, usStatePopulation);
-            const ireland = parseIreland(irelandData);
-            const ieData = countries.find(item => item.countryCode === "IE");
-            if (ieData) {
-                // ieData.geojson = ireland.geojson;
-                ieData.population = 4937786 // ireland.population;
-                // ieData.series.provinces = ireland.provinces;
-            }
 
             const coverage = createSeriesCoverage(countries);
             const regions = createSeriesRegion(countries);
@@ -26,14 +18,16 @@ class Coverage {
     }
 
     static async getAll() {
-        const [countryData, casesData, irelandData, usStatePopulation] = await Promise.all([
-            load(Coverage.COUNTRY_URL),
-            load(Coverage.CASES_URL),
-            load(Coverage.IRELAND_URL),
-            load(Coverage.US_POPULATION)
+        const [countryData, casesData, usStatePopulation] = await Promise.all([
+            load(Coverage.COUNTRY_URL, "COUNTRY_LIST"),
+            load(Coverage.CASES_URL, "COVID_DATA"),
+            load(Coverage.US_POPULATION, "US_POPULATION")
         ]);
+        postMessage({
+            type: 'processing-data',
+        })
 
-        return await this.parse(countryData, casesData, irelandData, usStatePopulation)
+        return await this.parse(countryData, casesData, usStatePopulation)
     }
 }
 

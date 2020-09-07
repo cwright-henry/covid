@@ -3,11 +3,8 @@
 		<div class="covid-sheet">
 			<header>
 				<div class="covid-country--title">
-					<img :src="country.flag" width="36" class="mr-3" />
-					<h1>
-						{{country.countryName}}
-						<span>Last Update: {{lastUpdate | date-long}}</span>
-					</h1>
+					<img :src="country.flag" width="36" class="mr-2" />
+					<h1>{{country.countryName}}</h1>
 				</div>
 				<v-spacer></v-spacer>
 				<div class="covid-country--nav-btns">
@@ -139,20 +136,20 @@ export default {
 					provinces: [],
 					ts: {},
 					stats: {},
-					geojson: {}
-				}
-			}
+					geojson: {},
+				},
+			},
 		};
 	},
 	components: {
 		BasicChart,
-		RegionStats
+		RegionStats,
 	},
 	props: {
 		countryCode: {
 			type: String,
-			default: ""
-		}
+			default: "",
+		},
 	},
 	computed: {
 		...mapGetters(["findCountry"]),
@@ -175,7 +172,7 @@ export default {
 				][0];
 			}
 			return "";
-		}
+		},
 	},
 	mounted() {
 		this.loadData();
@@ -183,7 +180,7 @@ export default {
 	watch: {
 		countryCode() {
 			this.loadData();
-		}
+		},
 	},
 	methods: {
 		loadData() {
@@ -192,8 +189,8 @@ export default {
 				this.countryCode
 			); /* Used by Navigation */
 			this.country = Object.freeze(this.findCountry(this.countryCode));
-		}
-	}
+		},
+	},
 };
 </script>
 
@@ -224,6 +221,7 @@ header {
 	.covid-country--title {
 		display: flex;
 		align-items: center;
+		margin: 0 0 4px;
 		h1 {
 			font-size: 24px;
 			font-weight: 400;

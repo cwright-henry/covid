@@ -1,0 +1,310 @@
+<template>
+	<div class="covid-splashscreen">
+		<div class="loading-wrapper">
+			<h1>Covid 19 Watch</h1>
+			<div class="animated-image">
+				<img src="@/assets/covid.png" height="64" width="64" />
+			</div>
+			<ul>
+				<li>
+					<div class="covid-splashscreen--status">
+						<v-icon size="18" color="#4CAF50" v-if="countryData.isFinished">mdi-check</v-icon>
+						<v-icon size="18" color="#F44336" v-else-if="countryData.isError">mdi-alert-circle</v-icon>
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-else-if="countryData.isLoading || countryData.isConnecting"
+						>mdi-arrow-right-bold</v-icon>
+					</div>
+					<label>Loading Country List</label>
+					<div class="covid-splashscreen--size" v-if="countryData.isConnecting">connecting...</div>
+					<div
+						class="covid-splashscreen--size"
+						v-else-if="countryData.isLoading || countryData.isFinished"
+					>
+						{{countryData.comtentSize | number(0)}}
+						<span class="mx-2">KB</span>
+					</div>
+					<div class="covid-splashscreen--size" v-else-if="countryData.isError">No Connection</div>
+				</li>
+				<li>
+					<div class="covid-splashscreen--status">
+						<v-icon size="18" color="#4CAF50" v-if="usStatsData.isFinished">mdi-check</v-icon>
+						<v-icon size="18" color="#F44336" v-else-if="usStatsData.isError">mdi-alert-circle</v-icon>
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-else-if="usStatsData.isLoading || usStatsData.isConnecting"
+						>mdi-arrow-right-bold</v-icon>
+					</div>
+					<label>Loading US Statistics</label>
+					<div class="covid-splashscreen--size" v-if="usStatsData.isConnecting">connecting...</div>
+					<div
+						class="covid-splashscreen--size"
+						v-else-if="usStatsData.isLoading || usStatsData.isFinished"
+					>
+						{{usStatsData.comtentSize | number(0)}}
+						<span class="mx-2">KB</span>
+					</div>
+					<div class="covid-splashscreen--size" v-else-if="usStatsData.isError">No Connection</div>
+				</li>
+				<li>
+					<div class="covid-splashscreen--status">
+						<v-icon size="18" color="#4CAF50" v-if="covidData.isFinished">mdi-check</v-icon>
+						<v-icon size="18" color="#F44336" v-else-if="covidData.isError">mdi-alert-circle</v-icon>
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-else-if="covidData.isLoading || covidData.isConnecting"
+						>mdi-arrow-right-bold</v-icon>
+					</div>
+					<label>Loading Covid Data</label>
+					<div class="covid-splashscreen--size" v-if="covidData.isConnecting">connecting...</div>
+					<div class="covid-splashscreen--size" v-else-if="covidData.isLoading || covidData.isFinished">
+						{{covidData.comtentSize | number(0)}}
+						<span class="mx-2">KB</span>
+					</div>
+					<div class="covid-splashscreen--size" v-else-if="covidData.isError">No Connection</div>
+				</li>
+				<li>
+					<div class="covid-splashscreen--status">
+						<v-icon size="18" color="#4CAF50" v-if="processing.isFinished">mdi-check</v-icon>
+						<v-icon size="18" color="#4CAF50" v-else-if="processing.inProgress">mdi-arrow-right-bold</v-icon>
+					</div>
+					<label>Processed Countries</label>
+					<div class="covid-splashscreen--size">
+						<span class="mx-2">{{processing.comtentSize | number(0)}}</span>
+					</div>
+				</li>
+				<li :class="{finished:processing.isFinished}" class="covid-splashscreen--rendering mt-6">
+					<div>Rendering Application</div>
+					<v-progress-linear color="#FFEB3B" class="mt-4" buffer-value="0" stream></v-progress-linear>
+				</li>
+			</ul>
+		</div>
+	</div>
+</template>
+
+<script>
+import Worker from "@/utils/utils.worker";
+
+export default {
+	data() {
+		return {
+			countryData: {
+				isError: false,
+				isConnecting: false,
+				isLoading: false,
+				isFinished: false,
+				comtentSize: 0,
+			},
+			usStatsData: {
+				isError: false,
+				isConnecting: false,
+				isLoading: false,
+				isFinished: false,
+				comtentSize: 0,
+			},
+			covidData: {
+				isError: false,
+				isConnecting: false,
+				isLoading: false,
+				isFinished: false,
+				comtentSize: 0,
+			},
+			processing: {
+				inProgress: false,
+				isFinished: false,
+				comtentSize: 0,
+			},
+		};
+	},
+	mounted() {
+		const worker = new Worker();
+		worker.postMessage({ msg: "getCoverage" });
+
+		worker.onmessage = (event) => {
+			switch (event.data.type) {
+				case "complete":
+					const { countries, coverage, regions } = event.data.results;
+					this.$store.commit("setData", Object.freeze(countries));
+					this.$store.commit("setCoverage", Object.freeze(coverage));
+					this.$store.commit("setRegions", Object.freeze(regions));
+					worker.terminate();
+					// this.$store.commit("isLoaded", true);
+					break;
+				case "url-download-started":
+					if (event.data.contentId === "COUNTRY_LIST") {
+						this.countryData.isConnecting = true;
+					}
+					if (event.data.contentId === "US_POPULATION") {
+						this.usStatsData.isConnecting = true;
+					}
+					if (event.data.contentId === "COVID_DATA") {
+						this.covidData.isConnecting = true;
+					}
+					break;
+				case "url-download-in-progress":
+					if (event.data.contentId === "COUNTRY_LIST") {
+						this.countryData.isConnecting = false;
+						this.countryData.isLoading = true;
+						this.countryData.comtentSize =
+							event.data.receivedLength / 1024;
+					}
+					if (event.data.contentId === "US_POPULATION") {
+						this.usStatsData.isConnecting = false;
+						this.usStatsData.isLoading = true;
+						this.usStatsData.comtentSize =
+							event.data.receivedLength / 1024;
+					}
+					if (event.data.contentId === "COVID_DATA") {
+						this.covidData.isConnecting = false;
+						this.covidData.isLoading = true;
+						this.covidData.comtentSize =
+							event.data.receivedLength / 1024;
+					}
+					break;
+					break;
+				case "url-download-finished":
+					if (event.data.contentId === "COUNTRY_LIST") {
+						this.countryData.isFinished = true;
+						this.countryData.isLoading = false;
+					}
+					if (event.data.contentId === "US_POPULATION") {
+						this.usStatsData.isFinished = true;
+						this.usStatsData.isLoading = false;
+					}
+					if (event.data.contentId === "COVID_DATA") {
+						this.covidData.isFinished = true;
+						this.covidData.isLoading = false;
+					}
+					break;
+				case "url-download-error":
+					if (event.data.contentId === "COUNTRY_LIST") {
+						this.countryData.isConnecting = false;
+						this.countryData.isLoading = false;
+						this.countryData.isError = true;
+					}
+					if (event.data.contentId === "US_POPULATION") {
+						this.usStatsData.isConnecting = false;
+						this.usStatsData.isLoading = false;
+						this.usStatsData.isError = true;
+					}
+					if (event.data.contentId === "COVID_DATA") {
+						this.covidData.isConnecting = false;
+						this.covidData.isLoading = false;
+						this.covidData.isError = true;
+					}
+					break;
+				case "processing-data":
+					this.processing.inProgress = true;
+					break;
+				case "parse-country":
+					this.processing.comtentSize += 1;
+					break;
+				case "parse-country-finished":
+					this.processing.inProgress = false;
+					this.processing.isFinished = true;
+					break;
+			}
+		};
+
+		worker.onerror = (event) => {
+			console.log(event.data);
+			this.$root.gaExperience("error", event.data);
+			this.loadStatus.status = "error";
+		};
+	},
+
+	methods: {
+		reload() {
+			window.location.reload(false);
+		},
+	},
+};
+</script>
+
+
+<style lang="less">
+.covid-splashscreen {
+	display: flex;
+	height: 100vh;
+	align-items: center;
+	justify-content: center;
+	background: center/cover url("/img/background.jpg") no-repeat;
+	position: relative;
+
+	.loading-wrapper {
+		max-width: 820px;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		margin: -48px 0 0 0;
+
+		h1 {
+			color: #fff;
+			font-weight: 300;
+			font-size: 42px;
+			margin: 0 0 16px;
+			background-color: rgba(0, 0, 0, 0.1);
+			font-family: "Merriweather", serif;
+		}
+
+		.animated-image {
+			position: absolute;
+			right: 20px;
+			top: 20px;
+			img {
+				height: 48px;
+				width: 48px;
+				animation: spin 24s linear infinite;
+			}
+		}
+		ul {
+			margin: 24px 0 0 0;
+			font-weight: 300;
+			font-size: 18px;
+			li {
+				display: flex;
+				align-items: center;
+				margin: 8px 0;
+				border: 1px solid #424242;
+				background-color: rgba(0, 0, 0, 0.85);
+				border-radius: 4px;
+				padding: 8px;
+				label {
+					width: 200px;
+				}
+				.covid-splashscreen--status {
+					width: 56px;
+					text-align: center;
+				}
+				.covid-splashscreen--size {
+					width: 120px;
+					text-align: right;
+					word-break: keep-all;
+				}
+				&.covid-splashscreen--rendering {
+					justify-content: center;
+					border: none;
+					background-color: transparent;
+					flex-direction: column;
+					visibility: hidden;
+					font-size: 20px;
+					&.finished {
+						visibility: visible;
+					}
+				}
+			}
+		}
+	}
+
+	@keyframes spin {
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+}
+</style>
