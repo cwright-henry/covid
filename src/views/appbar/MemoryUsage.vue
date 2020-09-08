@@ -33,7 +33,7 @@ export default {
 			this.latestMemory = [date, usedHeap];
 			setTimeout(() => {
 				this.startPolling();
-			}, 2000);
+			}, 1000);
 		},
 	},
 };

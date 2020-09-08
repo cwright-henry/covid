@@ -73,7 +73,7 @@ const options = (vm) => {
 						time = new Date().getTime(),
 						i;
 
-					for (i = -19; i <= 0; i += 1) {
+					for (i = -29; i <= 0; i += 1) {
 						data.push({
 							x: time + i * 1000,
 							y: 0,
@@ -133,6 +133,10 @@ export default {
 		render() {
 			const chart = this.$refs[this.ref].chart;
 			chart.get("memorySeries").addPoint(this.data, true, true);
+			const extremes = chart.yAxis[0].getExtremes();
+			const min = extremes.dataMin - extremes.dataMin * 0.1;
+			const max = extremes.dataMax + extremes.dataMax * 0.1;
+			chart.yAxis[0].setExtremes(min, max);
 		},
 	},
 };
