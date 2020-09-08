@@ -2,10 +2,10 @@
 	<div class="covid-memory">
 		<highcharts :options="options" :ref="ref"></highcharts>
 		<div class="covid-memory-info ml-2">
-			<span>Memory</span>
+			<span>{{title}}</span>
 			<span>
-				{{data[1] | number(1)}}
-				<span>MB</span>
+				{{data[1] | number(precision)}}
+				<span>{{units}}</span>
 			</span>
 		</div>
 	</div>
@@ -110,6 +110,22 @@ export default {
 			type: Array,
 			default: () => [],
 		},
+		title: {
+			type: String,
+			default: "",
+		},
+		precision: {
+			type: Number,
+			default: 0,
+		},
+		setExtremes: {
+			type: Boolean,
+			default: false,
+		},
+		units: {
+			type: String,
+			default: "",
+		},
 		backgroundColor: {
 			type: String,
 			default: "rgba(100, 0, 0, 0)",
@@ -133,10 +149,12 @@ export default {
 		render() {
 			const chart = this.$refs[this.ref].chart;
 			chart.get("memorySeries").addPoint(this.data, true, true);
-			const extremes = chart.yAxis[0].getExtremes();
-			const min = extremes.dataMin - extremes.dataMin * 0.1;
-			const max = extremes.dataMax + extremes.dataMax * 0.1;
-			chart.yAxis[0].setExtremes(min, max);
+			if (this.setExtremes) {
+				const extremes = chart.yAxis[0].getExtremes();
+				const min = extremes.dataMin - extremes.dataMin * 0.1;
+				const max = extremes.dataMax + extremes.dataMax * 0.1;
+				chart.yAxis[0].setExtremes(min, max);
+			}
 		},
 	},
 };

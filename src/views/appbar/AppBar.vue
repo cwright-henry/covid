@@ -9,7 +9,7 @@
 			</h1>
 			<div class="covid-appbar--info">
 				<RegionStats :region="coverage" isSlim />
-				<MemoryUsage v-if="supportsMemory" class="mr-2 mt-2" />
+				<Performance v-if="supportsMemory" class="mr-2 mt-2" />
 			</div>
 		</div>
 	</v-app-bar>
@@ -19,7 +19,7 @@
 import { mapState } from "vuex";
 import EventBus from "@/events";
 import RegionStats from "@/views/common/RegionStats";
-import MemoryUsage from "./MemoryUsage";
+import Performance from "./Performance";
 
 export default {
 	data() {
@@ -29,7 +29,7 @@ export default {
 	},
 	components: {
 		RegionStats,
-		MemoryUsage,
+		Performance,
 	},
 	computed: {
 		...mapState(["coverage"]),
