@@ -1,16 +1,7 @@
 export const GA = {
 	methods: {
 		/**
-		 * e.g. User clicked on popup's
-		 */
-		gaNavigation(action, label) {
-			window.gtag('event', action, {
-				event_category: 'navigation',
-				event_label: label
-			});
-		},
-		/**
-		 * e.g. User clicked
+		 * e.g. User clicked, general interactions
 		 */
 		gaInteraction(action, label) {
 			window.gtag('event', action, {
@@ -19,11 +10,11 @@ export const GA = {
 			});
 		},
 		/**
-		 * e.g. User viewed/experienced a snack bar
+		 * e.g. User experinced an error
 		 */
-		gaExperience(action, label) {
+		gaError(action, label) {
 			window.gtag('event', action, {
-				event_category: 'experience',
+				event_category: 'error',
 				event_label: label
 			});
 		}

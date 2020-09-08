@@ -211,7 +211,7 @@ export default {
 
 		worker.onerror = (event) => {
 			console.log(event.data);
-			this.$root.gaExperience("error", event.data);
+			this.$root.gaError("error", event.data);
 			this.loadStatus.status = "error";
 		};
 	},

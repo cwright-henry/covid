@@ -61,12 +61,12 @@ Vue.filter('date-day', function (value) {
 });
 
 Vue.config.errorHandler = function (err, vm, info) {
-	GA.methods.gaExperience("Vue Error Handler", `Vue Error - ${err} - ${info}`);
+	GA.methods.gaError("Vue Error Handler", `Vue Error - ${err} - ${info}`);
 	console.log(err)
 }
 
 window.onerror = function (msg, url, line, col, error) {
-	GA.methods.gaExperience("Window Error Handler", `Window Error - ${msg} - ${line} - ${col} - ${error}`);
+	GA.methods.gaError("Window Error Handler", `Window Error - ${msg} - ${line} - ${col} - ${error}`);
 	console.log(error)
 }
 
