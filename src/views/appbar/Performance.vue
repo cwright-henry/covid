@@ -39,6 +39,9 @@ export default {
 			}, 1000);
 		},
 
+		/**
+		 * https://gist.github.com/capfsb/3fd1b700b4732debb29aefd576cf54ef
+		 */
 		startFPSPolling() {
 			const fpsMeter = () => {
 				let prevTime = Date.now(),

@@ -44,19 +44,19 @@ export default {
 		coverage: {
 			type: Object,
 			default: () => ({
-				history: []
-			})
+				history: [],
+			}),
 		},
 		currentFilter: {
 			type: String,
-			default: ""
-		}
+			default: "",
+		},
 	},
 	data: () => ({
 		current: 0,
 		isPlaying: false,
 		timer: null,
-		isDisabled: false
+		isDisabled: false,
 	}),
 
 	computed: {
@@ -67,18 +67,18 @@ export default {
 			if (this.coverage.history[this.current])
 				return this.coverage.history[this.current].date;
 			return "";
-		}
+		},
 	},
 	watch: {
 		coverage: {
-			handler: function() {
+			handler: function () {
 				this.current = this.coverage.history.length - 1;
 			},
-			immediate: true
+			immediate: true,
 		},
 		currentFilter() {
 			this.reset();
-		}
+		},
 	},
 	methods: {
 		toggle() {
@@ -128,8 +128,8 @@ export default {
 			clearTimeout(this.timer);
 			this.current = this.max;
 			this.isDisabled = this.currentFilter === "population";
-		}
-	}
+		},
+	},
 };
 </script>
 
