@@ -79,7 +79,6 @@ export default {
 		render() {
 			const chart = this.$refs[this.ref].chart;
 			if (this.regions.length > 0) {
-				console.log(this.regions);
 				this.clearSeries();
 				setTimeout(() => {
 					const slices = this.regions.map((item) => ({
