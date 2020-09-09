@@ -86,6 +86,9 @@ const options = (vm) => {
 		},
 		series: [],
 		plotOptions: {
+			series: {
+				animation: true,
+			},
 			line: {
 				lineWidth: 1,
 				color: "#2196F3",

@@ -71,7 +71,7 @@
 						<v-icon size="18" color="#4CAF50" v-if="processing.isFinished">mdi-check</v-icon>
 						<v-icon size="18" color="#4CAF50" v-else-if="processing.inProgress">mdi-arrow-right-bold</v-icon>
 					</div>
-					<label>Processed Countries</label>
+					<label>Population Analysed</label>
 					<div class="covid-splashscreen--size">
 						<span class="mx-2">{{processing.comtentSize | number(0)}}</span>
 					</div>
@@ -200,7 +200,7 @@ export default {
 					this.processing.inProgress = true;
 					break;
 				case "parse-country":
-					this.processing.comtentSize += 1;
+					this.processing.comtentSize += event.data.population;
 					break;
 				case "parse-country-finished":
 					this.processing.inProgress = false;
@@ -234,13 +234,13 @@ export default {
 	position: relative;
 
 	.loading-wrapper {
-		max-width: 820px;
+		max-width: 520px;
 		width: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
-		margin: -48px 0 0 0;
+		margin: -32px 0 0 0;
 
 		h1 {
 			color: #fff;
@@ -281,7 +281,7 @@ export default {
 					text-align: center;
 				}
 				.covid-splashscreen--size {
-					width: 120px;
+					width: 130px;
 					text-align: right;
 					word-break: keep-all;
 				}

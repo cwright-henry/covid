@@ -140,7 +140,7 @@ export default {
 		return {
 			scrollAmount: 0,
 			ANIMATION_IN: "animate__fadeInUp",
-			ANIMATION_TIME: "1.0s"
+			ANIMATION_TIME: "0.5s"
 		};
 	},
 	components: {

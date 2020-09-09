@@ -68,6 +68,7 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 
 			postMessage({
 				type: 'parse-country',
+				population
 			})
 			data.push(item);
 		}
