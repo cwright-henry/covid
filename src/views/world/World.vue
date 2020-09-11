@@ -14,7 +14,7 @@
 				</h1>
 				<div class="covid-world--charts__chart">
 					<div>
-						<PieChart :regions="regionData.confirmed" name="Total Confirmed" />
+						<StackedChart :series="stackedChartData.confirmed" />
 					</div>
 					<div>
 						<BasicChart
@@ -36,7 +36,7 @@
 				</h1>
 				<div class="covid-world--charts__chart">
 					<div>
-						<PieChart :regions="regionData.recovered" name="Total Recovered" />
+						<StackedChart :series="stackedChartData.recovered" />
 					</div>
 					<div>
 						<BasicChart
@@ -58,7 +58,7 @@
 				</h1>
 				<div class="covid-world--charts__chart">
 					<div>
-						<PieChart :regions="regionData.fatalities" name="Total Fatalities" />
+						<StackedChart :series="stackedChartData.fatalities" />
 					</div>
 					<div>
 						<BasicChart :ts="coverage.ts.deathDailySeries" chartType="bar" showSMA name="Daily Change" />
@@ -124,12 +124,14 @@ import WorldMapView from "./WorldMapView";
 import BasicChart from "@/views/common/BasicChart";
 import RegionStats from "@/views/common/RegionStats";
 import PieChart from "@/views/common/PieChart";
+import StackedChart from "@/views/common/StackedChart";
 import InfiniteScroll from "@/views/common/InfiniteScroll";
 import {
 	findColor,
+	findContinentColor,
 	objectSorter,
 	lightenDarkenColor,
-	animation
+	animation,
 } from "@/utils";
 
 const valueSorter = objectSorter("value", "asc");
@@ -140,7 +142,7 @@ export default {
 		return {
 			scrollAmount: 0,
 			ANIMATION_IN: "animate__fadeInUp",
-			ANIMATION_TIME: "0.5s"
+			ANIMATION_TIME: "0.5s",
 		};
 	},
 	components: {
@@ -148,7 +150,8 @@ export default {
 		WorldMapView,
 		RegionStats,
 		PieChart,
-		InfiniteScroll
+		StackedChart,
+		InfiniteScroll,
 	},
 	mixins: [animation],
 	computed: {
@@ -161,21 +164,49 @@ export default {
 			for (const region of this.regions) {
 				confirmed.push({
 					name: region.name,
-					value: region.stats.latestConfirmed
+					value: region.stats.latestConfirmed,
 				});
 				recovered.push({
 					name: region.name,
-					value: region.stats.latestRecovered
+					value: region.stats.latestRecovered,
 				});
 				fatalities.push({
 					name: region.name,
-					value: region.stats.latestDeaths
+					value: region.stats.latestDeaths,
 				});
 			}
 
 			confirmed.sort(valueSorter);
 			recovered.sort(valueSorter);
 			fatalities.sort(valueSorter);
+
+			return { confirmed, recovered, fatalities };
+		},
+		stackedChartData() {
+			const confirmed = [];
+			const recovered = [];
+			const fatalities = [];
+
+			for (let i = 0; i < this.regions.length; i++) {
+				const region = this.regions[i];
+				const color = findContinentColor(i);
+				const name = region.name;
+				confirmed.push({
+					name,
+					ts: region.ts.confirmedDailySeries,
+					color,
+				});
+				recovered.push({
+					name,
+					ts: region.ts.recoveredDailySeries,
+					color,
+				});
+				fatalities.push({
+					name,
+					ts: region.ts.deathDailySeries,
+					color,
+				});
+			}
 
 			return { confirmed, recovered, fatalities };
 		},
@@ -187,7 +218,7 @@ export default {
 		},
 		scrollable() {
 			return this.scrollAmount < this.regions.length;
-		}
+		},
 	},
 	beforeRouteLeave(to, from, next) {
 		if (from.name === "world" && to.name === "region") {
@@ -210,7 +241,7 @@ export default {
 				confirmed.push({
 					name: region.subRegion,
 					value: region.stats.latestConfirmed,
-					color: lightenDarkenColor(this.findAColor(index++), -10)
+					color: lightenDarkenColor(this.findAColor(index++), -10),
 				});
 			}
 
@@ -219,8 +250,8 @@ export default {
 
 		loadMore() {
 			this.scrollAmount += SCROLL_AMOUNT;
-		}
-	}
+		},
+	},
 };
 </script>
 

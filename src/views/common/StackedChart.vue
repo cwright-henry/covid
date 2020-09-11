@@ -6,63 +6,66 @@
 import { mapState } from "vuex";
 import { uuid } from "@/utils";
 
-const options = vm => {
+const options = (vm) => {
 	return {
 		chart: {
 			height: vm._props.height,
 			backgroundColor: vm._props.backgroundColor,
 			zoomType: "x",
-			animation: true
+			animation: true,
+			type: "areaspline",
 		},
 		title: {
-			text: null
+			text: null,
 		},
 		credits: {
-			enabled: false
+			enabled: false,
 		},
 		legend: {
 			enabled: true,
 			itemStyle: {
-				color: "#fff"
-			}
+				color: "#fff",
+			},
 		},
-		tooltip: {},
+		tooltip: {
+			pointFormat:
+				"<span>{series.name}</span>: <b>{point.percentage:.1f}%</b> ",
+			split: true,
+		},
 		xAxis: {
 			title: {
-				text: ""
+				text: "",
 			},
 			alignTicks: true,
 			type: "datetime",
 			gridLineColor: "#707073",
 			labels: {
 				style: {
-					color: "#E0E0E3"
-				}
-			},
-			lineColor: "#707073",
-			minorGridLineColor: "#505053",
-			tickColor: "#707073",
-			tickWidth: 1
-		},
-		yAxis: {
-			title: {
-				text: ""
-			},
-			labels: {
-				align: "right"
-			},
-			offset: 0,
-			gridLineColor: "#707073",
-			labels: {
-				style: {
-					color: "#E0E0E3"
-				}
+					color: "#E0E0E3",
+				},
 			},
 			lineColor: "#707073",
 			minorGridLineColor: "#505053",
 			tickColor: "#707073",
 			tickWidth: 1,
-			min: 0
+		},
+		yAxis: {
+			title: {
+				enabled: false,
+			},
+			labels: {
+				format: "{value}%",
+				style: {
+					color: "#E0E0E3",
+				},
+			},
+			offset: 0,
+			gridLineColor: "#707073",
+			lineColor: "#707073",
+			minorGridLineColor: "#505053",
+			tickColor: "#707073",
+			tickWidth: 1,
+			min: 0,
 		},
 		series: [],
 		plotOptions: {
@@ -70,21 +73,20 @@ const options = vm => {
 				lineWidth: 1.5,
 				marker: {
 					enabled: true,
-					radius: 2
-				}
+					radius: 2,
+				},
 			},
-			area: {
-				stacking: "normal",
+			areaspline: {
+				stacking: "percent",
 				lineColor: "#666666",
 				lineWidth: 1,
-				opacity: 0.1,
 				marker: {
 					enabled: false,
 					lineWidth: 1,
-					lineColor: "#666666"
-				}
-			}
-		}
+					lineColor: "#666666",
+				},
+			},
+		},
 	};
 };
 
@@ -92,27 +94,27 @@ export default {
 	props: {
 		series: {
 			type: Array,
-			default: () => []
+			default: () => [],
 		},
 		height: {
 			type: String,
-			default: "320"
+			default: "358",
 		},
 		backgroundColor: {
 			type: String,
-			default: "rgba(0, 0, 0, 0)"
-		}
+			default: "rgba(0, 0, 0, 0)",
+		},
 	},
 	data() {
 		return {
 			options: options(this),
-			ref: `covid-chart-${uuid()}`
+			ref: `covid-chart-${uuid()}`,
 		};
 	},
 	watch: {
 		series() {
 			this.update();
-		}
+		},
 	},
 	mounted() {
 		this.update();
@@ -126,10 +128,9 @@ export default {
 					for (let i = 0; i < this.series.length; i++) {
 						const series = this.series[i];
 						chart.addSeries({
-							type: series.type,
 							data: series.ts,
 							name: series.name,
-							color: series.color
+							color: series.color,
 						});
 					}
 					chart.reflow();
@@ -142,8 +143,9 @@ export default {
 			while (chart.series.length > 0) {
 				chart.series[0].remove(false);
 			}
-		}
-	}
+		},
+	},
 };
 </script>
+
 

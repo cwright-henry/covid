@@ -19,6 +19,14 @@ const colors = [
     "#ffc107",
 ];
 
+const continentColor = [
+    "#37474F",
+    "#1976D2",
+    "#BBDEFB",
+    "#673AB7",
+    "#FFEB3B",
+];
+
 /**
  * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze
  * 
@@ -44,6 +52,10 @@ export const deepFreeze = (object) => {
 
 export const findColor = index => {
     return colors[index % colors.length];
+};
+
+export const findContinentColor = index => {
+    return continentColor[index % continentColor.length];
 };
 
 /**
