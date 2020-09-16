@@ -80,6 +80,12 @@
 					<div>Rendering Application</div>
 					<v-progress-linear color="#FFEB3B" class="mt-4" buffer-value="0" stream></v-progress-linear>
 				</li>
+				<li :class="{'has-error':hasError}" class="covid-splashscreen--error mt-6" @click="reload">
+					<v-btn fab color="#F44336">
+						<v-icon size="28" color="#FFF">mdi-refresh</v-icon>
+					</v-btn>
+					<label>Refresh</label>
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -118,6 +124,15 @@ export default {
 				comtentSize: 0,
 			},
 		};
+	},
+	computed: {
+		hasError() {
+			return (
+				this.countryData.isError ||
+				this.usStatsData.isError ||
+				this.covidData.isError
+			);
+		},
 	},
 	mounted() {
 		const worker = new Worker();
@@ -292,8 +307,31 @@ export default {
 					flex-direction: column;
 					visibility: hidden;
 					font-size: 20px;
+					opacity: 0;
+					transition: opacity 0.375s ease;
 					&.finished {
 						visibility: visible;
+						opacity: 1;
+					}
+				}
+				&.covid-splashscreen--error {
+					justify-content: center;
+					flex-direction: column;
+					align-items: center;
+					background-color: transparent;
+					margin: -56px 0 0 0 !important;
+					border: none;
+					visibility: hidden;
+					opacity: 0;
+					transition: opacity 0.375s ease;
+					label {
+						width: auto;
+						font-size: 14px;
+						margin: 2px 0 0 0;
+					}
+					&.has-error {
+						visibility: visible;
+						opacity: 1;
 					}
 				}
 			}

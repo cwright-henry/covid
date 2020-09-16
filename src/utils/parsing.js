@@ -32,7 +32,6 @@ const findReplacementName = name => {
 export const parseWorld = (countries, cases, usStatePopulation) => {
 	const data = [];
 	for (const country of countries) {
-		if (country.alpha2Code === 'MO') continue;
 		const entries = cases.filter(
 			item => country.alpha2Code === item.CountryCode
 		);
