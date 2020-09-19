@@ -79,83 +79,6 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 	return data;
 }
 
-/**
- * Coverage/summary of all the countries
- * 
- * @param {*} countries List of supported countries
- */
-export const createSeriesCoverage = countries => {
-	const coverage = {
-		numCountries: countries.length,
-		lastestDate: null,
-		population: 0,
-		history: null,
-		stats: {
-			latestConfirmed: 0,
-			latestRecovered: 0,
-			latestDeaths: 0,
-			totalConfirmed: 0,
-			totalRecovered: 0,
-			totalDeaths: 0
-		},
-		ts: {
-			confirmedSeries: [],
-			recoveredSeries: [],
-			deathSeries: [],
-			confirmedDailySeries: [],
-			recoveredDailySeries: [],
-			deathDailySeries: []
-		}
-	};
-
-	const merge = (tsTo, tsFrom) => {
-		for (let i = 0; i < tsFrom.length; i++) {
-			const entry = tsFrom[i];
-			const current = tsTo.find(item => item[0] === entry[0]);
-			if (current) {
-				current[1] += entry[1];
-			} else {
-				tsTo.push([entry[0], entry[1]]);
-			}
-		}
-	};
-
-	for (let i = 0; i < countries.length; i++) {
-		const country = countries[i];
-
-		// Merge pop
-		coverage.population += country.population;
-
-		// Merge stats
-		coverage.stats.latestConfirmed += country.series.stats.latestConfirmed;
-		coverage.stats.latestRecovered += country.series.stats.latestRecovered;
-		coverage.stats.latestDeaths += country.series.stats.latestDeaths;
-		coverage.stats.totalConfirmed += country.series.stats.totalConfirmed;
-		coverage.stats.totalRecovered += country.series.stats.totalRecovered;
-		coverage.stats.totalDeaths += country.series.stats.totalDeaths;
-
-		// Merge ts
-		merge(coverage.ts.confirmedSeries, country.series.ts.confirmedSeries);
-		merge(coverage.ts.recoveredSeries, country.series.ts.recoveredSeries);
-		merge(coverage.ts.deathSeries, country.series.ts.deathSeries);
-		merge(coverage.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
-		merge(coverage.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
-		merge(coverage.ts.deathDailySeries, country.series.ts.deathDailySeries);
-
-		// lastest Date
-		coverage.lastestDate = ""
-		if (country.series.ts.confirmedSeries.length > 0) {
-			coverage.lastestDate = country.series.ts.confirmedSeries[country.series.ts.confirmedSeries.length - 1][0];
-		}
-	}
-
-	coverage.ts.confirmed14DaySeries = create14DayPer100k(coverage.population, coverage.ts.confirmedDailySeries);
-	coverage.stats.latestConfirmed14Day = getLatestFromSeries(coverage.ts.confirmed14DaySeries);
-	coverage.stats.totalConfirmed14Day = (coverage.stats.totalConfirmed / coverage.population) * 100000;
-
-	coverage.history = createGeoJsonHistoryForCountries(countries)
-	return coverage;
-}
 
 /**
  * Can only tell increasing or decreasing slope
@@ -244,6 +167,88 @@ const SMA_AVG = data => {
 };
 
 /**
+ * Coverage/summary of all the countries
+ * 
+ * @param {*} countries List of supported countries
+ */
+export const createSeriesCoverage = countries => {
+	const coverage = {
+		numCountries: countries.length,
+		lastestDate: null,
+		population: 0,
+		history: null,
+		stats: {
+			latestConfirmed: 0,
+			latestRecovered: 0,
+			latestDeaths: 0,
+			totalConfirmed: 0,
+			totalRecovered: 0,
+			totalDeaths: 0
+		},
+		ts: {
+			confirmedSeries: [],
+			recoveredSeries: [],
+			deathSeries: [],
+			confirmedDailySeries: [],
+			recoveredDailySeries: [],
+			deathDailySeries: []
+		}
+	};
+
+	const merge = (tsTo, tsFrom) => {
+		for (let i = 0; i < tsFrom.length; i++) {
+			const entry = tsFrom[i];
+			const current = tsTo.find(item => item[0] === entry[0]);
+			if (current) {
+				current[1] += entry[1];
+			} else {
+				tsTo.push([entry[0], entry[1]]);
+			}
+		}
+	};
+
+	for (let i = 0; i < countries.length; i++) {
+		const country = countries[i];
+
+		// Merge pop
+		coverage.population += country.population;
+
+		// Merge stats
+		coverage.stats.latestConfirmed += country.series.stats.latestConfirmed;
+		coverage.stats.latestRecovered += country.series.stats.latestRecovered;
+		coverage.stats.latestDeaths += country.series.stats.latestDeaths;
+		coverage.stats.totalConfirmed += country.series.stats.totalConfirmed;
+		coverage.stats.totalRecovered += country.series.stats.totalRecovered;
+		coverage.stats.totalDeaths += country.series.stats.totalDeaths;
+
+		// Merge ts
+		merge(coverage.ts.confirmedSeries, country.series.ts.confirmedSeries);
+		merge(coverage.ts.recoveredSeries, country.series.ts.recoveredSeries);
+		merge(coverage.ts.deathSeries, country.series.ts.deathSeries);
+		merge(coverage.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
+		merge(coverage.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
+		merge(coverage.ts.deathDailySeries, country.series.ts.deathDailySeries);
+
+		// lastest Date
+		coverage.lastestDate = ""
+		if (country.series.ts.confirmedSeries.length > 0) {
+			coverage.lastestDate = country.series.ts.confirmedSeries[country.series.ts.confirmedSeries.length - 1][0];
+		}
+	}
+
+	coverage.ts.confirmedSMASeries = SMA_AVG(coverage.ts.confirmedDailySeries)
+	coverage.ts.recoveredSMASeries = SMA_AVG(coverage.ts.recoveredDailySeries)
+	coverage.ts.deathSMASeries = SMA_AVG(coverage.ts.deathDailySeries)
+
+	coverage.ts.confirmed14DaySeries = create14DayPer100k(coverage.population, coverage.ts.confirmedDailySeries);
+	coverage.stats.latestConfirmed14Day = getLatestFromSeries(coverage.ts.confirmed14DaySeries);
+	coverage.stats.totalConfirmed14Day = (coverage.stats.totalConfirmed / coverage.population) * 100000;
+
+	coverage.history = createGeoJsonHistoryForCountries(countries)
+	return coverage;
+}
+
+/**
  * Creates timeseries, latest and totals for confirmed, recovered and fatalities.
  * Assumes that dates are ordered - is this correct?
  * 
@@ -289,10 +294,12 @@ const createSeriesData = (series, population) => {
 	const confirmed14DaySeries = create14DayPer100k(population, confirmedDailySeries);
 	const latestConfirmed14Day = getLatestFromSeries(confirmed14DaySeries);
 
-	const sma = SMA_AVG(confirmedDailySeries)
+	const confirmedSMASeries = SMA_AVG(confirmedDailySeries)
+	const recoveredSMASeries = SMA_AVG(recoveredDailySeries)
+	const deathSMASeries = SMA_AVG(deathDailySeries)
 
-	const len = sma.length;
-	const slope = getSlope(sma.slice(len - 14, len));
+	const len = confirmedSMASeries.length;
+	const slope = getSlope(confirmedSMASeries.slice(len - 14, len));
 
 	const totalConfirmed14Day = (totalConfirmed / population) * 100000;
 
@@ -304,7 +311,10 @@ const createSeriesData = (series, population) => {
 			confirmedDailySeries,
 			recoveredDailySeries,
 			deathDailySeries,
-			confirmed14DaySeries
+			confirmed14DaySeries,
+			confirmedSMASeries,
+			recoveredSMASeries,
+			deathSMASeries
 		},
 		stats: {
 			latestConfirmed,
@@ -497,7 +507,10 @@ export const createSeriesRegion = (countries) => {
 					deathSeries: [],
 					confirmedDailySeries: [],
 					recoveredDailySeries: [],
-					deathDailySeries: []
+					deathDailySeries: [],
+					confirmedSMASeries: [],
+					recoveredSMASeries: [],
+					deathSMASeries: []
 				}
 			}
 			subRegions.push(region)
@@ -525,6 +538,9 @@ export const createSeriesRegion = (countries) => {
 			merge(region.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
 			merge(region.ts.deathDailySeries, country.series.ts.deathDailySeries);
 		}
+		region.ts.confirmedSMASeries = SMA_AVG(region.ts.confirmedDailySeries)
+		region.ts.recoveredSMASeries = SMA_AVG(region.ts.recoveredDailySeries)
+		region.ts.deathSMASeries = SMA_AVG(region.ts.deathDailySeries)
 	}
 
 	for (const region of subRegions) {
@@ -549,7 +565,10 @@ export const createSeriesRegion = (countries) => {
 					deathSeries: [],
 					confirmedDailySeries: [],
 					recoveredDailySeries: [],
-					deathDailySeries: []
+					deathDailySeries: [],
+					confirmedSMASeries: [],
+					recoveredSMASeries: [],
+					deathSMASeries: []
 				}
 			}
 			regions.push(aregion)
@@ -572,7 +591,9 @@ export const createSeriesRegion = (countries) => {
 		merge(aregion.ts.confirmedDailySeries, region.ts.confirmedDailySeries);
 		merge(aregion.ts.recoveredDailySeries, region.ts.recoveredDailySeries);
 		merge(aregion.ts.deathDailySeries, region.ts.deathDailySeries);
-
+		merge(aregion.ts.confirmedSMASeries, region.ts.confirmedSMASeries);
+		merge(aregion.ts.recoveredSMASeries, region.ts.recoveredSMASeries);
+		merge(aregion.ts.deathSMASeries, region.ts.deathSMASeries);
 	}
 
 	regions.sort(statsSorter);

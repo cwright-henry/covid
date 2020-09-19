@@ -49,7 +49,7 @@
 					<BasicChart
 						:ts="country.series.ts.confirmedDailySeries"
 						chartType="bar"
-						showSMA
+						:smats="country.series.ts.confirmedSMASeries"
 						:name="`${country.countryName} Confirmed Daily Change`"
 					/>
 				</div>
@@ -80,7 +80,7 @@
 					<BasicChart
 						:ts="country.series.ts.recoveredDailySeries"
 						chartType="bar"
-						showSMA
+						:smats="country.series.ts.recoveredSMASeries"
 						:name="`${country.countryName} Recovered Daily Changge`"
 					/>
 				</div>
@@ -111,7 +111,7 @@
 					<BasicChart
 						:ts="country.series.ts.deathDailySeries"
 						chartType="bar"
-						showSMA
+						:smats="country.series.ts.deathSMASeries"
 						:name="`${country.countryName} Deaths Daily Changge`"
 					/>
 				</div>

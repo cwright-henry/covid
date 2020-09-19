@@ -21,7 +21,7 @@
 					<BasicChart
 						:ts="region.ts.confirmedDailySeries"
 						chartType="bar"
-						showSMA
+						:smats="region.ts.confirmedSMASeries"
 						:name="`${region.name} Confirmed Daily Change`"
 					/>
 				</div>
@@ -43,7 +43,7 @@
 						chartType="bar"
 						height="240"
 						:color="findAColor(index)"
-						showSMA
+						:smats="country.series.ts.confirmedSMASeries"
 						name="Daily Change"
 					/>
 				</li>
@@ -63,7 +63,7 @@ import {
 	findColor,
 	sortCountries,
 	lightenDarkenColor,
-	objectSorter
+	objectSorter,
 } from "@/utils";
 
 const lastestConfirmedSorter = sortCountries("latestConfirmed", "asc");
@@ -75,20 +75,20 @@ export default {
 		return {
 			region: null,
 			slices: [],
-			scrollAmount: 0
+			scrollAmount: 0,
 		};
 	},
 	props: {
 		regionCode: {
 			type: String,
-			default: ""
-		}
+			default: "",
+		},
 	},
 	components: {
 		RegionStats,
 		BasicChart,
 		PieChart,
-		InfiniteScroll
+		InfiniteScroll,
 	},
 	computed: {
 		...mapGetters(["findRegion"]),
@@ -98,15 +98,15 @@ export default {
 
 		scrollable() {
 			return this.scrollAmount < this.region.countries.length;
-		}
+		},
 	},
 	watch: {
 		regionCode: {
 			handler() {
 				this.loadData();
 			},
-			immediate: true
-		}
+			immediate: true,
+		},
 	},
 	methods: {
 		loadData() {
@@ -119,7 +119,7 @@ export default {
 				this.slices.push({
 					name: country.countryName,
 					value: country.series.stats.latestConfirmed,
-					color: lightenDarkenColor(this.findAColor(index++), -10)
+					color: lightenDarkenColor(this.findAColor(index++), -10),
 				});
 			}
 
@@ -132,8 +132,8 @@ export default {
 
 		loadMore() {
 			this.scrollAmount += SCROLL_AMOUNT;
-		}
-	}
+		},
+	},
 };
 </script>
 

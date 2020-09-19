@@ -20,7 +20,7 @@
 						<BasicChart
 							:ts="coverage.ts.confirmedDailySeries"
 							chartType="bar"
-							showSMA
+							:smats="coverage.ts.confirmedSMASeries"
 							name="Daily Change"
 						/>
 					</div>
@@ -42,7 +42,7 @@
 						<BasicChart
 							:ts="coverage.ts.recoveredDailySeries"
 							chartType="bar"
-							showSMA
+							:smats="coverage.ts.recoveredSMASeries"
 							name="Daily Change"
 						/>
 					</div>
@@ -61,7 +61,12 @@
 						<StackedChart :series="stackedChartData.fatalities" />
 					</div>
 					<div>
-						<BasicChart :ts="coverage.ts.deathDailySeries" chartType="bar" showSMA name="Daily Change" />
+						<BasicChart
+							:ts="coverage.ts.deathDailySeries"
+							chartType="bar"
+							:smats="coverage.ts.deathSMASeries"
+							name="Daily Change"
+						/>
 					</div>
 				</div>
 			</div>
@@ -85,7 +90,7 @@
 								<BasicChart
 									:ts="region.ts.confirmedDailySeries"
 									chartType="bar"
-									showSMA
+									:smats="region.ts.confirmedSMASeries"
 									name="Daily Change"
 								/>
 							</div>
@@ -105,7 +110,7 @@
 									chartType="bar"
 									height="240"
 									:color="findAColor(index)"
-									showSMA
+									:smats="subregion.ts.confirmedSMASeries"
 									name="Daily Change"
 								/>
 							</li>
@@ -193,17 +198,17 @@ export default {
 				const name = region.name;
 				confirmed.push({
 					name,
-					ts: region.ts.confirmedDailySeries,
+					ts: region.ts.confirmedSMASeries,
 					color,
 				});
 				recovered.push({
 					name,
-					ts: region.ts.recoveredDailySeries,
+					ts: region.ts.recoveredSMASeries,
 					color,
 				});
 				fatalities.push({
 					name,
-					ts: region.ts.deathDailySeries,
+					ts: region.ts.deathSMASeries,
 					color,
 				});
 			}

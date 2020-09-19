@@ -5,29 +5,6 @@
 <script>
 import { uuid } from "@/utils";
 
-/**
- * Taking the forward and backward 3 seems to be the way to
- * Taking the previous 7 presents a lag
- */
-const SMA_AVG = (data) => {
-	const moveMean = [];
-
-	for (var i = 3; i < data.length - 3; i++) {
-		var mean =
-			(data[i][1] +
-				data[i - 1][1] +
-				data[i - 2][1] +
-				data[i - 3][1] +
-				data[i + 1][1] +
-				data[i + 2][1] +
-				data[i + 3][1]) /
-			7.0;
-		moveMean.push([data[i][0], mean]);
-	}
-
-	return moveMean;
-};
-
 const options = (vm) => {
 	return {
 		chart: {
@@ -115,6 +92,12 @@ export default {
 				return [];
 			},
 		},
+		smats: {
+			type: Array,
+			default: () => {
+				return [];
+			},
+		},
 		chartType: {
 			type: String,
 			default: "line",
@@ -122,10 +105,6 @@ export default {
 		color: {
 			type: String,
 			default: "#2196F3",
-		},
-		showSMA: {
-			type: Boolean,
-			default: false,
 		},
 		name: {
 			type: String,
@@ -168,11 +147,10 @@ export default {
 						name: this.name,
 					});
 
-					if (this.showSMA) {
-						const movingAvg = SMA_AVG(this.ts);
+					if (this.smats && this.smats.length > 0) {
 						chart.addSeries({
 							type: "line",
-							data: movingAvg,
+							data: this.smats,
 							name: `7 Day Moving Average`,
 							lineWidth: 3,
 							color: this.color,
