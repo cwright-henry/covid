@@ -72,6 +72,11 @@ export default {
 			ref: `covid-piechart-${uuid()}`,
 		};
 	},
+	watch: {
+		regions() {
+			this.render();
+		},
+	},
 	mounted() {
 		this.render();
 	},
