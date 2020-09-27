@@ -1,9 +1,10 @@
+import JSZip from 'jszip'
 /**
  * see https://javascript.info/fetch-progress
  * 
  * @param {*} url 
  */
-export const load = (url, contentId) => {
+export const load = (url, contentId, isZip) => {
 	postMessage({
 		type: 'url-download-started',
 		contentId
@@ -45,12 +46,21 @@ export const load = (url, contentId) => {
 		let result = new TextDecoder("utf-8").decode(chunksAll);
 
 		// We're done!
-		const json = JSON.parse(result);
+		let json = null
+		if (!isZip) {
+			json = JSON.parse(result);
+		}
+		else {
+			// zip files !
+			const zip = await JSZip.loadAsync(chunksAll)
+			const content = await zip.file("all.json").async("string");
+			json = JSON.parse(content);
+		}
 		postMessage({
 			type: 'url-download-finished',
 			contentId
 		});
-		return json
+		return json;
 	}).catch(e => {
 		postMessage({
 			type: 'url-download-error',

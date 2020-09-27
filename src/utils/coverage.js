@@ -3,7 +3,7 @@ import { parseWorld, createSeriesCoverage, createSeriesRegion } from './parsing'
 
 class Coverage {
     static COUNTRY_URL = "https://restcountries.eu/rest/v2/all";
-    static CASES_URL = "https://api.covid19api.com/all";
+    static CASES_URL = "https://api.covid19api.com/export";
     static IRELAND_URL = "https://services1.arcgis.com/eNO7HHeQ3rUcBllm/arcgis/rest/services/Covid19CountyStatisticsHPSCIrelandOpenData/FeatureServer/0/query?where=TimeStampDate%20%3E%3D%20TIMESTAMP%20%272020-05-20%2000%3A00%3A00%27%20&outFields=CountyName,PopulationCensus16,Lat,Long,ConfirmedCovidCases,TimeStampDate&outSR=4326&f=json"
     static US_POPULATION = "https://datausa.io/api/data?drilldowns=State&measures=Population&year=latest";
 
@@ -20,7 +20,7 @@ class Coverage {
     static async getAll() {
         const [countryData, casesData, usStatePopulation] = await Promise.all([
             load(Coverage.COUNTRY_URL, "COUNTRY_LIST"),
-            load(Coverage.CASES_URL, "COVID_DATA"),
+            load(Coverage.CASES_URL, "COVID_DATA", true),
             load(Coverage.US_POPULATION, "US_POPULATION")
         ]);
         postMessage({
