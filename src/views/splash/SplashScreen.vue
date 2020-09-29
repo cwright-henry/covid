@@ -8,79 +8,181 @@
 			<ul>
 				<li>
 					<div class="covid-splashscreen--status">
-						<v-icon size="18" color="#4CAF50" v-if="countryData.isFinished">mdi-check</v-icon>
-						<v-icon size="18" color="#F44336" v-else-if="countryData.isError">mdi-alert-circle</v-icon>
 						<v-icon
 							size="18"
 							color="#4CAF50"
-							v-else-if="countryData.isLoading || countryData.isConnecting"
-						>mdi-arrow-right-bold</v-icon>
+							v-if="countryData.isFinished"
+							>mdi-check</v-icon
+						>
+						<v-icon
+							size="18"
+							color="#F44336"
+							v-else-if="countryData.isError"
+							>mdi-alert-circle</v-icon
+						>
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-else-if="
+								countryData.isLoading ||
+								countryData.isConnecting
+							"
+							>mdi-arrow-right-bold</v-icon
+						>
 					</div>
-					<label>Loading Country List</label>
-					<div class="covid-splashscreen--size" v-if="countryData.isConnecting">connecting...</div>
+					<label>{{ getStatus(countryData) }} Country List</label>
 					<div
 						class="covid-splashscreen--size"
-						v-else-if="countryData.isLoading || countryData.isFinished"
+						v-if="countryData.isConnecting"
 					>
-						{{countryData.comtentSize | number(0)}}
-						<span class="mx-2">KB</span>
+						connecting...
 					</div>
-					<div class="covid-splashscreen--size" v-else-if="countryData.isError">No Connection</div>
-				</li>
-				<li>
-					<div class="covid-splashscreen--status">
-						<v-icon size="18" color="#4CAF50" v-if="usStatsData.isFinished">mdi-check</v-icon>
-						<v-icon size="18" color="#F44336" v-else-if="usStatsData.isError">mdi-alert-circle</v-icon>
-						<v-icon
-							size="18"
-							color="#4CAF50"
-							v-else-if="usStatsData.isLoading || usStatsData.isConnecting"
-						>mdi-arrow-right-bold</v-icon>
-					</div>
-					<label>Loading US Statistics</label>
-					<div class="covid-splashscreen--size" v-if="usStatsData.isConnecting">connecting...</div>
 					<div
 						class="covid-splashscreen--size"
-						v-else-if="usStatsData.isLoading || usStatsData.isFinished"
+						v-else-if="
+							countryData.isLoading || countryData.isFinished
+						"
 					>
-						{{usStatsData.comtentSize | number(0)}}
-						<span class="mx-2">KB</span>
+						{{ countryData.comtentSize | number(0) }}
+						<span class="ml-2">KB</span>
 					</div>
-					<div class="covid-splashscreen--size" v-else-if="usStatsData.isError">No Connection</div>
+					<div
+						class="covid-splashscreen--size"
+						v-else-if="countryData.isError"
+					>
+						No Connection
+					</div>
 				</li>
 				<li>
 					<div class="covid-splashscreen--status">
-						<v-icon size="18" color="#4CAF50" v-if="covidData.isFinished">mdi-check</v-icon>
-						<v-icon size="18" color="#F44336" v-else-if="covidData.isError">mdi-alert-circle</v-icon>
 						<v-icon
 							size="18"
 							color="#4CAF50"
-							v-else-if="covidData.isLoading || covidData.isConnecting"
-						>mdi-arrow-right-bold</v-icon>
+							v-if="usStatsData.isFinished"
+							>mdi-check</v-icon
+						>
+						<v-icon
+							size="18"
+							color="#F44336"
+							v-else-if="usStatsData.isError"
+							>mdi-alert-circle</v-icon
+						>
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-else-if="
+								usStatsData.isLoading ||
+								usStatsData.isConnecting
+							"
+							>mdi-arrow-right-bold</v-icon
+						>
 					</div>
-					<label>Loading Covid Data</label>
-					<div class="covid-splashscreen--size" v-if="covidData.isConnecting">connecting...</div>
-					<div class="covid-splashscreen--size" v-else-if="covidData.isLoading || covidData.isFinished">
-						{{covidData.comtentSize | number(0)}}
-						<span class="mx-2">KB</span>
+					<label>{{ getStatus(usStatsData) }} US Statistics</label>
+					<div
+						class="covid-splashscreen--size"
+						v-if="usStatsData.isConnecting"
+					>
+						connecting...
 					</div>
-					<div class="covid-splashscreen--size" v-else-if="covidData.isError">No Connection</div>
+					<div
+						class="covid-splashscreen--size"
+						v-else-if="
+							usStatsData.isLoading || usStatsData.isFinished
+						"
+					>
+						{{ usStatsData.comtentSize | number(0) }}
+						<span class="ml-2">KB</span>
+					</div>
+					<div
+						class="covid-splashscreen--size"
+						v-else-if="usStatsData.isError"
+					>
+						No Connection
+					</div>
 				</li>
 				<li>
 					<div class="covid-splashscreen--status">
-						<v-icon size="18" color="#4CAF50" v-if="processing.isFinished">mdi-check</v-icon>
-						<v-icon size="18" color="#4CAF50" v-else-if="processing.inProgress">mdi-arrow-right-bold</v-icon>
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-if="covidData.isFinished"
+							>mdi-check</v-icon
+						>
+						<v-icon
+							size="18"
+							color="#F44336"
+							v-else-if="covidData.isError"
+							>mdi-alert-circle</v-icon
+						>
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-else-if="
+								covidData.isLoading || covidData.isConnecting
+							"
+							>mdi-arrow-right-bold</v-icon
+						>
+					</div>
+					<label>{{ getStatus(covidData) }} Covid Data</label>
+					<div
+						class="covid-splashscreen--size"
+						v-if="covidData.isConnecting"
+					>
+						connecting...
+					</div>
+					<div
+						class="covid-splashscreen--size"
+						v-else-if="covidData.isLoading || covidData.isFinished"
+					>
+						{{ covidData.comtentSize | number(0) }}
+						<span class="ml-2">KB</span>
+					</div>
+					<div
+						class="covid-splashscreen--size"
+						v-else-if="covidData.isError"
+					>
+						No Connection
+					</div>
+				</li>
+				<li>
+					<div class="covid-splashscreen--status">
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-if="processing.isFinished"
+							>mdi-check</v-icon
+						>
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-else-if="processing.inProgress"
+							>mdi-arrow-right-bold</v-icon
+						>
 					</div>
 					<label>Population Analysed</label>
 					<div class="covid-splashscreen--size">
-						<span class="mx-2">{{processing.comtentSize | number(0)}}</span>
+						<span class="ml-2">{{
+							processing.comtentSize | number(0)
+						}}</span>
 					</div>
 				</li>
-				<li :class="{finished:processing.isFinished}" class="covid-splashscreen--rendering mt-6">
+				<li
+					:class="{ finished: processing.isFinished }"
+					class="covid-splashscreen--rendering mt-6"
+				>
 					<div>Rendering Application</div>
-					<v-progress-linear color="#FFEB3B" class="mt-4" buffer-value="0" stream></v-progress-linear>
+					<v-progress-linear
+						color="#FFEB3B"
+						class="mt-4"
+						buffer-value="0"
+						stream
+					></v-progress-linear>
 				</li>
-				<li :class="{'has-error':hasError}" class="covid-splashscreen--error mt-6" @click="reload">
+				<li
+					:class="{ 'has-error': hasError }"
+					class="covid-splashscreen--error mt-6"
+					@click="reload"
+				>
 					<v-btn fab color="#F44336">
 						<v-icon size="28" color="#FFF">mdi-refresh</v-icon>
 					</v-btn>
@@ -115,6 +217,7 @@ export default {
 				isError: false,
 				isConnecting: false,
 				isLoading: false,
+				isParsing: false,
 				isFinished: false,
 				comtentSize: 0,
 			},
@@ -179,6 +282,10 @@ export default {
 							event.data.receivedLength / 1024;
 					}
 					break;
+				case "url-download-parsing-progress":
+					if (event.data.contentId === "COVID_DATA") {
+						this.covidData.isParsing = true;
+					}
 					break;
 				case "url-download-finished":
 					if (event.data.contentId === "COUNTRY_LIST") {
@@ -192,6 +299,7 @@ export default {
 					if (event.data.contentId === "COVID_DATA") {
 						this.covidData.isFinished = true;
 						this.covidData.isLoading = false;
+						this.covidData.isParsing = false;
 					}
 					break;
 				case "url-download-error":
@@ -233,6 +341,17 @@ export default {
 	methods: {
 		reload() {
 			window.location.reload(false);
+		},
+
+		getStatus(source) {
+			if (source.isFinished) {
+				return "Loaded";
+			} else if (source.isError) {
+				return "Failed";
+			} else if (source.isParsing) {
+				return "Parsing";
+			}
+			return "Loading";
 		},
 	},
 };
@@ -292,13 +411,14 @@ export default {
 					width: 200px;
 				}
 				.covid-splashscreen--status {
-					width: 56px;
+					width: 48px;
 					text-align: center;
 				}
 				.covid-splashscreen--size {
 					width: 130px;
 					text-align: right;
 					word-break: keep-all;
+					margin: 0 8px 0 0;
 				}
 				&.covid-splashscreen--rendering {
 					justify-content: center;

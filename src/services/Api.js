@@ -11,7 +11,13 @@ export const load = (url, contentId, isZip) => {
 	})
 	return fetch(url, {
 		method: "GET",
+		headers: {
+			'accept': isZip ? 'application/zip' : 'application/json'
+		},
 	}).then(async response => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
 		const reader = response.body.getReader();
 
 		// Step 2: get total length
@@ -52,6 +58,10 @@ export const load = (url, contentId, isZip) => {
 		}
 		else {
 			// zip files !
+			postMessage({
+				type: 'url-download-parsing-progress',
+				contentId
+			})
 			const zip = await JSZip.loadAsync(chunksAll)
 			const content = await zip.file("all.json").async("string");
 			json = JSON.parse(content);
