@@ -15,19 +15,16 @@
 					</div>
 				</v-container>
 			</v-main>
-			<v-snackbar
-				v-model="msg"
-				:top="top"
-				:bottom="bottom"
-				:left="left"
-				:right="right"
-				:timeout="timeout"
-				:color="color"
-			>
-				{{ text }}
-				<v-btn text @click="msg = false">Close</v-btn>
-			</v-snackbar>
 		</template>
+		<v-snackbar
+			v-model="notification"
+			top
+			:timeout="timeout"
+			:color="color"
+		>
+			{{ text }}
+			<v-btn text @click="notification = false">Close</v-btn>
+		</v-snackbar>
 	</v-app>
 </template>
 
@@ -43,14 +40,10 @@ export default {
 
 	data() {
 		return {
-			msg: false,
+			notification: false,
 			timeout: 8000, // Allow 10 seconds to read error message
 			text: "",
-			color: "#53a318",
-			top: true,
-			bottom: false,
-			left: false,
-			right: false,
+			color: "#F44336",
 			transitionName: null,
 		};
 	},
@@ -61,6 +54,12 @@ export default {
 		AppBar,
 		NavigationBar,
 		SplashScreen,
+	},
+	mounted() {
+		EventBus.$on("onError", (error) => {
+			this.notification = true;
+			this.text = error;
+		});
 	},
 	async created() {
 		this.$router.beforeEach((to, from, next) => {

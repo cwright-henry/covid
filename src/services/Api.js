@@ -10,13 +10,10 @@ export const load = (url, contentId, isZip) => {
 		contentId
 	})
 	return fetch(url, {
-		method: "GET",
-		headers: {
-			'accept': isZip ? 'application/zip' : 'application/json'
-		},
+		method: "GET"
 	}).then(async response => {
 		if (!response.ok) {
-			throw new Error('Network response was not ok');
+			throw new Error(`Invalid network reponse code ${response.status}`);
 		}
 		const reader = response.body.getReader();
 
@@ -48,13 +45,10 @@ export const load = (url, contentId, isZip) => {
 			position += chunk.length;
 		}
 
-		// Step 5: decode into a string
-		let result = new TextDecoder("utf-8").decode(chunksAll);
-
 		// We're done!
 		let json = null
 		if (!isZip) {
-			json = JSON.parse(result);
+			json = JSON.parse(new TextDecoder("utf-8").decode(chunksAll));
 		}
 		else {
 			// zip files !
@@ -62,8 +56,20 @@ export const load = (url, contentId, isZip) => {
 				type: 'url-download-parsing-progress',
 				contentId
 			})
-			const zip = await JSZip.loadAsync(chunksAll)
-			const content = await zip.file("all.json").async("string");
+
+			let percent = 0;
+			const zip = await JSZip.loadAsync(chunksAll);
+			const content = await zip.file("all.json").async("string", function updateCallback(metadata) {
+				const currentPercent = metadata.percent.toFixed(0);
+				if (currentPercent !== percent) {
+					postMessage({
+						type: 'url-download-unzip-progress',
+						percent: currentPercent,
+						contentId
+					});
+					percent = currentPercent;
+				}
+			});
 			json = JSON.parse(content);
 		}
 		postMessage({
@@ -74,7 +80,8 @@ export const load = (url, contentId, isZip) => {
 	}).catch(e => {
 		postMessage({
 			type: 'url-download-error',
-			contentId
+			contentId,
+			error: e
 		});
 		throw e;
 	})

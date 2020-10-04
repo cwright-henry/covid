@@ -118,7 +118,9 @@
 							size="18"
 							color="#4CAF50"
 							v-else-if="
-								covidData.isLoading || covidData.isConnecting
+								covidData.isLoading ||
+								covidData.isConnecting ||
+								covidData.isParsing
 							"
 							>mdi-arrow-right-bold</v-icon
 						>
@@ -132,7 +134,11 @@
 					</div>
 					<div
 						class="covid-splashscreen--size"
-						v-else-if="covidData.isLoading || covidData.isFinished"
+						v-else-if="
+							covidData.isLoading ||
+							covidData.isFinished ||
+							covidData.isParsing
+						"
 					>
 						{{ covidData.comtentSize | number(0) }}
 						<span class="ml-2">KB</span>
@@ -142,6 +148,17 @@
 						v-else-if="covidData.isError"
 					>
 						No Connection
+					</div>
+					<div
+						class="covid-splashscreen--progress"
+						v-if="covidData.isParsing"
+					>
+						<v-progress-linear
+							color="#4CAF50"
+							height="2"
+							:value="covidData.percentParsed"
+						>
+						</v-progress-linear>
 					</div>
 				</li>
 				<li>
@@ -195,6 +212,7 @@
 
 <script>
 import Worker from "@/utils/utils.worker";
+import EventBus from "@/events";
 
 export default {
 	data() {
@@ -220,6 +238,7 @@ export default {
 				isParsing: false,
 				isFinished: false,
 				comtentSize: 0,
+				percentParsed: 0,
 			},
 			processing: {
 				inProgress: false,
@@ -284,7 +303,13 @@ export default {
 					break;
 				case "url-download-parsing-progress":
 					if (event.data.contentId === "COVID_DATA") {
+						this.covidData.isLoading = false;
 						this.covidData.isParsing = true;
+					}
+					break;
+				case "url-download-unzip-progress":
+					if (event.data.contentId === "COVID_DATA") {
+						this.covidData.percentParsed = event.data.percent;
 					}
 					break;
 				case "url-download-finished":
@@ -318,6 +343,7 @@ export default {
 						this.covidData.isLoading = false;
 						this.covidData.isError = true;
 					}
+					EventBus.$emit("onError", event.data.error);
 					break;
 				case "processing-data":
 					this.processing.inProgress = true;
@@ -400,6 +426,7 @@ export default {
 			font-weight: 300;
 			font-size: 18px;
 			li {
+				position: relative;
 				display: flex;
 				align-items: center;
 				margin: 8px 0;
@@ -453,6 +480,12 @@ export default {
 						visibility: visible;
 						opacity: 1;
 					}
+				}
+				.covid-splashscreen--progress {
+					position: absolute;
+					left: 0;
+					right: 0;
+					bottom: 0px;
 				}
 			}
 		}

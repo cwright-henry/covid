@@ -3,6 +3,13 @@ module.exports = {
 	"transpileDependencies": [
 		"vuetify"
 	],
+	devServer: {
+		proxy: {
+			"/covid/api": {
+				target: `http://localhost:3000/`
+			}
+		}
+	},
 	configureWebpack: (config) => {
 		config.module.rules = [
 			{
