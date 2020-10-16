@@ -155,7 +155,7 @@
 					>
 						<v-progress-linear
 							color="#4CAF50"
-							height="2"
+							height="3"
 							:value="covidData.percentParsed"
 						>
 						</v-progress-linear>

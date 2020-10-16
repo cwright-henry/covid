@@ -5,7 +5,7 @@
 				<WorldMapView :coverage="coverage" />
 			</div>
 			<div class="covid-world--charts">
-				<h1>
+				<h1 elementtiming="world-view">
 					World Daily Confirmed
 					<div>
 						Latest
