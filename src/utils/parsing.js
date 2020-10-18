@@ -70,6 +70,7 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 				type: 'parse-country',
 				population
 			})
+
 			data.push(item);
 		}
 	}
@@ -291,9 +292,6 @@ const createSeriesData = (series, population) => {
 	const latestDeaths = getLatestFromSeries(deathDailySeries);
 	const latestRecovered = getLatestFromSeries(recoveredDailySeries);
 
-	const confirmed14DaySeries = create14DayPer100k(population, confirmedDailySeries);
-	const latestConfirmed14Day = getLatestFromSeries(confirmed14DaySeries);
-
 	const confirmedSMASeries = SMA_AVG(confirmedDailySeries)
 	const recoveredSMASeries = SMA_AVG(recoveredDailySeries)
 	const deathSMASeries = SMA_AVG(deathDailySeries)
@@ -301,7 +299,15 @@ const createSeriesData = (series, population) => {
 	const len = confirmedSMASeries.length;
 	const slope = getSlope(confirmedSMASeries.slice(len - 14, len));
 
-	const totalConfirmed14Day = (totalConfirmed / population) * 100000;
+	// Some sub-series do not have a defined population
+	let confirmed14DaySeries = []
+	let latestConfirmed14Day = 0;
+	let totalConfirmed14Day = 0;
+	if (population) {
+		confirmed14DaySeries = create14DayPer100k(population, confirmedDailySeries);
+		latestConfirmed14Day = getLatestFromSeries(confirmed14DaySeries);
+		totalConfirmed14Day = (totalConfirmed / population) * 100000;
+	}
 
 	return {
 		ts: {
