@@ -9,7 +9,6 @@
 					<img :src="country.flag" width="36" class="mr-3" />
 					<h1>
 						{{ country.countryName }}
-						<span>Last Update: {{ lastUpdate | dateLong }}</span>
 					</h1>
 				</div>
 			</header>
