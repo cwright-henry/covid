@@ -11,6 +11,53 @@
 						<v-icon
 							size="18"
 							color="#4CAF50"
+							v-if="ieData.isFinished"
+							>mdi-check</v-icon
+						>
+						<v-icon
+							size="18"
+							color="#F44336"
+							v-else-if="ieData.isError"
+							>mdi-alert-circle</v-icon
+						>
+						<v-icon
+							size="18"
+							color="#4CAF50"
+							v-else-if="
+								ieData.isLoading ||
+								ieData.isConnecting
+							"
+							>mdi-arrow-right-bold</v-icon
+						>
+					</div>
+					<label>{{ getStatus(ieData) }} Ireland Data</label>
+					<div
+						class="covid-splashscreen--size"
+						v-if="ieData.isConnecting"
+					>
+						connecting...
+					</div>
+					<div
+						class="covid-splashscreen--size"
+						v-else-if="
+							ieData.isLoading || ieData.isFinished
+						"
+					>
+						{{ ieData.comtentSize | number(0) }}
+						<span class="ml-2">KB</span>
+					</div>
+					<div
+						class="covid-splashscreen--size"
+						v-else-if="ieData.isError"
+					>
+						No Connection
+					</div>
+				</li>
+				<li>
+					<div class="covid-splashscreen--status">
+						<v-icon
+							size="18"
+							color="#4CAF50"
 							v-if="countryData.isFinished"
 							>mdi-check</v-icon
 						>
@@ -217,6 +264,13 @@ import EventBus from "@/events";
 export default {
 	data() {
 		return {
+			ieData: {
+				isError: false,
+				isConnecting: false,
+				isLoading: false,
+				isFinished: false,
+				comtentSize: 0,
+			},
 			countryData: {
 				isError: false,
 				isConnecting: false,
@@ -250,6 +304,7 @@ export default {
 	computed: {
 		hasError() {
 			return (
+				this.ieData.isError ||
 				this.countryData.isError ||
 				this.usStatsData.isError ||
 				this.covidData.isError
@@ -271,6 +326,9 @@ export default {
 					this.$store.commit("isLoaded", true);
 					break;
 				case "url-download-started":
+					if (event.data.contentId === "IRELAND_DATA") {
+						this.ieData.isConnecting = true;
+					}
 					if (event.data.contentId === "COUNTRY_LIST") {
 						this.countryData.isConnecting = true;
 					}
@@ -282,6 +340,12 @@ export default {
 					}
 					break;
 				case "url-download-in-progress":
+					if (event.data.contentId === "IRELAND_DATA") {
+						this.ieData.isConnecting = false;
+						this.ieData.isLoading = true;
+						this.ieData.comtentSize =
+							event.data.receivedLength / 1024;
+					}
 					if (event.data.contentId === "COUNTRY_LIST") {
 						this.countryData.isConnecting = false;
 						this.countryData.isLoading = true;
@@ -313,6 +377,10 @@ export default {
 					}
 					break;
 				case "url-download-finished":
+					if (event.data.contentId === "IRELAND_DATA") {
+						this.ieData.isFinished = true;
+						this.ieData.isLoading = false;
+					}
 					if (event.data.contentId === "COUNTRY_LIST") {
 						this.countryData.isFinished = true;
 						this.countryData.isLoading = false;
@@ -406,7 +474,6 @@ export default {
 			color: #fff;
 			font-weight: 300;
 			font-size: 42px;
-			margin: 0 0 16px;
 			background-color: rgba(0, 0, 0, 0.1);
 			font-family: "Merriweather", serif;
 		}
@@ -422,7 +489,7 @@ export default {
 			}
 		}
 		ul {
-			margin: 24px 0 0 0;
+			margin: 12px 0 0 0;
 			font-weight: 300;
 			font-size: 18px;
 			li {

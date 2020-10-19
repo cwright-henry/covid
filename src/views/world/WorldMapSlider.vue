@@ -16,22 +16,38 @@
 				@end="onEndSlide"
 				:disabled="isDisabled"
 			>
-				<template v-slot:thumb-label="{ }">
-					<span class="covid-map-slider--thumb">{{currentDate | date-day}}</span>
+				<template v-slot:thumb-label="{}">
+					<span class="covid-map-slider--thumb">{{
+						currentDate | dateDay
+					}}</span>
 				</template>
 				<template v-slot:prepend>
-					<v-icon color="linkColor" @click="decrement">mdi-minus</v-icon>
+					<v-icon color="linkColor" @click="decrement"
+						>mdi-minus</v-icon
+					>
 				</template>
 
 				<template v-slot:append>
-					<v-icon color="linkColor" @click="increment">mdi-plus</v-icon>
+					<v-icon color="linkColor" @click="increment"
+						>mdi-plus</v-icon
+					>
 				</template>
 			</v-slider>
 			<div class="covid-map-slider--play">
-				<v-btn color="linkColor" small depressed outlined fab @click="toggle" :disabled="isDisabled">
-					<v-icon>{{ isPlaying ? 'mdi-pause' : 'mdi-play' }}</v-icon>
+				<v-btn
+					color="linkColor"
+					small
+					depressed
+					outlined
+					fab
+					@click="toggle"
+					:disabled="isDisabled"
+				>
+					<v-icon>{{ isPlaying ? "mdi-pause" : "mdi-play" }}</v-icon>
 				</v-btn>
-				<div class="covid-map-slider--play__date">{{currentDate | date-short}}</div>
+				<div class="covid-map-slider--play__date">
+					{{ currentDate | dateShort }}
+				</div>
 			</div>
 		</div>
 	</div>

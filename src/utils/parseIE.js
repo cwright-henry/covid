@@ -1,4 +1,4 @@
-import { uuid } from './utils'
+import { uuid, SMA_AVG } from './utils'
 import { timeseriesSorter } from './sorting'
 import { numberFormat } from './format'
 
@@ -6,6 +6,7 @@ import { numberFormat } from './format'
  * DONT forget this one
  * https://services1.arcgis.com/eNO7HHeQ3rUcBllm/arcgis/rest/services/CovidStatisticsProfileHPSCIrelandOpenData/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json
  */
+
 
 const tsSorter = timeseriesSorter('desc')
 
@@ -59,7 +60,8 @@ export const parseIreland = data => {
                 lng: attributes.Long,
                 ts: {
                     confirmedSeries: [],
-                    confirmedDailySeries: []
+                    confirmedDailySeries: [],
+                    confirmedSMASeries: []
                 },
                 stats: {
                     totalConfirmed: 0,
@@ -69,7 +71,7 @@ export const parseIreland = data => {
             population += county.population;
             counties.push(county)
         }
-        county.ts.confirmedSeries.push([attributes.TimeStampDate, attributes.ConfirmedCovidCases || 0])
+        county.ts.confirmedSeries.push([attributes.TimeStamp, attributes.ConfirmedCovidCases || 0])
     }
 
     for (const county of counties) {
@@ -88,6 +90,7 @@ export const parseIreland = data => {
                 }))
             }
         }
+        county.ts.confirmedSMASeries = SMA_AVG(county.ts.confirmedDailySeries)
     }
 
     return { provinces: counties, population, geojson };

@@ -48,15 +48,15 @@ Vue.filter('number', function (value, precision) {
 	return numberFormat(value, precision);
 });
 
-Vue.filter('date-long', function (value) {
+Vue.filter('dateLong', function (value) {
 	return dateLongFormat(value);
 });
 
-Vue.filter('date-short', function (value) {
+Vue.filter('dateShort', function (value) {
 	return dateShortFormat(value);
 });
 
-Vue.filter('date-day', function (value) {
+Vue.filter('dateDay', function (value) {
 	return dateDayFormat(value);
 });
 

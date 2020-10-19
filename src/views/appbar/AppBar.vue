@@ -1,10 +1,20 @@
 <template>
-	<v-app-bar app fixed clipped-left :prominent="isProminent" color="primary" v-resize="onResize">
-		<v-app-bar-nav-icon color="#fff" @click="toggleNavBar"></v-app-bar-nav-icon>
+	<v-app-bar
+		app
+		fixed
+		clipped-left
+		:prominent="isProminent"
+		color="primary"
+		v-resize="onResize"
+	>
+		<v-app-bar-nav-icon
+			color="#fff"
+			@click="toggleNavBar"
+		></v-app-bar-nav-icon>
 		<div class="covid-appbar--header ml-4">
 			<h1>
 				Covid 19 Watch
-				<span>Last Update: {{coverage.lastestDate | date-long}}</span>
+				<span>Last Update: {{ coverage.lastestDate | dateLong }}</span>
 				<img src="@/assets/covid.png" height="24" width="24" />
 			</h1>
 			<div class="covid-appbar--info">

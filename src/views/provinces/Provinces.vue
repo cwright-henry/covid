@@ -7,7 +7,10 @@
 			<header>
 				<div class="covid-provinces--title">
 					<img :src="country.flag" width="36" class="mr-3" />
-					<h1>{{country.countryName}}</h1>
+					<h1>
+						{{ country.countryName }}
+						<span>Last Update: {{ lastUpdate | dateLong }}</span>
+					</h1>
 				</div>
 			</header>
 			<RegionStats :region="country" />
@@ -28,8 +31,8 @@ export default {
 	props: {
 		countryCode: {
 			type: String,
-			default: ""
-		}
+			default: "",
+		},
 	},
 	data() {
 		return {
@@ -39,27 +42,39 @@ export default {
 					provinces: [],
 					ts: {},
 					stats: {},
-					geojson: {}
-				}
-			}
+					geojson: {},
+				},
+			},
 		};
 	},
 	components: {
 		ProvinceMapView,
 		ProvinceListView,
-		RegionStats
+		RegionStats,
 	},
 	computed: {
 		...mapGetters(["findCountry"]),
 
 		local() {
 			return getLocalProvince(this.countryCode);
-		}
+		},
+
+		lastUpdate() {
+			if (
+				this.country.series.ts.confirmedSeries &&
+				this.country.series.ts.confirmedSeries.length > 0
+			) {
+				return this.country.series.ts.confirmedSeries[
+					this.country.series.ts.confirmedSeries.length - 1
+				][0];
+			}
+			return "";
+		},
 	},
 	watch: {
 		countryCode() {
 			this.loadData();
-		}
+		},
 	},
 	mounted() {
 		this.loadData();
@@ -67,8 +82,8 @@ export default {
 	methods: {
 		loadData() {
 			this.country = Object.freeze(this.findCountry(this.countryCode));
-		}
-	}
+		},
+	},
 };
 </script>
 
@@ -85,6 +100,11 @@ export default {
 			h1 {
 				font-size: 24px;
 				font-weight: 400;
+				span {
+					margin: 0 0 0 8px;
+					font-size: 11px;
+					font-weight: 400;
+				}
 			}
 		}
 	}

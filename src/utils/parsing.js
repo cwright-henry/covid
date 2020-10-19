@@ -1,7 +1,6 @@
-import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000 } from './utils'
+import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000, getSlope, SMA_AVG } from './utils'
 import { createGeoJsonForCountry, createGeoJsonHistoryForCountries } from './geojson'
 import { sortCountriesStats } from './sorting'
-import { numberFormat } from './format'
 
 /**
  * Replace long names with shorter - this helps the map
@@ -80,29 +79,6 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 	return data;
 }
 
-
-/**
- * Can only tell increasing or decreasing slope
- * 
- * @param {*} data 
- */
-const getSlope = data => {
-	let sum = [0, 0, 0, 0, 0], n = 0;
-	if (data.length > 2) {
-		for (; n < data.length; n++) {
-			if (data[n][1]) {
-				sum[0] += data[n][0];
-				sum[1] += data[n][1];
-				sum[2] += data[n][0] * data[n][0];
-				sum[3] += data[n][0] * data[n][1];
-				sum[4] += data[n][1] * data[n][1];
-			}
-		}
-		return (n * sum[3] - sum[0] * sum[1]) / (n * sum[2] - sum[0] * sum[0]);
-	}
-	return 0;
-}
-
 /**
  * Create daily series from cumalitive series
  */
@@ -144,28 +120,6 @@ const getLatestFromSeries = series => {
 	return 0;
 }
 
-/**
- * Taking the forward and backward 3 seems to be the way to
- * Taking the previous 7 presents a lag
- */
-const SMA_AVG = data => {
-	const moveMean = [];
-
-	for (var i = 3; i < data.length - 3; i++) {
-		var mean =
-			(data[i][1] +
-				data[i - 1][1] +
-				data[i - 2][1] +
-				data[i - 3][1] +
-				data[i + 1][1] +
-				data[i + 2][1] +
-				data[i + 3][1]) /
-			7.0;
-		moveMean.push([data[i][0], mean]);
-	}
-
-	return moveMean;
-};
 
 /**
  * Coverage/summary of all the countries
