@@ -180,3 +180,31 @@ export const SMA_AVG = data => {
     return moveMean;
 };
 
+/**
+ * Covid-19 confirmed, recovered, fatalities per 100,000 people over the past 14 days.
+ */
+export const create14DayPer100k = (population, series) => {
+    const incidences = []
+    if (series.length > 14) {
+        for (let i = 0; i < 14; i++) {
+            incidences.push([1, 0.1]);
+        }
+        for (let i = 0; i < series.length - 14; i++) {
+            const subset = series.slice(i, 14 + i); // End not included
+            const average = (subset.reduce((a, b) => a + b[1], 0) / population) * 100000;
+            incidences.push([series[14 - 1 + i][0], average])
+        }
+    }
+    return incidences;
+}
+
+/**
+ * Retrieve latest from series
+ */
+export const getLatestFromSeries = series => {
+    if (series.length > 0) {
+        return series[series.length - 1][1];
+    }
+    return 0;
+}
+

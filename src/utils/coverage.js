@@ -2,6 +2,11 @@ import { load } from '@/services/Api';
 import { parseWorld, createSeriesCoverage, createSeriesRegion } from './parsing'
 import { parseIreland } from './parseIE'
 
+/**
+ * Examples:
+ * https://covid19ireland-geohive.hub.arcgis.com/pages/detailed-county-statistics
+ */
+
 class Coverage {
     static COUNTRY_URL = "https://restcountries.eu/rest/v2/all";
     static CASES_URL = "/covid/api/covid-data";

@@ -4,32 +4,60 @@
 			<header>
 				<div class="covid-country--title">
 					<img :src="country.flag" width="36" class="mr-2" />
-					<h1>{{country.countryName}}</h1>
+					<h1>{{ country.countryName }}</h1>
 				</div>
 				<v-spacer></v-spacer>
 				<div class="covid-country--nav-btns">
-					<div class="covid-country--nav-btn mr-4" v-if="country.series.provinces.length > 0">
-						<router-link :to="`/country/${countryCode}/provinces`" class="covid-link">
-							<label class="mr-1">{{country.series.provinces.length | number(0)}} {{local.provinceName}}</label>
-							<v-icon color="linkColor">mdi-arrow-right-bold</v-icon>
+					<div
+						class="covid-country--nav-btn mr-4"
+						v-if="country.series.provinces.length > 0"
+					>
+						<router-link
+							:to="`/country/${countryCode}/provinces`"
+							class="covid-link"
+						>
+							<label class="mr-1"
+								>{{
+									country.series.provinces.length | number(0)
+								}}
+								{{ local.provinceName }}</label
+							>
+							<v-icon color="linkColor"
+								>mdi-arrow-right-bold</v-icon
+							>
 						</router-link>
 					</div>
-					<div class="covid-country--nav-btn" v-if="country.borders.length > 0">
-						<router-link :to="`/country/${countryCode}/compare`" class="covid-link">
-							<label class="mr-1">{{country.borders.length | number(0)}} Bordered Countries</label>
-							<v-icon color="linkColor">mdi-arrow-right-bold</v-icon>
+					<div
+						class="covid-country--nav-btn"
+						v-if="country.borders.length > 0"
+					>
+						<router-link
+							:to="`/country/${countryCode}/compare`"
+							class="covid-link"
+						>
+							<label class="mr-1"
+								>{{
+									country.borders.length | number(0)
+								}}
+								Bordered Countries</label
+							>
+							<v-icon color="linkColor"
+								>mdi-arrow-right-bold</v-icon
+							>
 						</router-link>
 					</div>
 				</div>
 			</header>
 			<RegionStats :region="country" />
 			<div class="covid-country--charts">
-				<div class="covid-country--charts__chart">
+				<div class="covid-country--charts__chart pr-8">
 					<h1>
 						Cumulative Confirmed
 						<div>
 							Latest
-							<span>{{country.series.stats.totalConfirmed | number(0)}}</span>
+							<span>{{
+								country.series.stats.totalConfirmed | number(0)
+							}}</span>
 						</div>
 					</h1>
 					<BasicChart
@@ -43,7 +71,9 @@
 						Daily Confirmed
 						<div>
 							Latest
-							<span>{{country.series.stats.latestConfirmed | number(0)}}</span>
+							<span>{{
+								country.series.stats.latestConfirmed | number(0)
+							}}</span>
 						</div>
 					</h1>
 					<BasicChart
@@ -55,12 +85,14 @@
 				</div>
 			</div>
 			<div class="covid-country--charts">
-				<div class="covid-country--charts__chart">
+				<div class="covid-country--charts__chart pr-8">
 					<h1>
 						Cumulative Recovered
 						<div>
 							Latest
-							<span>{{country.series.stats.totalRecovered | number(0)}}</span>
+							<span>{{
+								country.series.stats.totalRecovered | number(0)
+							}}</span>
 						</div>
 					</h1>
 					<BasicChart
@@ -74,7 +106,9 @@
 						Daily Recovered
 						<div>
 							Latest
-							<span>{{country.series.stats.latestRecovered | number(0)}}</span>
+							<span>{{
+								country.series.stats.latestRecovered | number(0)
+							}}</span>
 						</div>
 					</h1>
 					<BasicChart
@@ -86,12 +120,14 @@
 				</div>
 			</div>
 			<div class="covid-country--charts">
-				<div class="covid-country--charts__chart">
+				<div class="covid-country--charts__chart pr-8">
 					<h1>
 						Cumulative Fatalities
 						<div>
 							Latest
-							<span>{{country.series.stats.totalDeaths | number(0)}}</span>
+							<span>{{
+								country.series.stats.totalDeaths | number(0)
+							}}</span>
 						</div>
 					</h1>
 					<BasicChart
@@ -105,7 +141,9 @@
 						Daily Fatalities
 						<div>
 							Latest
-							<span>{{country.series.stats.latestDeaths | number(0)}}</span>
+							<span>{{
+								country.series.stats.latestDeaths | number(0)
+							}}</span>
 						</div>
 					</h1>
 					<BasicChart
@@ -250,12 +288,12 @@ header {
 			text-transform: uppercase;
 			font-weight: 300;
 			color: var(--section-header-color);
-			margin: 0 0 4px 12px;
+			margin: 0 0px 4px 0px;
 			display: flex;
 			justify-content: space-between;
 			align-items: baseline;
 			div {
-				margin: 0 16px 0 0;
+				margin: 0 0px 0 0;
 				font-size: 12px;
 				color: #e0e0e0;
 				span {

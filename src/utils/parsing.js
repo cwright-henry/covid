@@ -1,4 +1,4 @@
-import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000, getSlope, SMA_AVG } from './utils'
+import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000, getSlope, SMA_AVG, create14DayPer100k, getLatestFromSeries} from './utils'
 import { createGeoJsonForCountry, createGeoJsonHistoryForCountries } from './geojson'
 import { sortCountriesStats } from './sorting'
 
@@ -91,35 +91,6 @@ const createDailySeries = series => {
 	}
 	return dailySeries;
 }
-
-/**
- * Covid-19 confirmed, recovered, fatalities per 100,000 people over the past 14 days.
- */
-const create14DayPer100k = (population, series) => {
-	const incidences = []
-	if (series.length > 14) {
-		for (let i = 0; i < 14; i++) {
-			incidences.push([1, 0.1]);
-		}
-		for (let i = 0; i < series.length - 14; i++) {
-			const subset = series.slice(i, 14 + i); // End not included
-			const average = (subset.reduce((a, b) => a + b[1], 0) / population) * 100000;
-			incidences.push([series[14 - 1 + i][0], average])
-		}
-	}
-	return incidences;
-}
-
-/**
- * Retrieve latest from series
- */
-const getLatestFromSeries = series => {
-	if (series.length > 0) {
-		return series[series.length - 1][1];
-	}
-	return 0;
-}
-
 
 /**
  * Coverage/summary of all the countries
@@ -501,6 +472,9 @@ export const createSeriesRegion = (countries) => {
 		region.ts.confirmedSMASeries = SMA_AVG(region.ts.confirmedDailySeries)
 		region.ts.recoveredSMASeries = SMA_AVG(region.ts.recoveredDailySeries)
 		region.ts.deathSMASeries = SMA_AVG(region.ts.deathDailySeries)
+		region.ts.confirmed14DaySeries = create14DayPer100k(region.population, region.ts.confirmedDailySeries);
+		region.stats.latestConfirmed14Day = getLatestFromSeries(region.ts.confirmed14DaySeries);
+		region.stats.totalConfirmed14Day = (region.stats.totalConfirmed / region.population) * 100000;
 	}
 
 	for (const region of subRegions) {
@@ -554,6 +528,10 @@ export const createSeriesRegion = (countries) => {
 		merge(aregion.ts.confirmedSMASeries, region.ts.confirmedSMASeries);
 		merge(aregion.ts.recoveredSMASeries, region.ts.recoveredSMASeries);
 		merge(aregion.ts.deathSMASeries, region.ts.deathSMASeries);
+
+		aregion.ts.confirmed14DaySeries = create14DayPer100k(aregion.population, aregion.ts.confirmedDailySeries);
+		aregion.stats.latestConfirmed14Day = getLatestFromSeries(aregion.ts.confirmed14DaySeries);
+		aregion.stats.totalConfirmed14Day = (aregion.stats.totalConfirmed / aregion.population) * 100000;
 	}
 
 	regions.sort(statsSorter);

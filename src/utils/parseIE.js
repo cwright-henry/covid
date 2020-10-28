@@ -1,4 +1,4 @@
-import { uuid, SMA_AVG } from './utils'
+import { uuid, SMA_AVG, create14DayPer100k, getLatestFromSeries } from './utils'
 import { timeseriesSorter } from './sorting'
 import { numberFormat } from './format'
 
@@ -61,11 +61,14 @@ export const parseIreland = data => {
                 ts: {
                     confirmedSeries: [],
                     confirmedDailySeries: [],
-                    confirmedSMASeries: []
+                    confirmedSMASeries: [],
+                    confirmed14DaySeries: []
                 },
                 stats: {
                     totalConfirmed: 0,
-                    latestConfirmed: 0
+                    latestConfirmed: 0,
+                    latestConfirmed14Day: 0,
+                    totalConfirmed14Day: 0
                 }
             }
             population += county.population;
@@ -91,6 +94,9 @@ export const parseIreland = data => {
             }
         }
         county.ts.confirmedSMASeries = SMA_AVG(county.ts.confirmedDailySeries)
+        county.ts.confirmed14DaySeries = create14DayPer100k(county.population, county.ts.confirmedDailySeries);
+        county.stats.latestConfirmed14Day = getLatestFromSeries(county.ts.confirmed14DaySeries);
+        county.stats.totalConfirmed14Day = (county.stats.totalConfirmed / county.population) * 100000;
     }
 
     return { provinces: counties, population, geojson };

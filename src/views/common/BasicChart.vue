@@ -1,5 +1,10 @@
 <template>
-	<highcharts v-resize="onResize" :options="options" :ts="ts" :ref="ref"></highcharts>
+	<highcharts
+		v-resize="onResize"
+		:options="options"
+		:ts="ts"
+		:ref="ref"
+	></highcharts>
 </template>
 
 <script>
@@ -11,7 +16,8 @@ const options = (vm) => {
 			height: vm._props.height,
 			backgroundColor: vm._props.backgroundColor,
 			zoomType: "x",
-			spacingRight: 12,
+			spacingRight: 0,
+			spacingLeft: 0,
 			animation: true,
 		},
 		title: {

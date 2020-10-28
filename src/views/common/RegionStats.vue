@@ -1,41 +1,47 @@
 <template>
-	<ul class="covid-region--stats" :class="{slim: isSlim}" v-resize="onResize">
+	<ul
+		class="covid-region--stats"
+		:class="{ slim: isSlim }"
+		v-resize="onResize"
+	>
 		<li v-if="region.numCountries !== undefined && showCountries">
 			<label>Countries</label>
-			<div>{{numCountries | number(0)}}</div>
+			<div>{{ numCountries | number(0) }}</div>
 		</li>
 		<li v-if="showPopulation">
 			<label>Population</label>
-			<div>{{population | number(0)}}</div>
+			<div>{{ population | number(0) }}</div>
 		</li>
 		<li v-if="showPerCapita">
-			<label>Per Capita Confirmed</label>
+			<label>Confirmed Per Capita Per 100,000</label>
 			<div>
 				<nobr>
-					<span>{{perCapita | number(0)}}</span>
-					<span class="small">per 100,000</span>
+					<span class="label">Total</span>
+					<span>{{ perCapita | number(0) }}</span>
+					<span class="label ml-2">Last 14 Days</span>
+					<span>{{ perCapitaLatest | number(0) }}</span>
 				</nobr>
 			</div>
 		</li>
 		<li>
-			<label>Confirmed</label>
+			<label>Total Confirmed</label>
 			<div>
-				<span>{{confirmed | number(0)}}</span>
-				<span class="small">{{confirmedPercent | number(2)}}%</span>
+				<span>{{ confirmed | number(0) }}</span>
+				<span class="small">{{ confirmedPercent | number(2) }}%</span>
 			</div>
 		</li>
 		<li>
-			<label>Recovered</label>
+			<label>Total Recovered</label>
 			<div>
-				<span>{{recovered | number(0)}}</span>
-				<span class="small">{{recoveredPercent | number(2)}}%</span>
+				<span>{{ recovered | number(0) }}</span>
+				<span class="small">{{ recoveredPercent | number(2) }}%</span>
 			</div>
 		</li>
 		<li>
-			<label>Fatalities</label>
+			<label>Total Fatalities</label>
 			<div>
-				<span>{{fatalities | number(0)}}</span>
-				<span class="small">{{fatalitiesPercent | number(2)}}%</span>
+				<span>{{ fatalities | number(0) }}</span>
+				<span class="small">{{ fatalitiesPercent | number(2) }}%</span>
 			</div>
 		</li>
 	</ul>
@@ -46,16 +52,16 @@ export default {
 	props: {
 		region: {
 			type: Object,
-			default: () => {}
+			default: () => {},
 		},
 		isSlim: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 	data() {
 		return {
-			windowWidth: 0
+			windowWidth: 0,
 		};
 	},
 	mounted() {
@@ -73,7 +79,14 @@ export default {
 				? this.region.series.stats
 				: this.region.stats;
 
-			return (stats.totalConfirmed / this.region.population) * 100000;
+			return stats.totalConfirmed14Day;
+		},
+		perCapitaLatest() {
+			const stats = this.region.series
+				? this.region.series.stats
+				: this.region.stats;
+
+			return stats.latestConfirmed14Day;
 		},
 		confirmed() {
 			const stats = this.region.series
@@ -119,13 +132,13 @@ export default {
 		},
 		showCountries() {
 			return this.windowWidth > 610;
-		}
+		},
 	},
 	methods: {
 		onResize() {
 			this.windowWidth = window.innerWidth;
-		}
-	}
+		},
+	},
 };
 </script>
 
@@ -151,7 +164,14 @@ ul.covid-region--stats {
 			font-size: 18px;
 			span.small {
 				margin: 0 0 0 4px;
-				font-size: 12px;
+				font-size: 11px;
+			}
+			span.label {
+				font-size: 10px;
+				text-transform: uppercase;
+				margin: 0 4px 0 0;
+				font-weight: 400;
+				color: #e0e0e0;
 			}
 		}
 	}

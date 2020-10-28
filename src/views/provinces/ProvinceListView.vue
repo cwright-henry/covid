@@ -1,15 +1,51 @@
 <template>
 	<div class="covid-country--charts__provinces">
-		<h1>Confirmed Cases By {{local.provinceName}}</h1>
-		<transition-group tag="ul" @enter="enter" :css="false" class="covid-country--charts__provinces">
-			<li v-for="(province, index) of scrollableProvinces" :key="province.uuid">
-				<h1>
-					{{province.name}}
+		<h1>Confirmed Cases By {{ local.provinceName }}</h1>
+		<transition-group
+			tag="ul"
+			@enter="enter"
+			:css="false"
+			class="covid-country--charts__provinces"
+		>
+			<li
+				v-for="(province, index) of scrollableProvinces"
+				:key="province.uuid"
+			>
+				<header class="population" v-if="province.population">
+					<label>{{ province.name }}</label>
+					<div>
+						<div>
+							<label>Per Capita Per 100,000</label>
+							<nobr>
+								<label>Total</label>
+								<span>{{
+									province.stats.totalConfirmed14Day
+										| number(0)
+								}}</span>
+								<label class="ml-3">Last 14 Days</label>
+								<span>{{
+									province.stats.latestConfirmed14Day
+										| number(0)
+								}}</span>
+							</nobr>
+						</div>
+						<div>
+							<label>Latest</label>
+							<span>{{
+								province.stats.latestConfirmed | number(0)
+							}}</span>
+						</div>
+					</div>
+				</header>
+				<header v-else>
+					<label>{{ province.name }}</label>
 					<div>
 						Latest
-						<span>{{province.stats.latestConfirmed | number(0)}}</span>
+						<span>{{
+							province.stats.latestConfirmed | number(0)
+						}}</span>
 					</div>
-				</h1>
+				</header>
 				<BasicChart
 					:ts="province.ts.confirmedDailySeries"
 					chartType="bar"
@@ -30,7 +66,7 @@ import { animation } from "@/utils";
 import InfiniteScroll from "@/views/common/InfiniteScroll";
 import { findColor, sortCountriesStats } from "@/utils";
 
-const SCROLL_AMOUNT = 8;
+const SCROLL_AMOUNT = 6;
 const latestConfirmedSorter = new sortCountriesStats("latestConfirmed", "asc");
 
 export default {
@@ -45,29 +81,29 @@ export default {
 						deathSeries: [],
 						confirmedDailySeries: [],
 						recoveredDailySeries: [],
-						deathDailySeries: []
+						deathDailySeries: [],
 					},
 					data: [],
-					provinces: []
-				}
-			})
+					provinces: [],
+				},
+			}),
 		},
 		local: {
 			type: Object,
-			default: () => {}
-		}
+			default: () => {},
+		},
 	},
 	mixins: [animation],
 	data() {
 		return {
 			scrollAmount: SCROLL_AMOUNT,
 			ANIMATION_IN: "animate__fadeInUp",
-			ANIMATION_TIME: "1.0s"
+			ANIMATION_TIME: "1.0s",
 		};
 	},
 	components: {
 		BasicChart,
-		InfiniteScroll
+		InfiniteScroll,
 	},
 	computed: {
 		scrollableProvinces() {
@@ -76,13 +112,13 @@ export default {
 
 		scrollable() {
 			return this.scrollAmount < this.country.series.provinces.length;
-		}
+		},
 	},
 	watch: {
 		country() {
 			this.scrollAmount = SCROLL_AMOUNT;
 			this.country.series.provinces.sort(latestConfirmedSorter);
-		}
+		},
 	},
 	methods: {
 		loadMore() {
@@ -91,8 +127,8 @@ export default {
 
 		findAColor(index) {
 			return findColor(index);
-		}
-	}
+		},
+	},
 };
 </script>
 
@@ -103,31 +139,70 @@ export default {
 		text-transform: uppercase;
 		font-weight: 300;
 		color: var(--section-header-color);
-		margin: 0 0 0 12px;
+		margin: 0 0 0 8px;
 	}
 	ul {
 		display: flex;
 		flex-wrap: wrap;
 		li {
-			width: 25%;
-			padding: 24px 0;
-			h1 {
+			width: 33%;
+			padding: 24px 24px 12px 8px;
+			header {
 				font-size: 13px;
-				text-transform: uppercase;
 				font-weight: 300;
 				color: #fff;
-				margin: 0 0 4px 12px;
+				margin: 0 0 4px 0px;
 				display: flex;
 				justify-content: space-between;
 				align-items: baseline;
+				label {
+					font-weight: 400;
+					font-size: 16px;
+					color:#fff;
+				}
 				div {
-					margin: 0 16px 0 0;
 					font-size: 12px;
 					color: #e0e0e0;
+					label {
+						text-transform: uppercase;
+					}
 					span {
 						margin: 0 0 0 2px;
-						font-size: 14px;
-						color: var(--section-header-color);
+						font-size: 16px;
+						color: #fff;
+						font-weight: 400;
+					}
+				}
+				&.population {
+					display: flex;
+					flex-direction: column;
+					> label {
+						font-weight: 400;
+						margin: 0 0 6px 0;
+						font-size: 16px;
+					}
+					> div {
+						display: flex;
+						justify-content: space-between;
+						width: 100%;
+						> div {
+							display: flex;
+							flex-direction: column;
+							> label {
+								font-weight: 300;
+								margin: 0 0 1px 0;
+								font-size: 11px;
+							}
+							nobr {
+								label {
+									font-size: 9px;
+									margin: 0 4px 0 0;
+								}
+							}
+							&:nth-child(2) {
+								text-align: right;
+							}
+						}
 					}
 				}
 			}

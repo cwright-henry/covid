@@ -9,7 +9,9 @@
 					World Daily Confirmed
 					<div>
 						Latest
-						<span>{{coverage.stats.latestConfirmed | number(0)}}</span>
+						<span>{{
+							coverage.stats.latestConfirmed | number(0)
+						}}</span>
 					</div>
 				</h1>
 				<div class="covid-world--charts__chart">
@@ -31,7 +33,9 @@
 					World Daily Recovered
 					<div>
 						Latest
-						<span>{{coverage.stats.latestRecovered | number(0)}}</span>
+						<span>{{
+							coverage.stats.latestRecovered | number(0)
+						}}</span>
 					</div>
 				</h1>
 				<div class="covid-world--charts__chart">
@@ -53,7 +57,9 @@
 					World Daily Fatalities
 					<div>
 						Latest
-						<span>{{coverage.stats.latestDeaths | number(0)}}</span>
+						<span>{{
+							coverage.stats.latestDeaths | number(0)
+						}}</span>
 					</div>
 				</h1>
 				<div class="covid-world--charts__chart">
@@ -71,20 +77,30 @@
 				</div>
 			</div>
 			<h1 class="mt-4 ml-1">Continents</h1>
-			<transition-group tag="ul" @enter="enter" :css="false" class="covid-world--regions">
+			<transition-group
+				tag="ul"
+				@enter="enter"
+				:css="false"
+				class="covid-world--regions"
+			>
 				<li v-for="region of scrollableRegions" :key="region.uuid">
 					<div class="covid-world--charts">
 						<h1>
-							{{region.name}} Daily Confirmed
+							{{ region.name }} Daily Confirmed
 							<div>
 								Latest
-								<span>{{region.stats.latestConfirmed | number(0)}}</span>
+								<span>{{
+									region.stats.latestConfirmed | number(0)
+								}}</span>
 							</div>
 						</h1>
 						<RegionStats :region="region" isSlim class="ma-6" />
 						<div class="covid-world--charts__chart">
 							<div>
-								<PieChart :regions="getSubRegionData(region)" name="Total Confirmed" />
+								<PieChart
+									:regions="getSubRegionData(region)"
+									name="Total Confirmed"
+								/>
 							</div>
 							<div>
 								<BasicChart
@@ -96,15 +112,60 @@
 							</div>
 						</div>
 						<ul class="covid-world--subregions">
-							<li v-for="(subregion, index) of region.subRegions" :key="subregion.uuid">
-								<h2>
-									{{subregion.subRegion}}
-									<router-link :to="`/world/${subregion.subRegion}`" title="Explore Region">
-										Latest
-										<span>{{subregion.stats.latestConfirmed | number(0)}}</span>
-										<v-icon size="18" color="linkColor">mdi-arrow-right-bold</v-icon>
-									</router-link>
-								</h2>
+							<li
+								v-for="(subregion, index) of region.subRegions"
+								:key="subregion.uuid"
+							>
+								<header>
+									<h1>
+										{{ subregion.subRegion }}
+									</h1>
+									<div>
+										<div>
+											<label
+												>Per Capita Per 100,000</label
+											>
+											<nobr>
+												<label>Total</label>
+												<span>{{
+													subregion.stats
+														.totalConfirmed14Day
+														| number(0)
+												}}</span>
+												<label class="ml-3"
+													>Last 14 Days</label
+												>
+												<span>{{
+													subregion.stats
+														.latestConfirmed14Day
+														| number(0)
+												}}</span>
+											</nobr>
+										</div>
+										<div>
+											<router-link
+												:to="`/world/${subregion.subRegion}`"
+												title="Explore Region"
+												class="country-link"
+											>
+												<div>
+													<label>Latest</label>
+													<span>{{
+														subregion.stats
+															.latestConfirmed
+															| number(0)
+													}}</span>
+												</div>
+												<v-icon
+													size="18"
+													color="linkColor"
+													class="ml-2"
+													>mdi-arrow-right-bold</v-icon
+												>
+											</router-link>
+										</div>
+									</div>
+								</header>
 								<BasicChart
 									:ts="subregion.ts.confirmedDailySeries"
 									chartType="bar"
@@ -276,7 +337,7 @@ export default {
 		margin: 16px 0;
 		border: 1px solid #424242;
 		border-radius: 4px;
-		h1 {
+		> h1 {
 			font-size: 16px;
 			text-transform: uppercase;
 			font-weight: 300;
@@ -317,26 +378,61 @@ export default {
 			li {
 				width: 33%;
 				padding: 12px;
-				h2 {
-					font-size: 13px;
-					text-transform: uppercase;
-					font-weight: 300;
-					color: #fff;
-					margin: 0 0 4px 12px;
-					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					a {
-						margin: 0 8px 0 0;
-						font-size: 12px;
-						color: #e0e0e0;
+				header {
+					margin: 0 0 8px;
+					h1 {
+						font-weight: 400;
+						margin: 0 0 8px 0;
+						font-size: 16px;
 						display: flex;
 						align-items: center;
-						text-decoration: none;
-						span {
-							margin: 0 4px 0 6px;
-							font-size: 14px;
-							color: var(--section-header-color);
+						text-transform: none;
+						color: #fff;
+					}
+					> div {
+						display: flex;
+						justify-content: space-between;
+						width: 100%;
+						> div {
+							display: flex;
+							flex-direction: column;
+							> label {
+								font-weight: 300;
+								margin: 0 0 1px 0;
+								font-size: 11px;
+								text-transform: uppercase;
+							}
+							nobr {
+								label {
+									font-size: 9px;
+									margin: 0 8px 0 0;
+									text-transform: uppercase;
+								}
+							}
+							.country-link {
+								display: flex;
+								justify-content: space-between;
+								text-decoration: none;
+								> div {
+									display: flex;
+									flex-direction: column;
+									justify-content: flex-start;
+									align-items: flex-end;
+									label {
+										font-size: 11px;
+										font-weight: 300;
+										margin: 0 0 0 0;
+										text-transform: uppercase;
+										color: #e0e0e0;
+										cursor: pointer;
+									}
+									span {
+										color:#fff;
+									}
+								}
+								font-size: 16px;
+								color: var(--section-header-color);
+							}
 						}
 					}
 				}
