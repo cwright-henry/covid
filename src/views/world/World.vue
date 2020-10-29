@@ -97,7 +97,7 @@
 						<RegionStats :region="region" isSlim class="ma-6" />
 						<div class="covid-world--charts__chart">
 							<div>
-								<PieChart
+								<ColumnChart
 									:regions="getSubRegionData(region)"
 									name="Total Confirmed"
 								/>
@@ -192,11 +192,11 @@ import RegionStats from "@/views/common/RegionStats";
 import PieChart from "@/views/common/PieChart";
 import StackedChart from "@/views/common/StackedChart";
 import InfiniteScroll from "@/views/common/InfiniteScroll";
+import ColumnChart from "@/views/common/ColumnChart";
 import {
 	findColor,
 	findContinentColor,
 	objectSorter,
-	lightenDarkenColor,
 	animation,
 } from "@/utils";
 
@@ -218,6 +218,7 @@ export default {
 		PieChart,
 		StackedChart,
 		InfiniteScroll,
+		ColumnChart,
 	},
 	mixins: [animation],
 	computed: {
@@ -307,7 +308,7 @@ export default {
 				confirmed.push({
 					name: region.subRegion,
 					value: region.stats.latestConfirmed,
-					color: lightenDarkenColor(this.findAColor(index++), -10),
+					color: this.findAColor(index++),
 				});
 			}
 
@@ -427,7 +428,7 @@ export default {
 										cursor: pointer;
 									}
 									span {
-										color:#fff;
+										color: #fff;
 									}
 								}
 								font-size: 16px;

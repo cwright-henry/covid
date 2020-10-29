@@ -17,9 +17,9 @@
 			<div>
 				<nobr>
 					<span class="label">Total</span>
-					<span>{{ perCapita | number(0) }}</span>
-					<span class="label ml-2">Last 14 Days</span>
-					<span>{{ perCapitaLatest | number(0) }}</span>
+					<span class="ml-1">{{ perCapita | number(0) }}</span>
+					<span class="label ml-3">Last 14 Days</span>
+					<span class="ml-1">{{ perCapitaLatest | number(0) }}</span>
 				</nobr>
 			</div>
 		</li>
@@ -169,7 +169,6 @@ ul.covid-region--stats {
 			span.label {
 				font-size: 10px;
 				text-transform: uppercase;
-				margin: 0 4px 0 0;
 				font-weight: 400;
 				color: #e0e0e0;
 			}
