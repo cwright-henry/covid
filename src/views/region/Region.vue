@@ -7,8 +7,8 @@
 			<h1>{{ regionCode }}</h1>
 			<RegionStats :region="region" />
 			<div class="covid-region--charts">
-				<div class="covid-region--charts__chart">
-					<PieChart :regions="slices" name="Latest Confirmed" />
+				<div class="covid-region--charts__chart mt-5">
+					<ColumnChart :regions="slices" name="Latest Confirmed" />
 				</div>
 				<div class="covid-region--charts__chart pl-4">
 					<h1>
@@ -28,7 +28,7 @@
 					/>
 				</div>
 			</div>
-			<h2>Confirmed Cases</h2>
+			<h2>Daily Confirmed Cases</h2>
 			<ul class="covid-world--subregions">
 				<li
 					v-for="(country, index) of scrollableCountries"
@@ -101,7 +101,7 @@
 import { mapGetters } from "vuex";
 import RegionStats from "@/views/common/RegionStats";
 import BasicChart from "@/views/common/BasicChart";
-import PieChart from "@/views/common/PieChart";
+import ColumnChart from "@/views/common/ColumnChart";
 import InfiniteScroll from "@/views/common/InfiniteScroll";
 import {
 	findColor,
@@ -131,7 +131,7 @@ export default {
 	components: {
 		RegionStats,
 		BasicChart,
-		PieChart,
+		ColumnChart,
 		InfiniteScroll,
 	},
 	computed: {
@@ -219,7 +219,7 @@ export default {
 				justify-content: space-between;
 				align-items: baseline;
 				div {
-					margin: 0 16px 0 0;
+					margin: 0 2px 0 0;
 					font-size: 12px;
 					color: #e0e0e0;
 					span {

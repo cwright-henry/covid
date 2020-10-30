@@ -49,7 +49,7 @@ const options = (vm) => {
 		plotOptions: {
 			bar: {
 				opacity: 0.8,
-				pointWidth: 25,
+				pointPadding: 0.15,
 				dataLabels: {
 					enabled: true,
 					inside: false,
@@ -90,7 +90,7 @@ export default {
 		},
 		height: {
 			type: String,
-			default: "295",
+			default: "300",
 		},
 		backgroundColor: {
 			type: String,
