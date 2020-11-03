@@ -1,9 +1,14 @@
 <template>
-	<v-navigation-drawer v-model="drawer" app clipped fixed width="360">
+	<v-navigation-drawer v-model="drawer" app clipped fixed width="380">
 		<div class="covid-nav--top">
 			<div class="covid-nav-world">
 				<router-link to="/world" class="covid-link">
-					<img src="../../assets/earth.gif" width="28" height="28" class="mx-3" />
+					<img
+						src="../../assets/earth.gif"
+						width="28"
+						height="28"
+						class="mx-3"
+					/>
 					<h1>World View</h1>
 				</router-link>
 				<v-spacer></v-spacer>
@@ -26,11 +31,18 @@
 							<li
 								v-for="filter of sortFilters"
 								:key="filter.uuid"
-								:class="{'active': currentFilter === filter.uuid}"
+								:class="{
+									active: currentFilter === filter.uuid,
+								}"
 								@click="currentFilter = filter.uuid"
 							>
-								{{filter.text}}
-								<v-icon v-if="currentFilter === filter.uuid" size="22" class="mr-1">mdi-check</v-icon>
+								{{ filter.text }}
+								<v-icon
+									v-if="currentFilter === filter.uuid"
+									size="22"
+									class="mr-1"
+									>mdi-check</v-icon
+								>
 							</li>
 						</ul>
 					</div>
@@ -53,11 +65,17 @@
 		</div>
 		<div ref="regionList">
 			<ul
-				v-if="currentFilter === 'region' || currentFilter === 'subregion'"
+				v-if="
+					currentFilter === 'region' || currentFilter === 'subregion'
+				"
 				class="covid-nav--region-list"
 			>
-				<li v-for="(countries, region) in items" :key="region" class="covid-nav--region">
-					<h1>{{region}}</h1>
+				<li
+					v-for="(countries, region) in items"
+					:key="region"
+					class="covid-nav--region"
+				>
+					<h1>{{ region }}</h1>
 					<NavigationCountry
 						:countries="countries"
 						:scroll="scroll"
@@ -66,7 +84,12 @@
 					/>
 				</li>
 			</ul>
-			<NavigationCountry v-else :countries="items" :filter="currentFilter" :search="search" />
+			<NavigationCountry
+				v-else
+				:countries="items"
+				:filter="currentFilter"
+				:search="search"
+			/>
 		</div>
 	</v-navigation-drawer>
 </template>
