@@ -373,7 +373,7 @@ export default {
 					break;
 				case "url-download-unzip-progress":
 					if (event.data.contentId === "COVID_DATA") {
-						this.covidData.percentParsed = event.data.percent;
+						this.covidData.percentParsed = this.getPercent(event.data.percent);
 					}
 					break;
 				case "url-download-finished":
@@ -435,6 +435,17 @@ export default {
 	methods: {
 		reload() {
 			window.location.reload(false);
+		},
+
+		/**
+		 * HCI literature shows that, if a progress indicator speeds up towards the end, 
+		 * the process is judged to have been faster than if the speed of the progress indicator was constant.
+		 * 
+		 * hmmm Not so sure when you view it in action well for using log anyways
+		 */
+		getPercent(value) {
+			// return value < 100 ?  100 - (Math.log10(100 - value) * 50) : 100;
+			return value;
 		},
 
 		getStatus(source) {
