@@ -10,7 +10,7 @@ import { parseIreland } from './parseIE'
 class Coverage {
     static COUNTRY_URL = "https://restcountries.eu/rest/v2/all";
     static CASES_URL = "/covid/api/covid-data";
-    static IRELAND_URL = "https://services1.arcgis.com/eNO7HHeQ3rUcBllm/arcgis/rest/services/Covid19CountyStatisticsHPSCIreland/FeatureServer/0/query?f=json&cacheHint=true&resultOffset=0&resultRecordCount=32000&where=(TimeStamp%20BETWEEN%20CURRENT_TIMESTAMP%20-%20120%20AND%20CURRENT_TIMESTAMP)&orderByFields=TimeStamp%20ASC&outFields=ConfirmedCovidCases%2CPopulationCensus16%2CTimeStamp%2CCountyName%2CLat%2CLong&resultType=standard&returnGeometry=false&spatialRel=esriSpatialRelIntersects"
+    static IRELAND_URL = "/covid/api/covid-ireland-data"
     static US_POPULATION = "https://datausa.io/api/data?drilldowns=State&measures=Population&year=latest";
 
     static async parse(countryData, casesData, irelandData, usStatePopulation) {

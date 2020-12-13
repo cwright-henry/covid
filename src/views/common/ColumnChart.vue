@@ -60,7 +60,7 @@ const options = (vm) => {
 									.map((p) => p.y)
 									.reduce((a, b) => a + b, 0)) *
 							100;
-						return pcnt.toFixed(2) + "%";
+						return pcnt ? pcnt.toFixed(2) + "%" : "0 %";
 					},
 					style: {
 						color: "#fff",
