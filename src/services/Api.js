@@ -32,7 +32,7 @@ export const load = (url, contentId, isZip) => {
 
 			postMessage({
 				type: 'url-download-in-progress',
-				receivedLength,
+				receivedLength: value.length,
 				contentId
 			})
 		}

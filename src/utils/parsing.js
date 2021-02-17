@@ -1,4 +1,4 @@
-import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000, getSlope, SMA_AVG, create14DayPer100k, getLatestFromSeries} from './utils'
+import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000, getSlope, SMA_AVG, create14DayPer100k, getLatestFromSeries } from './utils'
 import { createGeoJsonForCountry, createGeoJsonHistoryForCountries } from './geojson'
 import { sortCountriesStats } from './sorting'
 
@@ -32,8 +32,9 @@ export const parseWorld = (countries, cases, usStatePopulation) => {
 	const data = [];
 	for (const country of countries) {
 		const entries = cases.filter(
-			item => country.alpha2Code === item.CountryCode
+			item => country.name === item.country
 		);
+
 		if (entries.length > 0) {
 			const name = findReplacementName(country.name);
 			const population = country.alpha2Code === 'IE' ? 4937786 : country.population
@@ -294,7 +295,7 @@ const createdSeriesForCountry = (entries, countryCode, usStatePopulation, popula
 	};
 
 	for (let i = 0; i < entries.length; i++) {
-		if (entries[i].Province === "") {
+		if (entries[i].province === "") {
 			series.data.push(stats(entries, i));
 		} else {
 			let province = series.provinces.find(

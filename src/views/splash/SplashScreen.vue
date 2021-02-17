@@ -343,25 +343,25 @@ export default {
 					if (event.data.contentId === "IRELAND_DATA") {
 						this.ieData.isConnecting = false;
 						this.ieData.isLoading = true;
-						this.ieData.comtentSize =
+						this.ieData.comtentSize +=
 							event.data.receivedLength / 1024;
 					}
 					if (event.data.contentId === "COUNTRY_LIST") {
 						this.countryData.isConnecting = false;
 						this.countryData.isLoading = true;
-						this.countryData.comtentSize =
+						this.countryData.comtentSize +=
 							event.data.receivedLength / 1024;
 					}
 					if (event.data.contentId === "US_POPULATION") {
 						this.usStatsData.isConnecting = false;
 						this.usStatsData.isLoading = true;
-						this.usStatsData.comtentSize =
+						this.usStatsData.comtentSize +=
 							event.data.receivedLength / 1024;
 					}
 					if (event.data.contentId === "COVID_DATA") {
 						this.covidData.isConnecting = false;
 						this.covidData.isLoading = true;
-						this.covidData.comtentSize =
+						this.covidData.comtentSize +=
 							event.data.receivedLength / 1024;
 					}
 					break;
