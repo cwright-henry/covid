@@ -61,6 +61,16 @@
 					hide-details
 					maxlength="128"
 				></v-text-field>
+				<div class="covid-nav-search-summary">
+					<span
+						><v-icon class="down">mdi-play</v-icon
+						>{{ count.down | number(0) }} countries</span
+					>
+					<span
+						><v-icon class="up">mdi-play</v-icon
+						>{{ count.up | number(0) }} countries</span
+					>
+				</div>
 			</div>
 		</div>
 		<div ref="regionList">
@@ -192,6 +202,15 @@ export default {
 			return copy;
 		},
 
+		count() {
+			let up = 0;
+			let down = 0;
+			for (const country of this.items) {
+				country.series.stats.slope > 0 ? up++ : down++;
+			}
+			return { up, down };
+		},
+
 		items() {
 			const searchTerm = this.search
 				? this.search.trim().toLowerCase()
@@ -290,7 +309,7 @@ export default {
 	position: sticky;
 	top: 0px;
 	background-color: #363636;
-	padding: 0 0 12px 0;
+	padding: 0 0 2px 0;
 }
 .covid-nav-world {
 	padding: 12px 0 16px;
@@ -311,6 +330,28 @@ export default {
 }
 .covid-nav-search {
 	margin: 0 8px;
+	.covid-nav-search-summary {
+		font-size: 11px;
+		display: flex;
+		justify-content: flex-end;
+		margin: 4px 2px 0 0;
+		> span {
+			color: #fff !important;
+			padding: 0 0 0 12px;
+			i {
+				z-index: -1;
+				margin: -2px 0 0 0;
+				color: #4caf50;
+				transform: rotate(90deg);
+				font-size: 22px;
+				&.up {
+					color: #f44336;
+					transform: rotate(-90deg);
+					margin: 0px 0 0 0;
+				}
+			}
+		}
+	}
 }
 ul.covid-nav--region-list {
 	li:first-child {

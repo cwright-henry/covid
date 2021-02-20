@@ -129,8 +129,6 @@ const processEntries = (countryCode, data, population) => {
 			delete province.deaths;
 		}
 
-		console.log(data.filter(item => item.province === "Washington"))
-
 		return Object.assign({}, { provinces: provinces }, createSeriesData({ confirmedSeries: totalConfirmed, deathSeries: totalDeaths, recoveredSeries: [] }, population))
 	}
 	else if (countryCode === 'AU' || countryCode === 'CA' || countryCode === 'CN') {
