@@ -52,6 +52,7 @@
 				<RegionStats :region="country" />
 				<div class="covid-country--stats-progress">
 					<v-progress-circular
+						:rotate="-90"
 						:size="72"
 						:width="10"
 						:value="country.vaccinations.percent"
