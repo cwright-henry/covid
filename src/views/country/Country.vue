@@ -75,8 +75,7 @@
 					</h1>
 					<BasicChart
 						:ts="country.vaccinations.data"
-						color="#1976D2"
-						chartType="area"
+						chartType="bar"
 						:name="`${country.countryName} Vaccinated`"
 					/>
 				</div>
