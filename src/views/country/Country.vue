@@ -48,22 +48,36 @@
 					</div>
 				</div>
 			</header>
-			<RegionStats :region="country" />
+			<div class="covid-country--stats">
+				<RegionStats :region="country" />
+				<div class="covid-country--stats-progress">
+					<v-progress-circular
+						:size="72"
+						:width="10"
+						:value="country.vaccinations.percent"
+						color="#4CAF50"
+					>
+						{{ country.vaccinations.percent | number(0) }}%
+					</v-progress-circular>
+					<label>Vaccinated</label>
+				</div>
+			</div>
 			<div class="covid-country--charts">
 				<div class="covid-country--charts__chart pr-8">
 					<h1>
-						Cumulative Confirmed
+						Daily Vaccinations
 						<div>
-							Latest
+							Total
 							<span>{{
-								country.series.stats.totalConfirmed | number(0)
+								country.vaccinations.total | number(0)
 							}}</span>
 						</div>
 					</h1>
 					<BasicChart
-						:ts="country.series.ts.confirmedSeries"
-						chartType="line"
-						:name="`${country.countryName} Confirmed`"
+						:ts="country.vaccinations.data"
+						color="#1976D2"
+						chartType="bar"
+						:name="`${country.countryName} Vaccinated`"
 					/>
 				</div>
 				<div class="covid-country--charts__chart">
@@ -87,22 +101,6 @@
 			<div class="covid-country--charts">
 				<div class="covid-country--charts__chart pr-8">
 					<h1>
-						Cumulative Recovered
-						<div>
-							Latest
-							<span>{{
-								country.series.stats.totalRecovered | number(0)
-							}}</span>
-						</div>
-					</h1>
-					<BasicChart
-						:ts="country.series.ts.recoveredSeries"
-						chartType="line"
-						:name="`${country.countryName} Recovered`"
-					/>
-				</div>
-				<div class="covid-country--charts__chart">
-					<h1>
 						Daily Recovered
 						<div>
 							Latest
@@ -116,24 +114,6 @@
 						chartType="bar"
 						:smats="country.series.ts.recoveredSMASeries"
 						:name="`${country.countryName} Recovered Daily Changge`"
-					/>
-				</div>
-			</div>
-			<div class="covid-country--charts">
-				<div class="covid-country--charts__chart pr-8">
-					<h1>
-						Cumulative Fatalities
-						<div>
-							Latest
-							<span>{{
-								country.series.stats.totalDeaths | number(0)
-							}}</span>
-						</div>
-					</h1>
-					<BasicChart
-						:ts="country.series.ts.deathSeries"
-						chartType="line"
-						:name="`${country.countryName} Deaths`"
 					/>
 				</div>
 				<div class="covid-country--charts__chart">
@@ -268,6 +248,22 @@ header {
 				font-size: 11px;
 				font-weight: 400;
 			}
+		}
+	}
+}
+.covid-country--stats {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 0 12px 24px 0;
+	.covid-country--stats-progress {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		label {
+			font-size: 13px;
+			margin: 2px 0 0 0;
+			font-weight: 300;
 		}
 	}
 }

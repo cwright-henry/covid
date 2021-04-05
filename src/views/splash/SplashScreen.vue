@@ -23,10 +23,7 @@
 						<v-icon
 							size="18"
 							color="#4CAF50"
-							v-else-if="
-								ieData.isLoading ||
-								ieData.isConnecting
-							"
+							v-else-if="ieData.isLoading || ieData.isConnecting"
 							>mdi-arrow-right-bold</v-icon
 						>
 					</div>
@@ -39,9 +36,7 @@
 					</div>
 					<div
 						class="covid-splashscreen--size"
-						v-else-if="
-							ieData.isLoading || ieData.isFinished
-						"
+						v-else-if="ieData.isLoading || ieData.isFinished"
 					>
 						{{ ieData.comtentSize | number(0) }}
 						<span class="ml-2">KB</span>
@@ -105,44 +100,48 @@
 						<v-icon
 							size="18"
 							color="#4CAF50"
-							v-if="usStatsData.isFinished"
+							v-if="covidVaccineData.isFinished"
 							>mdi-check</v-icon
 						>
 						<v-icon
 							size="18"
 							color="#F44336"
-							v-else-if="usStatsData.isError"
+							v-else-if="covidVaccineData.isError"
 							>mdi-alert-circle</v-icon
 						>
 						<v-icon
 							size="18"
 							color="#4CAF50"
 							v-else-if="
-								usStatsData.isLoading ||
-								usStatsData.isConnecting
+								covidVaccineData.isLoading ||
+								covidVaccineData.isConnecting
 							"
 							>mdi-arrow-right-bold</v-icon
 						>
 					</div>
-					<label>{{ getStatus(usStatsData) }} US Statistics</label>
+					<label
+						>{{ getStatus(covidVaccineData) }} Covid Vaccine
+						Data</label
+					>
 					<div
 						class="covid-splashscreen--size"
-						v-if="usStatsData.isConnecting"
+						v-if="covidVaccineData.isConnecting"
 					>
 						connecting...
 					</div>
 					<div
 						class="covid-splashscreen--size"
 						v-else-if="
-							usStatsData.isLoading || usStatsData.isFinished
+							covidVaccineData.isLoading ||
+							covidVaccineData.isFinished
 						"
 					>
-						{{ usStatsData.comtentSize | number(0) }}
+						{{ covidVaccineData.comtentSize | number(0) }}
 						<span class="ml-2">KB</span>
 					</div>
 					<div
 						class="covid-splashscreen--size"
-						v-else-if="usStatsData.isError"
+						v-else-if="covidVaccineData.isError"
 					>
 						No Connection
 					</div>
@@ -278,7 +277,7 @@ export default {
 				isFinished: false,
 				comtentSize: 0,
 			},
-			usStatsData: {
+			covidVaccineData: {
 				isError: false,
 				isConnecting: false,
 				isLoading: false,
@@ -306,7 +305,7 @@ export default {
 			return (
 				this.ieData.isError ||
 				this.countryData.isError ||
-				this.usStatsData.isError ||
+				this.covidVaccineData.isError ||
 				this.covidData.isError
 			);
 		},
@@ -314,6 +313,8 @@ export default {
 	mounted() {
 		const worker = new Worker();
 		worker.postMessage({ msg: "getCoverage" });
+		const NUM_COVID_FILES = 5;
+		let currentCovidFiles = 0;
 
 		worker.onmessage = (event) => {
 			switch (event.data.type) {
@@ -332,8 +333,8 @@ export default {
 					if (event.data.contentId === "COUNTRY_LIST") {
 						this.countryData.isConnecting = true;
 					}
-					if (event.data.contentId === "US_POPULATION") {
-						this.usStatsData.isConnecting = true;
+					if (event.data.contentId === "COVID_VACCINATIONS") {
+						this.covidVaccineData.isConnecting = true;
 					}
 					if (event.data.contentId === "COVID_DATA") {
 						this.covidData.isConnecting = true;
@@ -352,10 +353,10 @@ export default {
 						this.countryData.comtentSize +=
 							event.data.receivedLength / 1024;
 					}
-					if (event.data.contentId === "US_POPULATION") {
-						this.usStatsData.isConnecting = false;
-						this.usStatsData.isLoading = true;
-						this.usStatsData.comtentSize +=
+					if (event.data.contentId === "COVID_VACCINATIONS") {
+						this.covidVaccineData.isConnecting = false;
+						this.covidVaccineData.isLoading = true;
+						this.covidVaccineData.comtentSize +=
 							event.data.receivedLength / 1024;
 					}
 					if (event.data.contentId === "COVID_DATA") {
@@ -373,7 +374,9 @@ export default {
 					break;
 				case "url-download-unzip-progress":
 					if (event.data.contentId === "COVID_DATA") {
-						this.covidData.percentParsed = this.getPercent(event.data.percent);
+						this.covidData.percentParsed = this.getPercent(
+							event.data.percent
+						);
 					}
 					break;
 				case "url-download-finished":
@@ -385,14 +388,17 @@ export default {
 						this.countryData.isFinished = true;
 						this.countryData.isLoading = false;
 					}
-					if (event.data.contentId === "US_POPULATION") {
-						this.usStatsData.isFinished = true;
-						this.usStatsData.isLoading = false;
+					if (event.data.contentId === "COVID_VACCINATIONS") {
+						this.covidVaccineData.isFinished = true;
+						this.covidVaccineData.isLoading = false;
 					}
 					if (event.data.contentId === "COVID_DATA") {
-						this.covidData.isFinished = true;
-						this.covidData.isLoading = false;
-						this.covidData.isParsing = false;
+						++currentCovidFiles;
+						if (currentCovidFiles === NUM_COVID_FILES) {
+							this.covidData.isFinished = true;
+							this.covidData.isLoading = false;
+							this.covidData.isParsing = false;
+						}
 					}
 					break;
 				case "url-download-error":
@@ -401,10 +407,10 @@ export default {
 						this.countryData.isLoading = false;
 						this.countryData.isError = true;
 					}
-					if (event.data.contentId === "US_POPULATION") {
-						this.usStatsData.isConnecting = false;
-						this.usStatsData.isLoading = false;
-						this.usStatsData.isError = true;
+					if (event.data.contentId === "COVID_VACCINATIONS") {
+						this.covidVaccineData.isConnecting = false;
+						this.covidVaccineData.isLoading = false;
+						this.covidVaccineData.isError = true;
 					}
 					if (event.data.contentId === "COVID_DATA") {
 						this.covidData.isConnecting = false;
@@ -438,9 +444,9 @@ export default {
 		},
 
 		/**
-		 * HCI literature shows that, if a progress indicator speeds up towards the end, 
+		 * HCI literature shows that, if a progress indicator speeds up towards the end,
 		 * the process is judged to have been faster than if the speed of the progress indicator was constant.
-		 * 
+		 *
 		 * hmmm Not so sure when you view it in action well for using log anyways
 		 */
 		getPercent(value) {
@@ -473,7 +479,7 @@ export default {
 	position: relative;
 
 	.loading-wrapper {
-		max-width: 520px;
+		max-width: 600px;
 		width: 100%;
 		display: flex;
 		align-items: center;
@@ -513,7 +519,7 @@ export default {
 				border-radius: 4px;
 				padding: 8px;
 				label {
-					width: 200px;
+					width: 220px;
 				}
 				.covid-splashscreen--status {
 					width: 48px;

@@ -170,7 +170,7 @@ const processEntries = (countryCode, data, population) => {
 	}
 }
 
-export const parseWorld = (countries, cases) => {
+export const parseWorld = (countries, cases, vaccines) => {
 	const data = [];
 	for (const country of countries) {
 		let entries = cases.filter(
@@ -186,7 +186,8 @@ export const parseWorld = (countries, cases) => {
 
 		if (entries.length > 0) {
 			const name = findShorttName(country.name);
-			const population = country.alpha2Code === 'IE' ? 4937786 : country.population
+			const population = country.alpha2Code === 'IE' ? 4937786 : country.population;
+			const vaccineData = vaccines.find(item => item.iso === country.alpha3Code)
 			const item = {
 				uuid: uuid(),
 				countryName: name,
@@ -201,6 +202,7 @@ export const parseWorld = (countries, cases) => {
 				area: country.area /* Square kilometers */,
 				regionName: country.region,
 				subRegionName: country.subregion,
+				vaccinations: vaccineData || {total: 0, percent: 0},
 				regionCode: country.regionalBlocs[0]
 					? country.regionalBlocs[0].acronym
 					: "Other",
@@ -250,6 +252,7 @@ export const createSeriesCoverage = countries => {
 		numCountries: countries.length,
 		lastestDate: null,
 		population: 0,
+		vaccinations: 0,
 		history: null,
 		stats: {
 			latestConfirmed: 0,
@@ -286,6 +289,9 @@ export const createSeriesCoverage = countries => {
 
 		// Merge pop
 		coverage.population += country.population;
+
+		// Merge vaccinations
+		coverage.vaccinations += country.vaccinations.total;
 
 		// Merge stats
 		coverage.stats.latestConfirmed += country.series.stats.latestConfirmed;
@@ -411,6 +417,7 @@ export const createSeriesRegion = (countries) => {
 			region = {
 				uuid: uuid(),
 				population: 0,
+				vaccinations: 0,
 				region: country.regionName,
 				subRegion: country.subRegionName,
 				countries: [],
@@ -437,6 +444,7 @@ export const createSeriesRegion = (countries) => {
 			subRegions.push(region)
 		}
 		region.population += country.population;
+		region.vaccinations += country.vaccinations.total;
 		region.countries.push(country)
 	}
 
@@ -473,6 +481,7 @@ export const createSeriesRegion = (countries) => {
 			aregion = {
 				uuid: uuid(),
 				population: 0,
+				vaccinations: 0,
 				name: region.region,
 				subRegions: [],
 				stats: {
@@ -499,6 +508,7 @@ export const createSeriesRegion = (countries) => {
 		}
 		aregion.subRegions.push(region);
 		aregion.population += region.population;
+		aregion.vaccinations += region.vaccinations;
 
 		// Merge stats
 		aregion.stats.latestConfirmed += region.stats.latestConfirmed;

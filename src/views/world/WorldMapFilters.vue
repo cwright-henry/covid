@@ -4,8 +4,8 @@
 			<h1>Filter Map by</h1>
 			<div>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Popluation" value="population" color="linkColor"></v-radio>
-					<span>{{coverage.population | number(0)}}</span>
+					<v-radio hide-details label="Vaccinations" value="vaccinations" color="linkColor"></v-radio>
+					<span>{{coverage.vaccinations | number(0)}}</span>
 				</div>
 				<label>Confirmed</label>
 				<div class="covid-map--filters__radio">

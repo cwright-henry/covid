@@ -40,7 +40,7 @@ export default {
 			mapStyle: "mapbox://styles/mapbox/dark-v10?optimize=true",
 			viewState: {
 				longitude: 50,
-				latitude: 20,
+				latitude: 22,
 				zoom: 1,
 				bearing: 0,
 				pitch: 0,
@@ -103,7 +103,7 @@ export default {
 
 		onFilterChange(filter) {
 			this.filter = filter;
-			if (this.filter !== "population") {
+			if (this.filter !== "vaccinations") {
 				this.map
 					.getSource("coverage")
 					.setData(this.coverage.history[this.lastDate][this.filter]);
@@ -116,7 +116,7 @@ export default {
 			]);
 
 			switch (this.filter) {
-				case "population":
+				case "vaccinations":
 					this.map.setPaintProperty(
 						"coverage-labels",
 						"text-color",

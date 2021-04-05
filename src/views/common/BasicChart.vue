@@ -81,7 +81,7 @@ const options = (vm) => {
 				},
 			},
 			bar: {
-				opacity: 0.5,
+				opacity: 0.65,
 			},
 		},
 	};
@@ -143,8 +143,9 @@ export default {
 	methods: {
 		render() {
 			const chart = this.$refs[this.ref].chart;
+
+			this.clearSeries();
 			if (this.ts.length > 0) {
-				this.clearSeries();
 				setTimeout(() => {
 					chart.addSeries({
 						type: this.chartType,

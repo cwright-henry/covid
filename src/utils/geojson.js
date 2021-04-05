@@ -27,6 +27,7 @@ const createFeature = (region, stats) => {
         properties: {
             name: region.countryName || region.name,
             population: numberFormat(region.population || 0, 0),
+            vaccinations: numberFormat(region?.vaccinations?.total || 0, 0),
             countryCode: region.countryCode || '',
             totalConfirmed: numberFormat(stats.totalConfirmed || 0, 0),
             totalConfirmedRaw: stats.totalConfirmed || 0,

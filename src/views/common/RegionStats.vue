@@ -31,17 +31,16 @@
 			</div>
 		</li>
 		<li>
-			<label>Total Recovered</label>
-			<div>
-				<span>{{ recovered | number(0) }}</span>
-				<span class="small">{{ recoveredPercent | number(2) }}%</span>
-			</div>
-		</li>
-		<li>
 			<label>Total Fatalities</label>
 			<div>
 				<span>{{ fatalities | number(0) }}</span>
 				<span class="small">{{ fatalitiesPercent | number(2) }}%</span>
+			</div>
+		</li>
+		<li>
+			<label>Total Vaccinations</label>
+			<div>
+				<span>{{ vaccinations | number(0) }}</span>
 			</div>
 		</li>
 	</ul>
@@ -100,17 +99,11 @@ export default {
 				: this.region.stats;
 			return (stats.totalConfirmed / this.region.population) * 100;
 		},
-		recovered() {
-			const stats = this.region.series
-				? this.region.series.stats
-				: this.region.stats;
-			return stats.totalRecovered;
-		},
-		recoveredPercent() {
-			const stats = this.region.series
-				? this.region.series.stats
-				: this.region.stats;
-			return (stats.totalRecovered / stats.totalConfirmed) * 100;
+		vaccinations() {
+			if (this.region.vaccinations.total !== undefined) {
+				return this.region.vaccinations.total;
+			}
+			return this.region.vaccinations;
 		},
 		fatalities() {
 			const stats = this.region.series

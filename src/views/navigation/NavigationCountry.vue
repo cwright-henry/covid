@@ -22,17 +22,17 @@
 						<span>{{filterType === 'totals' ? "Total" : "Latest"}}</span>
 					</h2>
 					<ul>
-						<li class="mr-2">
-							<label>Population</label>
-							<span :class="{isHighlighted : isPopulationSelected}">{{country.population | number(0)}}</span>
+						<li class="mr-3">
+							<label>Vaccinated</label>
+							<span :class="{isHighlighted : isVaccinatedSelected}">{{country.vaccinations.percent | number(2)}} %</span>
 						</li>
-						<li class="mr-2">
+						<li class="mr-3">
 							<label>Confirmed</label>
 							<span
 								:class="{isHighlighted : isConfirmedSelected}"
 							>{{filterType === 'totals' ? country.series.stats.totalConfirmed : country.series.stats.latestConfirmed | number(0)}}</span>
 						</li>
-						<li class="mr-2">
+						<li class="mr-3">
 							<label>Fatalities</label>
 							<span
 								:class="{isHighlighted : isFatalitiesSelected}"
@@ -117,8 +117,8 @@ export default {
 			return true;
 		},
 
-		isPopulationSelected() {
-			return this.filter === "population";
+		isVaccinatedSelected() {
+			return this.filter === "vaccinations";
 		},
 		isConfirmedSelected() {
 			return (
@@ -230,9 +230,6 @@ ul.covid-nav-countries {
 						flex-direction: column;
 						align-items: flex-start;
 						margin: 0;
-						&:first-child {
-							width: 70px;
-						}
 						span.isHighlighted {
 							color: var(--section-header-color);
 						}

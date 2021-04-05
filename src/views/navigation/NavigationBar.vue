@@ -21,7 +21,8 @@
 					left
 				>
 					<template v-slot:activator="{ on }">
-						<v-btn dark icon v-on="on">
+						<v-btn dark text small v-on="on">
+							more
 							<v-icon>mdi-dots-vertical</v-icon>
 						</v-btn>
 					</template>
@@ -107,13 +108,28 @@
 <script>
 import { mapState } from "vuex";
 import NavigationCountry from "./NavigationCountry";
-import { objectSorter, sortCountries } from "@/utils";
+import { sortCountries } from "@/utils";
 import EventBus from "@/events";
 
-/**
- * Sort By population
- */
-const populationSorter = objectSorter("population", "asc");
+const vaccinationSorter = (sort) => {
+	return function (a, b) {
+		if (
+			a?.vaccinations?.percent != undefined &&
+			b?.vaccinations?.percent !== undefined
+		) {
+			const left = a.vaccinations.percent;
+			const right = b.vaccinations.percent;
+
+			if (left < right) {
+				return sort ? (sort === "desc" ? -1 : 1) : -1;
+			}
+			if (left > right) {
+				return sort ? (sort === "desc" ? 1 : -1) : 1;
+			}
+		}
+		return 0;
+	};
+};
 const totalConfirmedSorter = sortCountries("totalConfirmed", "asc");
 const latestConfirmedSorter = sortCountries("latestConfirmed", "asc");
 const totalConfirmed14DaySorter = sortCountries("totalConfirmed14Day", "asc");
@@ -151,7 +167,7 @@ export default {
 			sortFilters: [
 				{ text: "Region", uuid: "region" },
 				{ text: "Sub Region", uuid: "subregion" },
-				{ text: "Total Population", uuid: "population" },
+				{ text: "Population Vaccinated", uuid: "vaccinations" },
 				{ text: "Latest Confirmed", uuid: "latestConfirmed" },
 				{ text: "Latest Fatalities", uuid: "latestFatalities" },
 				{ text: "Latest Per Capita", uuid: "latestConfirmed14Day" },
@@ -205,8 +221,16 @@ export default {
 		count() {
 			let up = 0;
 			let down = 0;
-			for (const country of this.items) {
-				country.series.stats.slope > 0 ? up++ : down++;
+			if (this.items instanceof Array) {
+				for (const country of this.items) {
+					country.series.stats.slope > 0 ? up++ : down++;
+				}
+			} else {
+				for (const region in this.items) {
+					for (const country of this.items[region]) {
+						country.series.stats.slope > 0 ? up++ : down++;
+					}
+				}
 			}
 			return { up, down };
 		},
@@ -228,8 +252,8 @@ export default {
 					return regionSorter(data);
 				case "subregion":
 					return regionSorter(data, true);
-				case "population":
-					return data.sort(populationSorter);
+				case "vaccinations":
+					return data.sort(vaccinationSorter(true));
 				case "totalConfirmed":
 					EventBus.$emit("onNavFilterChange", this.currentFilter);
 					return data.sort(totalConfirmedSorter);
