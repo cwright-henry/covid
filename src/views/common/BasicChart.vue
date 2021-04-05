@@ -83,6 +83,12 @@ const options = (vm) => {
 			bar: {
 				opacity: 0.65,
 			},
+			area: {
+				fillOpacity: 0.4,
+				marker: {
+					enabled: false,
+				},
+			},
 		},
 	};
 };
