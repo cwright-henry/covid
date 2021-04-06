@@ -170,7 +170,7 @@ const processEntries = (countryCode, data, population) => {
 	}
 }
 
-export const parseWorld = (countries, cases, vaccines) => {
+export const parseWorld = (countries, cases, vaccinations, vaccinationsLocations) => {
 	const data = [];
 	for (const country of countries) {
 		let entries = cases.filter(
@@ -187,7 +187,8 @@ export const parseWorld = (countries, cases, vaccines) => {
 		if (entries.length > 0) {
 			const name = findShorttName(country.name);
 			const population = country.alpha2Code === 'IE' ? 4937786 : country.population;
-			const vaccineData = vaccines.find(item => item.iso === country.alpha3Code)
+			const vaccineData = vaccinations.find(item => item.iso === country.alpha3Code)
+			const vaccineLocationData = vaccinationsLocations.find(item => item.iso === country.alpha3Code)
 			const item = {
 				uuid: uuid(),
 				countryName: name,
@@ -202,7 +203,8 @@ export const parseWorld = (countries, cases, vaccines) => {
 				area: country.area /* Square kilometers */,
 				regionName: country.region,
 				subRegionName: country.subregion,
-				vaccinations: vaccineData || {total: 0, percent: 0},
+				vaccinations: vaccineData || { total: 0, percent: 0 },
+				vaccines: vaccineLocationData?.vaccines || '',
 				regionCode: country.regionalBlocs[0]
 					? country.regionalBlocs[0].acronym
 					: "Other",

@@ -16,6 +16,7 @@ class Coverage {
     static GLOBAL_RECOVERED_URL = "/covid/api/covid-data-recovered-global";
     static IRELAND_URL = "/covid/api/covid-ireland-data";
     static GLOBAL_VACCINATIONS_URL = "/covid/api/covid-vaccinations-data";
+    static GLOBAL_VACCINATIONS_LOCATIONS_URL = "/covid/api/covid-vaccinations-location-data";
 
     static async mergeCases(globalConfirmed, usConfirmed, globalDeaths, usDeaths, globalRecovered) {
         return new Promise(resolve => {
@@ -45,9 +46,9 @@ class Coverage {
         })
     }
 
-    static async parse(countryData, cases, irelandData, globalVaccinations) {
+    static async parse(countryData, cases, irelandData, vaccinations, vaccinationsLocations) {
         return new Promise(resolve => {
-            const countries = parseWorld(countryData, cases, globalVaccinations);
+            const countries = parseWorld(countryData, cases, vaccinations, vaccinationsLocations);
 
             const ireland = parseIreland(irelandData);
             const ieData = countries.find(item => item.countryCode === "IE");
@@ -68,7 +69,7 @@ class Coverage {
      */
     static async getAll() {
         try {
-            const [irelandData, countryData, globalConfirmed, usConfirmed, globalDeaths, usDeaths, globalRecovered, globalVaccinations] = await Promise.all([
+            const [irelandData, countryData, globalConfirmed, usConfirmed, globalDeaths, usDeaths, globalRecovered, vaccinations, vaccinationsLocations] = await Promise.all([
                 load(Coverage.IRELAND_URL, "IRELAND_DATA"),
                 load(Coverage.COUNTRY_URL, "COUNTRY_LIST"),
                 load(Coverage.GLOBAL_CONFIRMED_URL, "COVID_DATA"),
@@ -76,7 +77,8 @@ class Coverage {
                 load(Coverage.GLOBAL_DEATHS_URL, "COVID_DATA"),
                 load(Coverage.US_DEATHS_URL, "COVID_DATA"),
                 load(Coverage.GLOBAL_RECOVERED_URL, "COVID_DATA"),
-                load(Coverage.GLOBAL_VACCINATIONS_URL, "COVID_VACCINATIONS")
+                load(Coverage.GLOBAL_VACCINATIONS_URL, "COVID_VACCINATIONS"),
+                load(Coverage.GLOBAL_VACCINATIONS_LOCATIONS_URL, "COVID_VACCINATIONS")
             ]);
             postMessage({
                 type: 'processing-data',
@@ -85,7 +87,7 @@ class Coverage {
 
             const cases = await this.mergeCases(globalConfirmed, usConfirmed, globalDeaths, usDeaths, globalRecovered);
 
-            return await this.parse(countryData, cases, irelandData, globalVaccinations)
+            return await this.parse(countryData, cases, irelandData, vaccinations, vaccinationsLocations)
         }
         catch (e) {
             console.log(e)

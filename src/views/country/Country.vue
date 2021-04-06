@@ -63,6 +63,10 @@
 					<label>Vaccinated</label>
 				</div>
 			</div>
+			<div class="covid-country--stats-vaccines" v-if="country.vaccines">
+				<label>Vaccines</label>
+				<span>{{country.vaccines}}</span>
+			</div>
 			<div class="covid-country--charts">
 				<div class="covid-country--charts__chart pr-8">
 					<h1>
@@ -255,7 +259,7 @@ header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 0 12px 24px 0;
+	margin: 0 0 24px 0;
 	.covid-country--stats-progress {
 		display: flex;
 		flex-direction: column;
@@ -265,6 +269,18 @@ header {
 			margin: 2px 0 0 0;
 			font-weight: 300;
 		}
+	}
+}
+.covid-country--stats-vaccines {
+	display: flex;
+	justify-content: flex-end;
+	align-items: baseline;
+	margin: -12px 0 24px 0;
+	label {
+		text-transform: uppercase;
+		font-weight: 300;
+		font-size: 11px;
+		margin: 0 8px 0 0;
 	}
 }
 .covid-country--info__select {

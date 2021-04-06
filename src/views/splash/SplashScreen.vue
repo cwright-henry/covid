@@ -315,6 +315,8 @@ export default {
 		worker.postMessage({ msg: "getCoverage" });
 		const NUM_COVID_FILES = 5;
 		let currentCovidFiles = 0;
+		const NUM_VACCINATION_FILES = 2;
+		let currentVaccinationFiles = 0;
 
 		worker.onmessage = (event) => {
 			switch (event.data.type) {
@@ -389,8 +391,11 @@ export default {
 						this.countryData.isLoading = false;
 					}
 					if (event.data.contentId === "COVID_VACCINATIONS") {
-						this.covidVaccineData.isFinished = true;
-						this.covidVaccineData.isLoading = false;
+						++currentVaccinationFiles;
+						if (currentVaccinationFiles === NUM_VACCINATION_FILES) {
+							this.covidVaccineData.isFinished = true;
+							this.covidVaccineData.isLoading = false;
+						}
 					}
 					if (event.data.contentId === "COVID_DATA") {
 						++currentCovidFiles;
