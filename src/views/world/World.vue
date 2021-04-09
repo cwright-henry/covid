@@ -30,30 +30,6 @@
 			</div>
 			<div class="covid-world--charts">
 				<h1>
-					World Daily Recovered
-					<div>
-						Latest
-						<span>{{
-							coverage.stats.latestRecovered | number(0)
-						}}</span>
-					</div>
-				</h1>
-				<div class="covid-world--charts__chart">
-					<div>
-						<StackedChart :series="stackedChartData.recovered" />
-					</div>
-					<div>
-						<BasicChart
-							:ts="coverage.ts.recoveredDailySeries"
-							chartType="bar"
-							:smats="coverage.ts.recoveredSMASeries"
-							name="Daily Change"
-						/>
-					</div>
-				</div>
-			</div>
-			<div class="covid-world--charts">
-				<h1>
 					World Daily Fatalities
 					<div>
 						Latest
@@ -71,6 +47,30 @@
 							:ts="coverage.ts.deathDailySeries"
 							chartType="bar"
 							:smats="coverage.ts.deathSMASeries"
+							name="Daily Change"
+						/>
+					</div>
+				</div>
+			</div>
+			<div class="covid-world--charts">
+				<h1>
+					World Daily Vaccinations
+					<div>
+						Latest
+						<span>{{
+							coverage.stats.latestVaccinations | number(0)
+						}}</span>
+					</div>
+				</h1>
+				<div class="covid-world--charts__chart">
+					<div>
+						<StackedChart :series="stackedChartData.vaccinations" />
+					</div>
+					<div>
+						<BasicChart
+							:ts="coverage.ts.dailyVaccinations"
+							chartType="bar"
+							:smats="coverage.ts.vaccinationsSMASeries"
 							name="Daily Change"
 						/>
 					</div>
@@ -251,7 +251,7 @@ export default {
 		},
 		stackedChartData() {
 			const confirmed = [];
-			const recovered = [];
+			const vaccinations = [];
 			const fatalities = [];
 
 			for (let i = 0; i < this.regions.length; i++) {
@@ -263,9 +263,9 @@ export default {
 					ts: region.ts.confirmedSMASeries,
 					color,
 				});
-				recovered.push({
+				vaccinations.push({
 					name,
-					ts: region.ts.recoveredSMASeries,
+					ts: region.ts.vaccinationsSeries,
 					color,
 				});
 				fatalities.push({
@@ -275,7 +275,7 @@ export default {
 				});
 			}
 
-			return { confirmed, recovered, fatalities };
+			return { confirmed, vaccinations, fatalities };
 		},
 		scrollableRegions() {
 			if (this.scrollAmount === 0) {

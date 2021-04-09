@@ -1,6 +1,6 @@
 import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000, getSlope, SMA_AVG, create14DayPer100k, getLatestFromSeries } from './utils'
 import { createGeoJsonForCountry, createGeoJsonHistoryForCountries } from './geojson'
-import { sortCountriesStats } from './sorting'
+import { sortCountriesStats, timeseriesSorter } from './sorting'
 
 /**
  * Replace long names with shorter - this helps the map
@@ -187,7 +187,7 @@ export const parseWorld = (countries, cases, vaccinations, vaccinationsLocations
 		if (entries.length > 0) {
 			const name = findShorttName(country.name);
 			const population = country.alpha2Code === 'IE' ? 4937786 : country.population;
-			const vaccineData = vaccinations.find(item => item.iso === country.alpha3Code)
+			const vaccineData = vaccinations.find(item => item.iso === country.alpha3Code);
 			const vaccineLocationData = vaccinationsLocations.find(item => item.iso === country.alpha3Code)
 			const item = {
 				uuid: uuid(),
@@ -203,7 +203,8 @@ export const parseWorld = (countries, cases, vaccinations, vaccinationsLocations
 				area: country.area /* Square kilometers */,
 				regionName: country.region,
 				subRegionName: country.subregion,
-				vaccinations: vaccineData || { total: 0, percent: 0 },
+				vaccinations: vaccineData || { total: 0, percent: 0, data: [] },
+				vaccinationsLatest: vaccineData?.data ? getLatestFromSeries(vaccineData.data) : 0,
 				vaccines: vaccineLocationData?.vaccines || '',
 				regionCode: country.regionalBlocs[0]
 					? country.regionalBlocs[0].acronym
@@ -260,6 +261,7 @@ export const createSeriesCoverage = countries => {
 			latestConfirmed: 0,
 			latestRecovered: 0,
 			latestDeaths: 0,
+			latestVaccinations: 0,
 			totalConfirmed: 0,
 			totalRecovered: 0,
 			totalDeaths: 0
@@ -270,7 +272,8 @@ export const createSeriesCoverage = countries => {
 			deathSeries: [],
 			confirmedDailySeries: [],
 			recoveredDailySeries: [],
-			deathDailySeries: []
+			deathDailySeries: [],
+			dailyVaccinations: []
 		}
 	};
 
@@ -310,6 +313,7 @@ export const createSeriesCoverage = countries => {
 		merge(coverage.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
 		merge(coverage.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
 		merge(coverage.ts.deathDailySeries, country.series.ts.deathDailySeries);
+		merge(coverage.ts.dailyVaccinations, country.vaccinations.data);
 
 		// lastest Date
 		coverage.lastestDate = ""
@@ -317,14 +321,17 @@ export const createSeriesCoverage = countries => {
 			coverage.lastestDate = country.series.ts.confirmedSeries[country.series.ts.confirmedSeries.length - 1][0];
 		}
 	}
+	coverage.ts.dailyVaccinations.sort(timeseriesSorter('desc'))
 
 	coverage.ts.confirmedSMASeries = SMA_AVG(coverage.ts.confirmedDailySeries)
 	coverage.ts.recoveredSMASeries = SMA_AVG(coverage.ts.recoveredDailySeries)
 	coverage.ts.deathSMASeries = SMA_AVG(coverage.ts.deathDailySeries)
+	coverage.ts.vaccinationsSMASeries = SMA_AVG(coverage.ts.dailyVaccinations)
 
 	coverage.ts.confirmed14DaySeries = create14DayPer100k(coverage.population, coverage.ts.confirmedDailySeries);
 	coverage.stats.latestConfirmed14Day = getLatestFromSeries(coverage.ts.confirmed14DaySeries);
 	coverage.stats.totalConfirmed14Day = (coverage.stats.totalConfirmed / coverage.population) * 100000;
+	coverage.stats.latestVaccinations = getLatestFromSeries(coverage.ts.dailyVaccinations);
 
 	coverage.history = createGeoJsonHistoryForCountries(countries)
 	return coverage;
@@ -432,6 +439,7 @@ export const createSeriesRegion = (countries) => {
 					totalDeaths: 0
 				},
 				ts: {
+					vaccinationsSeries:[],
 					confirmedSeries: [],
 					recoveredSeries: [],
 					deathSeries: [],
@@ -468,7 +476,10 @@ export const createSeriesRegion = (countries) => {
 			merge(region.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
 			merge(region.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
 			merge(region.ts.deathDailySeries, country.series.ts.deathDailySeries);
+			merge(region.ts.vaccinationsSeries, country.vaccinations.data);
 		}
+		region.ts.vaccinationsSeries.sort(timeseriesSorter('desc'));
+
 		region.ts.confirmedSMASeries = SMA_AVG(region.ts.confirmedDailySeries)
 		region.ts.recoveredSMASeries = SMA_AVG(region.ts.recoveredDailySeries)
 		region.ts.deathSMASeries = SMA_AVG(region.ts.deathDailySeries)
@@ -495,6 +506,7 @@ export const createSeriesRegion = (countries) => {
 					totalDeaths: 0
 				},
 				ts: {
+					vaccinationsSeries:[],
 					confirmedSeries: [],
 					recoveredSeries: [],
 					deathSeries: [],
@@ -521,6 +533,7 @@ export const createSeriesRegion = (countries) => {
 		aregion.stats.totalDeaths += region.stats.totalDeaths;
 
 		// Merge ts
+		merge(aregion.ts.vaccinationsSeries, region.ts.vaccinationsSeries);
 		merge(aregion.ts.confirmedSeries, region.ts.confirmedSeries);
 		merge(aregion.ts.recoveredSeries, region.ts.recoveredSeries);
 		merge(aregion.ts.deathSeries, region.ts.deathSeries);
@@ -530,6 +543,7 @@ export const createSeriesRegion = (countries) => {
 		merge(aregion.ts.confirmedSMASeries, region.ts.confirmedSMASeries);
 		merge(aregion.ts.recoveredSMASeries, region.ts.recoveredSMASeries);
 		merge(aregion.ts.deathSMASeries, region.ts.deathSMASeries);
+		aregion.ts.vaccinationsSeries.sort(timeseriesSorter('desc'))
 
 		aregion.ts.confirmed14DaySeries = create14DayPer100k(aregion.population, aregion.ts.confirmedDailySeries);
 		aregion.stats.latestConfirmed14Day = getLatestFromSeries(aregion.ts.confirmed14DaySeries);

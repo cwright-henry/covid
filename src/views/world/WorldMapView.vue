@@ -4,7 +4,10 @@
 			<div id="worldMap" ref="map"></div>
 		</div>
 		<div class="covid-map--filters">
-			<WorldMapFilters :coverage="coverage" @onFilterChange="onFilterChange" />
+			<WorldMapFilters
+				:coverage="coverage"
+				@onFilterChange="onFilterChange"
+			/>
 			<WorldMapSlider
 				class="mt-4"
 				:currentFilter="filter"
@@ -267,12 +270,16 @@ section {
 		height: 500px;
 		position: relative;
 		overflow: hidden;
+
 		#worldMap {
 			position: absolute;
 			top: 0;
 			left: 0;
 			width: 100%;
 			height: 100%;
+			canvas {
+				outline: none;
+			}
 		}
 	}
 	.covid-map--filters {

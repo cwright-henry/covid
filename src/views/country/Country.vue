@@ -60,21 +60,21 @@
 					>
 						{{ country.vaccinations.percent | number(0) }}%
 					</v-progress-circular>
-					<label>Vaccinated</label>
+					<label>Fully Vaccinated</label>
 				</div>
 			</div>
 			<div class="covid-country--stats-vaccines" v-if="country.vaccines">
 				<label>Vaccines</label>
-				<span>{{country.vaccines}}</span>
+				<span>{{ country.vaccines }}</span>
 			</div>
 			<div class="covid-country--charts">
 				<div class="covid-country--charts__chart pr-8">
 					<h1>
 						Daily Vaccinations
 						<div>
-							Total
+							Latest
 							<span>{{
-								country.vaccinations.total | number(0)
+								country.vaccinationsLatest | number(0)
 							}}</span>
 						</div>
 					</h1>
@@ -153,6 +153,7 @@ export default {
 		return {
 			country: {
 				borders: [],
+				vaccinations: {},
 				series: {
 					data: [],
 					provinces: [],
