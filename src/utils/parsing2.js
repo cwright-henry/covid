@@ -259,19 +259,15 @@ export const createSeriesCoverage = countries => {
 		history: null,
 		stats: {
 			latestConfirmed: 0,
-			latestRecovered: 0,
 			latestDeaths: 0,
 			latestVaccinations: 0,
 			totalConfirmed: 0,
-			totalRecovered: 0,
 			totalDeaths: 0
 		},
 		ts: {
 			confirmedSeries: [],
-			recoveredSeries: [],
 			deathSeries: [],
 			confirmedDailySeries: [],
-			recoveredDailySeries: [],
 			deathDailySeries: [],
 			dailyVaccinations: []
 		}
@@ -300,18 +296,14 @@ export const createSeriesCoverage = countries => {
 
 		// Merge stats
 		coverage.stats.latestConfirmed += country.series.stats.latestConfirmed;
-		coverage.stats.latestRecovered += country.series.stats.latestRecovered;
 		coverage.stats.latestDeaths += country.series.stats.latestDeaths;
 		coverage.stats.totalConfirmed += country.series.stats.totalConfirmed;
-		coverage.stats.totalRecovered += country.series.stats.totalRecovered;
 		coverage.stats.totalDeaths += country.series.stats.totalDeaths;
 
 		// Merge ts
 		merge(coverage.ts.confirmedSeries, country.series.ts.confirmedSeries);
-		merge(coverage.ts.recoveredSeries, country.series.ts.recoveredSeries);
 		merge(coverage.ts.deathSeries, country.series.ts.deathSeries);
 		merge(coverage.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
-		merge(coverage.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
 		merge(coverage.ts.deathDailySeries, country.series.ts.deathDailySeries);
 		merge(coverage.ts.dailyVaccinations, country.vaccinations.data);
 
@@ -324,7 +316,6 @@ export const createSeriesCoverage = countries => {
 	coverage.ts.dailyVaccinations.sort(timeseriesSorter('desc'))
 
 	coverage.ts.confirmedSMASeries = SMA_AVG(coverage.ts.confirmedDailySeries)
-	coverage.ts.recoveredSMASeries = SMA_AVG(coverage.ts.recoveredDailySeries)
 	coverage.ts.deathSMASeries = SMA_AVG(coverage.ts.deathDailySeries)
 	coverage.ts.vaccinationsSMASeries = SMA_AVG(coverage.ts.dailyVaccinations)
 
@@ -432,22 +423,17 @@ export const createSeriesRegion = (countries) => {
 				countries: [],
 				stats: {
 					latestConfirmed: 0,
-					latestRecovered: 0,
 					latestDeaths: 0,
 					totalConfirmed: 0,
-					totalRecovered: 0,
 					totalDeaths: 0
 				},
 				ts: {
-					vaccinationsSeries:[],
+					vaccinationsSeries: [],
 					confirmedSeries: [],
-					recoveredSeries: [],
 					deathSeries: [],
 					confirmedDailySeries: [],
-					recoveredDailySeries: [],
 					deathDailySeries: [],
 					confirmedSMASeries: [],
-					recoveredSMASeries: [],
 					deathSMASeries: []
 				}
 			}
@@ -463,25 +449,20 @@ export const createSeriesRegion = (countries) => {
 		for (const country of region.countries) {
 			// Merge stats
 			region.stats.latestConfirmed += country.series.stats.latestConfirmed;
-			region.stats.latestRecovered += country.series.stats.latestRecovered;
 			region.stats.latestDeaths += country.series.stats.latestDeaths;
 			region.stats.totalConfirmed += country.series.stats.totalConfirmed;
-			region.stats.totalRecovered += country.series.stats.totalRecovered;
 			region.stats.totalDeaths += country.series.stats.totalDeaths;
 
 			// Merge ts
 			merge(region.ts.confirmedSeries, country.series.ts.confirmedSeries);
-			merge(region.ts.recoveredSeries, country.series.ts.recoveredSeries);
 			merge(region.ts.deathSeries, country.series.ts.deathSeries);
 			merge(region.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
-			merge(region.ts.recoveredDailySeries, country.series.ts.recoveredDailySeries);
 			merge(region.ts.deathDailySeries, country.series.ts.deathDailySeries);
 			merge(region.ts.vaccinationsSeries, country.vaccinations.data);
 		}
 		region.ts.vaccinationsSeries.sort(timeseriesSorter('desc'));
 
 		region.ts.confirmedSMASeries = SMA_AVG(region.ts.confirmedDailySeries)
-		region.ts.recoveredSMASeries = SMA_AVG(region.ts.recoveredDailySeries)
 		region.ts.deathSMASeries = SMA_AVG(region.ts.deathDailySeries)
 		region.ts.confirmed14DaySeries = create14DayPer100k(region.population, region.ts.confirmedDailySeries);
 		region.stats.latestConfirmed14Day = getLatestFromSeries(region.ts.confirmed14DaySeries);
@@ -499,22 +480,17 @@ export const createSeriesRegion = (countries) => {
 				subRegions: [],
 				stats: {
 					latestConfirmed: 0,
-					latestRecovered: 0,
 					latestDeaths: 0,
 					totalConfirmed: 0,
-					totalRecovered: 0,
 					totalDeaths: 0
 				},
 				ts: {
-					vaccinationsSeries:[],
+					vaccinationsSeries: [],
 					confirmedSeries: [],
-					recoveredSeries: [],
 					deathSeries: [],
 					confirmedDailySeries: [],
-					recoveredDailySeries: [],
 					deathDailySeries: [],
 					confirmedSMASeries: [],
-					recoveredSMASeries: [],
 					deathSMASeries: []
 				}
 			}
@@ -526,22 +502,17 @@ export const createSeriesRegion = (countries) => {
 
 		// Merge stats
 		aregion.stats.latestConfirmed += region.stats.latestConfirmed;
-		aregion.stats.latestRecovered += region.stats.latestRecovered;
 		aregion.stats.latestDeaths += region.stats.latestDeaths;
 		aregion.stats.totalConfirmed += region.stats.totalConfirmed;
-		aregion.stats.totalRecovered += region.stats.totalRecovered;
 		aregion.stats.totalDeaths += region.stats.totalDeaths;
 
 		// Merge ts
 		merge(aregion.ts.vaccinationsSeries, region.ts.vaccinationsSeries);
 		merge(aregion.ts.confirmedSeries, region.ts.confirmedSeries);
-		merge(aregion.ts.recoveredSeries, region.ts.recoveredSeries);
 		merge(aregion.ts.deathSeries, region.ts.deathSeries);
 		merge(aregion.ts.confirmedDailySeries, region.ts.confirmedDailySeries);
-		merge(aregion.ts.recoveredDailySeries, region.ts.recoveredDailySeries);
 		merge(aregion.ts.deathDailySeries, region.ts.deathDailySeries);
 		merge(aregion.ts.confirmedSMASeries, region.ts.confirmedSMASeries);
-		merge(aregion.ts.recoveredSMASeries, region.ts.recoveredSMASeries);
 		merge(aregion.ts.deathSMASeries, region.ts.deathSMASeries);
 		aregion.ts.vaccinationsSeries.sort(timeseriesSorter('desc'))
 

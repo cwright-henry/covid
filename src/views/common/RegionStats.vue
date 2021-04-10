@@ -100,10 +100,10 @@ export default {
 			return (stats.totalConfirmed / this.region.population) * 100;
 		},
 		vaccinations() {
-			if (this.region.vaccinations.total !== undefined) {
+			if (this.region.vaccinations?.total !== undefined) {
 				return this.region.vaccinations.total;
 			}
-			return this.region.vaccinations;
+			return this.region.vaccinations || 0;
 		},
 		fatalities() {
 			const stats = this.region.series
