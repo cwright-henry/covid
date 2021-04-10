@@ -14,7 +14,8 @@
 		<div class="covid-appbar--header ml-4">
 			<h1>
 				Covid 19 Watch
-				<span>Last Update: {{ coverage.lastestDate | dateLong }}</span>
+				<div><span>Day</span>{{ coverage.daysSoFar | number(0) }}</div>
+				<div><span>Last Updated</span>{{ coverage.lastestDate | dateLong }}</div>
 				<img src="@/assets/covid.png" height="24" width="24" />
 			</h1>
 			<div class="covid-appbar--info">
@@ -77,9 +78,17 @@ export default {
 		margin: 4px 0;
 		position: relative;
 		width: 100%;
-		span {
-			font-size: 13px;
-			margin: 0 0 0 8px;
+		display: flex;
+		align-items: baseline;
+		div {
+			font-size: 14px;
+			margin: 0 0 0 16px;
+			> span {
+				text-transform: uppercase;
+				font-size: 11px;
+				margin: 0 6px 0 0;
+				font-weight: 300;
+			}
 		}
 		img {
 			position: absolute;

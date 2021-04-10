@@ -257,6 +257,7 @@ export const createSeriesCoverage = countries => {
 		population: 0,
 		vaccinations: 0,
 		history: null,
+		daysSoFar:0,
 		stats: {
 			latestConfirmed: 0,
 			latestDeaths: 0,
@@ -285,6 +286,9 @@ export const createSeriesCoverage = countries => {
 		}
 	};
 
+	let minDate = Number.MAX_VALUE;
+	let maxDate = 0;
+
 	for (let i = 0; i < countries.length; i++) {
 		const country = countries[i];
 
@@ -312,7 +316,20 @@ export const createSeriesCoverage = countries => {
 		if (country.series.ts.confirmedSeries.length > 0) {
 			coverage.lastestDate = country.series.ts.confirmedSeries[country.series.ts.confirmedSeries.length - 1][0];
 		}
+
+		// Calculate date range for daysSoFar
+		const min = coverage.ts.confirmedSeries[0][0]
+		const max = coverage.ts.confirmedSeries[coverage.ts.confirmedSeries.length - 1][0];
+		if(min < minDate) {
+			minDate = min;
+		}
+		if(max > maxDate) {
+			maxDate = max;
+		}
 	}
+
+	coverage.daysSoFar = (maxDate - minDate) / (1000 * 60 * 60 * 24);
+
 	coverage.ts.dailyVaccinations.sort(timeseriesSorter('desc'))
 
 	coverage.ts.confirmedSMASeries = SMA_AVG(coverage.ts.confirmedDailySeries)
