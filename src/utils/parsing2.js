@@ -1,6 +1,18 @@
-import { uuid, cumulative_number_for_14_days_of_COVID_19_cases_per_100000, getSlope, SMA_AVG, create14DayPer100k, getLatestFromSeries } from './utils'
+import { uuid, getSlope, SMA_AVG, create14DayPer100k, getLatestFromSeries } from './utils'
 import { createGeoJsonForCountry, createGeoJsonHistoryForCountries } from './geojson'
 import { sortCountriesStats, timeseriesSorter } from './sorting'
+
+const merge = (tsTo, tsFrom) => {
+	for (let i = 0; i < tsFrom.length; i++) {
+		const entry = tsFrom[i];
+		const current = tsTo.find(item => item[0] === entry[0]);
+		if (current) {
+			current[1] += entry[1];
+		} else {
+			tsTo.push([entry[0], entry[1]]);
+		}
+	}
+};
 
 /**
  * Replace long names with shorter - this helps the map
@@ -56,10 +68,6 @@ const caseNameMapping = [
 	{ caseName: "Burma", actualName: "Myanmar" },
 ];
 
-const specials = [
-	'US', 'CA', 'AU', 'CN'
-]
-
 const statsSorter = sortCountriesStats('latestConfirmed', 'asc');
 
 const findCaseName = name => {
@@ -73,18 +81,6 @@ const findShorttName = name => {
 }
 
 const processEntries = (countryCode, data, population) => {
-	const merge = (tsTo, tsFrom) => {
-		for (let i = 0; i < tsFrom.length; i++) {
-			const entry = tsFrom[i];
-			const current = tsTo.find(item => item[0] === entry[0]);
-			if (current) {
-				current[1] += entry[1];
-			} else {
-				tsTo.push([entry[0], entry[1]]);
-			}
-		}
-	};
-
 	if (countryCode === 'US') {
 		const provinces = [];
 		const totalConfirmed = []
@@ -257,7 +253,7 @@ export const createSeriesCoverage = countries => {
 		population: 0,
 		vaccinations: 0,
 		history: null,
-		daysSoFar:0,
+		daysSoFar: 0,
 		stats: {
 			latestConfirmed: 0,
 			latestDeaths: 0,
@@ -271,18 +267,6 @@ export const createSeriesCoverage = countries => {
 			confirmedDailySeries: [],
 			deathDailySeries: [],
 			dailyVaccinations: []
-		}
-	};
-
-	const merge = (tsTo, tsFrom) => {
-		for (let i = 0; i < tsFrom.length; i++) {
-			const entry = tsFrom[i];
-			const current = tsTo.find(item => item[0] === entry[0]);
-			if (current) {
-				current[1] += entry[1];
-			} else {
-				tsTo.push([entry[0], entry[1]]);
-			}
 		}
 	};
 
@@ -320,10 +304,10 @@ export const createSeriesCoverage = countries => {
 		// Calculate date range for daysSoFar
 		const min = coverage.ts.confirmedSeries[0][0]
 		const max = coverage.ts.confirmedSeries[coverage.ts.confirmedSeries.length - 1][0];
-		if(min < minDate) {
+		if (min < minDate) {
 			minDate = min;
 		}
-		if(max > maxDate) {
+		if (max > maxDate) {
 			maxDate = max;
 		}
 	}
@@ -415,18 +399,6 @@ const createSeriesData = ({ confirmedSeries, deathSeries, recoveredSeries }, pop
 export const createSeriesRegion = (countries) => {
 	const regions = []
 	const subRegions = [];
-
-	const merge = (tsTo, tsFrom) => {
-		for (let i = 0; i < tsFrom.length; i++) {
-			const entry = tsFrom[i];
-			const current = tsTo.find(item => item[0] === entry[0]);
-			if (current) {
-				current[1] += entry[1];
-			} else {
-				tsTo.push([entry[0], entry[1]]);
-			}
-		}
-	};
 
 	for (const country of countries) {
 		let region = subRegions.find(item => item.subRegion === country.subRegionName);
@@ -544,30 +516,4 @@ export const createSeriesRegion = (countries) => {
 	}
 
 	return regions;
-}
-
-export const create14DayCumulativeForCountries = (countries) => {
-	for (const country of countries) {
-		const country14Day = cumulative_number_for_14_days_of_COVID_19_cases_per_100000(country.series.ts.confirmedDailySeries, country.population);
-		country.series.ts.confirmed14Day = country14Day;
-		country.series.stats.latestConfirmed14Day = country14Day[country14Day.length - 1][1];
-		for (const province of country.series.provinces) {
-			const province14Day = cumulative_number_for_14_days_of_COVID_19_cases_per_100000(province.ts.confirmedDailySeries, province.population);
-			province.ts.confirmed14Day = province14Day;
-			province.stats.latestConfirmed14Day = province14Day[province14Day.length - 1][1];
-		}
-	}
-}
-
-export const create14DayCumulativeForRegions = (regions) => {
-	for (const region of regions) {
-		const region14Day = cumulative_number_for_14_days_of_COVID_19_cases_per_100000(region.ts.confirmedDailySeries, region.population);
-		region.ts.confirmed14Day = region14Day;
-		region.stats.latestConfirmed14Day = region14Day[region14Day.length - 1][1];
-		for (const subRegion of region.subRegions) {
-			const subRegion14Day = cumulative_number_for_14_days_of_COVID_19_cases_per_100000(subRegion.ts.confirmedDailySeries, subRegion.population);
-			subRegion.ts.confirmed14Day = subRegion14Day;
-			subRegion.stats.latestConfirmed14Day = subRegion14Day[subRegion14Day.length - 1][1];
-		}
-	}
 }
