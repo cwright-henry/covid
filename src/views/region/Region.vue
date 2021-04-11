@@ -5,7 +5,7 @@
 		</router-link>
 		<div class="covid-region covid-sheet">
 			<h1>{{ regionCode }}</h1>
-			<RegionStats :region="region" />
+			<RegionStats :region="region" hasProgress/>
 			<div class="covid-region--charts">
 				<div class="covid-region--charts__chart mt-5">
 					<ColumnChart :regions="slices" name="Latest Confirmed" />

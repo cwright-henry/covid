@@ -50,18 +50,7 @@
 			</header>
 			<div class="covid-country--stats">
 				<RegionStats :region="country" />
-				<div class="covid-country--stats-progress">
-					<v-progress-circular
-						:rotate="-90"
-						:size="72"
-						:width="10"
-						:value="country.vaccinations.percent"
-						color="#4CAF50"
-					>
-						{{ country.vaccinations.percent | number(0) }}%
-					</v-progress-circular>
-					<label>Fully Vaccinated</label>
-				</div>
+				<Progress :value="country.vaccinations.percent" title="Fully Vaccinated"/>
 			</div>
 			<div class="covid-country--stats-vaccines" v-if="country.vaccines">
 				<label>Vaccines</label>
@@ -147,6 +136,7 @@ import { mapGetters } from "vuex";
 import BasicChart from "@/views/common/BasicChart";
 import RegionStats from "@/views/common/RegionStats";
 import { getLocalProvince } from "@/utils";
+import Progress from '@/views/common/Progress'
 
 export default {
 	data() {
@@ -167,6 +157,7 @@ export default {
 	components: {
 		BasicChart,
 		RegionStats,
+		Progress
 	},
 	props: {
 		countryCode: {
@@ -261,16 +252,6 @@ header {
 	justify-content: space-between;
 	align-items: center;
 	margin: 0 0 24px 0;
-	.covid-country--stats-progress {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		label {
-			font-size: 13px;
-			margin: 2px 0 0 0;
-			font-weight: 300;
-		}
-	}
 }
 .covid-country--stats-vaccines {
 	display: flex;

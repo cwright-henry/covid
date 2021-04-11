@@ -6,7 +6,10 @@ import 'animate.css'
 import vuetify from './plugins/vuetify';
 import Highcharts from 'highcharts'
 import HighchartsVue from 'highcharts-vue'
+import noData from  'highcharts/modules/no-data-to-display'
 import { GA, numberFormat, dateShortFormat, dateLongFormat, dateDayFormat } from "@/utils";
+
+noData(Highcharts)
 
 
 Highcharts.createElement('link', {

@@ -94,7 +94,7 @@
 								}}</span>
 							</div>
 						</h1>
-						<RegionStats :region="region" isSlim class="ma-6" />
+						<RegionStats :region="region" isSlim class="ma-6"  hasProgress/>
 						<div class="covid-world--charts__chart">
 							<div>
 								<ColumnChart

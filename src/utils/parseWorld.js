@@ -208,6 +208,8 @@ export const parseWorld = (countries, cases, vaccinations, vaccinationsLocations
 				series: processEntries(country.alpha2Code, entries, population)
 			}
 
+			item.fullyVaccinated = (item.vaccinations.percent / 100) * item.population;
+
 			if (item.series.provinces?.length > 0) {
 				item.geojson = createGeoJsonForCountry(item)
 			}
@@ -252,6 +254,7 @@ export const createSeriesCoverage = countries => {
 		lastestDate: null,
 		population: 0,
 		vaccinations: 0,
+		fullyVaccinated: 0,
 		history: null,
 		daysSoFar: 0,
 		stats: {
@@ -281,6 +284,7 @@ export const createSeriesCoverage = countries => {
 
 		// Merge vaccinations
 		coverage.vaccinations += country.vaccinations.total;
+		coverage.fullyVaccinated += country.fullyVaccinated;
 
 		// Merge stats
 		coverage.stats.latestConfirmed += country.series.stats.latestConfirmed;
@@ -407,6 +411,7 @@ export const createSeriesRegion = (countries) => {
 				uuid: uuid(),
 				population: 0,
 				vaccinations: 0,
+				fullyVaccinated: 0,
 				region: country.regionName,
 				subRegion: country.subRegionName,
 				countries: [],
@@ -430,6 +435,7 @@ export const createSeriesRegion = (countries) => {
 		}
 		region.population += country.population;
 		region.vaccinations += country.vaccinations.total;
+		region.fullyVaccinated += country.fullyVaccinated;
 		region.countries.push(country)
 	}
 
@@ -465,6 +471,7 @@ export const createSeriesRegion = (countries) => {
 				uuid: uuid(),
 				population: 0,
 				vaccinations: 0,
+				fullyVaccinated: 0,
 				name: region.region,
 				subRegions: [],
 				stats: {
@@ -488,6 +495,7 @@ export const createSeriesRegion = (countries) => {
 		aregion.subRegions.push(region);
 		aregion.population += region.population;
 		aregion.vaccinations += region.vaccinations;
+		aregion.fullyVaccinated += region.fullyVaccinated;
 
 		// Merge stats
 		aregion.stats.latestConfirmed += region.stats.latestConfirmed;

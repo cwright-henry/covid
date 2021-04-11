@@ -23,6 +23,9 @@ const options = (vm) => {
 		title: {
 			text: null,
 		},
+		lang: {
+			noData: "No data to display",
+		},
 		credits: {
 			enabled: false,
 		},
@@ -159,6 +162,7 @@ export default {
 						data: this.ts,
 						name: this.name,
 					});
+					chart.xAxis[0].update({ visible: true });
 
 					if (this.smats && this.smats.length > 0) {
 						chart.addSeries({
@@ -177,6 +181,12 @@ export default {
 					}
 					chart.reflow();
 				}, 400); // Synchronize with transitions else main thread will be blocked
+			} else {
+				chart.addSeries({
+					type: "column",
+					data: [],
+				});
+				chart.xAxis[0].update({ visible: false });
 			}
 		},
 

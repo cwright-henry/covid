@@ -22,7 +22,7 @@
 				<img src="@/assets/covid.png" height="24" width="24" />
 			</h1>
 			<div class="covid-appbar--info">
-				<RegionStats :region="coverage" isSlim />
+				<RegionStats :region="coverage" isSlim/>
 				<Performance v-if="supportsMemory" class="mr-2 mt-2" />
 			</div>
 		</div>
