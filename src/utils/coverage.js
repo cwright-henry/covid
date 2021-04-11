@@ -1,5 +1,5 @@
 import { load } from '@/services/Api';
-import { parseWorld, createSeriesCoverage, createSeriesRegion } from './parsing2'
+import { parseWorld, createSeriesCoverage, createSeriesRegion } from './parseWorld'
 import { parseIreland } from './parseIE'
 
 /**
@@ -8,7 +8,7 @@ import { parseIreland } from './parseIE'
  */
 
 class Coverage {
-    static COUNTRY_URL = "https://restcountries.eu/rest/v2/all";
+    static COUNTRY_URL = "/covid/api/country-data";
     static GLOBAL_CONFIRMED_URL = "/covid/api/covid-data-confirmed-global";
     static US_CONFIRMED_URL = "/covid/api/covid-data-confirmed-us";
     static GLOBAL_DEATHS_URL = "/covid/api/covid-data-deaths-global";
