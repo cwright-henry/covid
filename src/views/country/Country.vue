@@ -255,7 +255,7 @@ header {
 }
 .covid-country--stats-vaccines {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: flex-start;
 	align-items: baseline;
 	margin: -12px 0 24px 0;
 	label {
