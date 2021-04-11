@@ -9,7 +9,7 @@
 				<v-spacer></v-spacer>
 				<div class="covid-country--nav-btns">
 					<div
-						class="covid-country--nav-btn mr-4"
+						class="covid-country--nav-btn mr-3"
 						v-if="country.series.provinces.length > 0"
 					>
 						<router-link
@@ -221,9 +221,9 @@ export default {
 			color: #e0e0e0;
 			cursor: pointer;
 		}
-		&:first-child {
-			border-right: 1px solid #616161;
-			padding: 0 12px 0 0;
+		&:nth-child(2) {
+			border-left: 1px solid #616161;
+			padding: 0 0 0 16px;
 		}
 	}
 }
@@ -231,7 +231,7 @@ header {
 	display: flex;
 	align-items: flex-start;
 	justify-content: space-between;
-	margin: 0 0 4px 0;
+	margin: 0 0 12px 0;
 	.covid-country--title {
 		display: flex;
 		align-items: center;
