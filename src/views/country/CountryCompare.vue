@@ -98,7 +98,6 @@ export default {
 		}
 	}
 	section {
-		min-height: 500px;
 		.covid-compare--data-filters {
 			display: flex;
 			justify-content: flex-start;
