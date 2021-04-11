@@ -15,7 +15,10 @@
 			<h1>
 				Covid 19 Watch
 				<div><span>Day</span>{{ coverage.daysSoFar | number(0) }}</div>
-				<div><span>Last Updated</span>{{ coverage.lastestDate | dateLong }}</div>
+				<div>
+					<span>Last Updated</span
+					>{{ coverage.lastestDate | dateShort }}
+				</div>
 				<img src="@/assets/covid.png" height="24" width="24" />
 			</h1>
 			<div class="covid-appbar--info">
