@@ -1,42 +1,84 @@
 <template>
-	<v-radio-group v-model="filter" active-class="covid-radio" dense hide-details>
+	<v-radio-group
+		v-model="filter"
+		active-class="covid-radio"
+		dense
+		hide-details
+	>
 		<div class="covid-map-filters">
 			<h1>Filter Map by</h1>
 			<div>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Vaccinations" value="vaccinations" color="linkColor"></v-radio>
-					<span>{{coverage.vaccinations | number(0)}}</span>
+					<v-radio
+						hide-details
+						label="Vaccinations"
+						value="vaccinations"
+						color="linkColor"
+					></v-radio>
+					<span>{{ coverage.vaccinations | number(0) }}</span>
 				</div>
 				<label>Confirmed</label>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Latest" value="latestConfirmed" color="linkColor"></v-radio>
-					<span>{{coverage.stats.latestConfirmed | number(0)}}</span>
+					<v-radio
+						hide-details
+						label="Latest"
+						value="latestConfirmed"
+						color="linkColor"
+					></v-radio>
+					<span>{{
+						coverage.stats.latestConfirmed | number(0)
+					}}</span>
 				</div>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Total" value="totalConfirmed" color="linkColor"></v-radio>
-					<span>{{coverage.stats.totalConfirmed | number(0)}}</span>
+					<v-radio
+						hide-details
+						label="Total"
+						value="totalConfirmed"
+						color="linkColor"
+					></v-radio>
+					<span>{{ coverage.stats.totalConfirmed | number(0) }}</span>
 				</div>
 				<label>Fatalities</label>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Latest" value="latestFatalities" color="linkColor"></v-radio>
-					<span>{{coverage.stats.latestDeaths | number(0)}}</span>
+					<v-radio
+						hide-details
+						label="Latest"
+						value="latestFatalities"
+						color="linkColor"
+					></v-radio>
+					<span>{{ coverage.stats.latestDeaths | number(0) }}</span>
 				</div>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Total" value="totalFatalities" color="linkColor"></v-radio>
-					<span>{{coverage.stats.totalDeaths | number(0)}}</span>
+					<v-radio
+						hide-details
+						label="Total"
+						value="totalFatalities"
+						color="linkColor"
+					></v-radio>
+					<span>{{ coverage.stats.totalDeaths | number(0) }}</span>
 				</div>
 				<label>Per Capita Confirmed</label>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Latest" value="latestConfirmed14Day" color="linkColor"></v-radio>
+					<v-radio
+						hide-details
+						label="Last 14 Days"
+						value="latestConfirmed14Day"
+						color="linkColor"
+					></v-radio>
 					<span>
-						{{coverage.stats.latestConfirmed14Day | number(0)}}
+						{{ coverage.stats.latestConfirmed14Day | number(0) }}
 						<span>per 100,000</span>
 					</span>
 				</div>
 				<div class="covid-map--filters__radio">
-					<v-radio hide-details label="Total" value="totalConfirmed14Day" color="linkColor"></v-radio>
+					<v-radio
+						hide-details
+						label="Total"
+						value="totalConfirmed14Day"
+						color="linkColor"
+					></v-radio>
 					<span>
-						{{coverage.stats.totalConfirmed14Day | number(0)}}
+						{{ coverage.stats.totalConfirmed14Day | number(0) }}
 						<span>per 100,000</span>
 					</span>
 				</div>
