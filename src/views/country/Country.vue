@@ -4,7 +4,13 @@
 			<header>
 				<div class="covid-country--title">
 					<img :src="country.flag" width="36" class="mr-2" />
-					<h1>{{ country.countryName }}</h1>
+					<h1>
+						<div>{{ country.countryName }}</div>
+						<span class="covid-country--stats-vaccines">
+							<label>Vaccines used</label>
+							<span>{{ country.vaccines || "No data" }}</span>
+						</span>
+					</h1>
 				</div>
 				<v-spacer></v-spacer>
 				<div class="covid-country--nav-btns">
@@ -50,11 +56,10 @@
 			</header>
 			<div class="covid-country--stats">
 				<RegionStats :region="country" />
-				<Progress :value="country.vaccinations.percent" title="Fully Vaccinated"/>
-			</div>
-			<div class="covid-country--stats-vaccines" v-if="country.vaccines">
-				<label>Vaccines</label>
-				<span>{{ country.vaccines }}</span>
+				<Progress
+					:value="country.vaccinations.percent"
+					title="Fully Vaccinated"
+				/>
 			</div>
 			<div class="covid-country--charts">
 				<div class="covid-country--charts__chart pr-8">
@@ -136,7 +141,7 @@ import { mapGetters } from "vuex";
 import BasicChart from "@/views/common/BasicChart";
 import RegionStats from "@/views/common/RegionStats";
 import { getLocalProvince } from "@/utils";
-import Progress from '@/views/common/Progress'
+import Progress from "@/views/common/Progress";
 
 export default {
 	data() {
@@ -157,7 +162,7 @@ export default {
 	components: {
 		BasicChart,
 		RegionStats,
-		Progress
+		Progress,
 	},
 	props: {
 		countryCode: {
@@ -235,14 +240,25 @@ header {
 	.covid-country--title {
 		display: flex;
 		align-items: center;
-		margin: 0 0 4px;
+		margin: 0 0 6px;
 		h1 {
-			font-size: 24px;
+			display: flex;
+			flex-direction: column;
+			font-size: 26px;
 			font-weight: 400;
-			span {
-				margin: 0 0 0 8px;
-				font-size: 11px;
-				font-weight: 400;
+			line-height: 1;
+			.covid-country--stats-vaccines {
+				display: flex;
+				font-size: 13px;
+				justify-content: flex-start;
+				align-items: baseline;
+				margin: 4px 0 0 2px;
+				label {
+					text-transform: uppercase;
+					font-weight: 300;
+					font-size: 10px;
+					margin: 0 8px 0 0;
+				}
 			}
 		}
 	}
@@ -252,18 +268,6 @@ header {
 	justify-content: space-between;
 	align-items: center;
 	margin: 0 0 24px 0;
-}
-.covid-country--stats-vaccines {
-	display: flex;
-	justify-content: flex-start;
-	align-items: baseline;
-	margin: -12px 0 24px 0;
-	label {
-		text-transform: uppercase;
-		font-weight: 300;
-		font-size: 11px;
-		margin: 0 8px 0 0;
-	}
 }
 .covid-country--info__select {
 	display: flex;
