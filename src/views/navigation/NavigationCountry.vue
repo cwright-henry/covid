@@ -6,43 +6,91 @@
 		@before-leave="beforeLeave"
 		class="covid-nav-countries"
 	>
-		<li v-for="(country, index) of countries" :key="country.uuid" :ref="country.countryCode">
+		<li
+			v-for="(country, index) of countries"
+			:key="country.uuid"
+			:ref="country.countryCode"
+		>
 			<router-link
 				:to="`/country/${country.countryCode}`"
 				class="covid-link covid-nav-countries--country"
 			>
 				<div class="covid-nav-countries--rank">
-					<img :src="country.flag" width="28" height="14" class="mx-2" />
-					<span v-if="hasRank">{{index + 1}}</span>
-					<v-icon :class="{'up': isCovidIncreasing(country), 'pad': !hasRank}">mdi-play</v-icon>
+					<img
+						:src="country.flag"
+						width="28"
+						height="14"
+						class="mx-2"
+					/>
+					<span v-if="hasRank">{{ index + 1 }}</span>
+					<v-icon
+						:class="{
+							up: isCovidIncreasing(country),
+							pad: !hasRank,
+						}"
+						>mdi-play</v-icon
+					>
 				</div>
 				<div class="covid-nav-countries--country__info">
 					<h2 :title="country.countryName">
-						{{country.countryName}}
-						<span>{{filterType === 'totals' ? "Total" : "Latest"}}</span>
+						{{ country.countryName }}
+						<span>{{
+							filterType === "totals" ? "Total" : "Latest"
+						}}</span>
 					</h2>
 					<ul>
 						<li class="mr-3">
 							<label>Vaccinated</label>
-							<span :class="{isHighlighted : isVaccinatedSelected}">{{country.vaccinations.percent | number(2)}} %</span>
+							<span
+								:class="{ isHighlighted: isVaccinatedSelected }"
+								>{{
+									country.vaccinations.percent | number(2)
+								}}
+								%</span
+							>
 						</li>
 						<li class="mr-3">
 							<label>Confirmed</label>
 							<span
-								:class="{isHighlighted : isConfirmedSelected}"
-							>{{filterType === 'totals' ? country.series.stats.totalConfirmed : country.series.stats.latestConfirmed | number(0)}}</span>
+								:class="{ isHighlighted: isConfirmedSelected }"
+								>{{
+									filterType === "totals"
+										? country.series.stats.totalConfirmed
+										: country.series.stats.latestConfirmed
+										  | number(0)
+								}}</span
+							>
 						</li>
 						<li class="mr-3">
 							<label>Fatalities</label>
 							<span
-								:class="{isHighlighted : isFatalitiesSelected}"
-							>{{filterType === 'totals' ? country.series.stats.totalDeaths : country.series.stats.latestDeaths | number(0)}}</span>
+								:class="{ isHighlighted: isFatalitiesSelected }"
+								>{{
+									filterType === "totals"
+										? country.series.stats.totalDeaths
+										: country.series.stats.latestDeaths
+										  | number(0)
+								}}</span
+							>
 						</li>
 						<li>
 							<label>Per Capita Confirmed</label>
-							<span :class="{isHighlighted : isPerCapitaelected}">
-								{{filterType === 'totals' ? country.series.stats.totalConfirmed14Day : country.series.stats.latestConfirmed14Day | number(0)}}
-								<span>{{filterType === 'totals' ? '/ 100,000' : '/ 100,000 / last 14 Days'}}</span>
+							<span
+								:class="{ isHighlighted: isPerCapitaelected }"
+							>
+								{{
+									filterType === "totals"
+										? country.series.stats
+												.totalConfirmed14Day
+										: country.series.stats
+												.latestConfirmed14Day
+										  | number(0)
+								}}
+								<span>{{
+									filterType === "totals"
+										? "/ 100,000"
+										: "/ 100,000 / last 14 Days"
+								}}</span>
 							</span>
 						</li>
 					</ul>
@@ -54,7 +102,6 @@
 
 <script>
 import { mapState } from "vuex";
-import EventBus from "@/events";
 import { animation } from "@/utils";
 
 export default {
@@ -84,11 +131,11 @@ export default {
 			switch (this.filter) {
 				case "region":
 				case "subregion":
-				case "population":
 				case "totalConfirmed":
 				case "totalConfirmed14Day":
 				case "totalFatalities":
 					return "totals";
+				case "vaccinations":
 				case "latestConfirmed":
 				case "latestConfirmed14Day":
 				case "latestFatalities":
@@ -105,7 +152,7 @@ export default {
 				case "region":
 				case "subregion":
 					return false;
-				case "population":
+				case "vaccinations":
 				case "totalConfirmed":
 				case "totalConfirmed14Day":
 				case "totalFatalities":

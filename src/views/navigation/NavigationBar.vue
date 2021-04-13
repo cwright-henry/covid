@@ -167,7 +167,7 @@ export default {
 			sortFilters: [
 				{ text: "Region", uuid: "region" },
 				{ text: "Sub Region", uuid: "subregion" },
-				{ text: "Population Vaccinated", uuid: "vaccinations" },
+				{ text: "Latest Vaccinated", uuid: "vaccinations" },
 				{ text: "Latest Confirmed", uuid: "latestConfirmed" },
 				{ text: "Latest Fatalities", uuid: "latestFatalities" },
 				{ text: "Latest Per Capita", uuid: "latestConfirmed14Day" },
