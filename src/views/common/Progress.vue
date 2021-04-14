@@ -1,5 +1,5 @@
 <template>
-	<div class="covid-progress">
+	<div class="covid-progress" :class="{ small: small }">
 		<v-progress-circular
 			:rotate="-90"
 			:size="size"
@@ -26,17 +26,17 @@ export default {
 		},
 		small: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 	computed: {
 		size() {
-			return this.small ? 56 : 72
+			return this.small ? 52 : 72;
 		},
 		width() {
-			return this.small ? 6 : 10
-		}
-	}
+			return this.small ? 7 : 10;
+		},
+	},
 };
 </script>
 
@@ -50,6 +50,13 @@ export default {
 		font-size: 13px;
 		margin: 2px 0 0 0;
 		font-weight: 300;
+	}
+	&.small {
+		font-size: 14px;
+		label {
+			font-size: 11px;
+			font-weight: 300;
+		}
 	}
 }
 </style>

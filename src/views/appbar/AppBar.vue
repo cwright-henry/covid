@@ -11,7 +11,7 @@
 			color="#fff"
 			@click="toggleNavBar"
 		></v-app-bar-nav-icon>
-		<div class="covid-appbar--header ml-4">
+		<div class="covid-appbar--header">
 			<h1>
 				Covid 19 Watch
 				<div><span>Day</span>{{ coverage.daysSoFar | number(0) }}</div>
@@ -19,11 +19,36 @@
 					<span>Last Updated</span
 					>{{ coverage.lastestDate | dateShort }}
 				</div>
-				<img src="@/assets/covid.png" height="24" width="24" />
+				<v-btn
+					@click="showDevTools = !showDevTools"
+					x-small
+					text
+					color="amber"
+					class="covid-appbar--tools"
+					>System<v-icon right dark size="18">{{
+						showDevTools ? "mdi-eye-off" : "mdi-eye"
+					}}</v-icon></v-btn
+				>
 			</h1>
 			<div class="covid-appbar--info">
-				<RegionStats :region="coverage" isSlim/>
-				<Performance v-if="supportsMemory" class="mr-2 mt-2" />
+				<RegionStats :region="coverage" isSlim />
+				<div>
+					<Progress
+						class="mr-2"
+						small
+						:value="
+							(coverage.fullyVaccinated / coverage.population) *
+							100
+						"
+						title="Fully Vaccinated"
+					/>
+					<div v-show="showDevTools">
+						<Performance
+							v-if="supportsMemory"
+							class="mr-2 ml-2 mt-2"
+						/>
+					</div>
+				</div>
 			</div>
 		</div>
 	</v-app-bar>
@@ -34,16 +59,19 @@ import { mapState } from "vuex";
 import EventBus from "@/events";
 import RegionStats from "@/views/common/RegionStats";
 import Performance from "./Performance";
+import Progress from "@/views/common/Progress";
 
 export default {
 	data() {
 		return {
 			windowWidth: 0,
+			showDevTools: false,
 		};
 	},
 	components: {
 		RegionStats,
 		Performance,
+		Progress,
 	},
 	computed: {
 		...mapState(["coverage"]),
@@ -93,11 +121,10 @@ export default {
 				font-weight: 300;
 			}
 		}
-		img {
+		.covid-appbar--tools {
 			position: absolute;
 			right: 4px;
 			top: 12px;
-			animation: spin 24s linear infinite;
 		}
 	}
 
@@ -111,6 +138,10 @@ export default {
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
+	> div {
+		display: flex;
+		align-items: flex-start;
+	}
 }
 
 @media screen and (max-width: 1000px) {
