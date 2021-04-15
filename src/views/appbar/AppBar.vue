@@ -43,10 +43,7 @@
 						title="Fully Vaccinated"
 					/>
 					<div v-show="showDevTools">
-						<Performance
-							v-if="supportsMemory"
-							class="mr-2 ml-2 mt-2"
-						/>
+						<Performance class="mr-2 ml-2 mt-2" />
 					</div>
 				</div>
 			</div>
@@ -77,9 +74,6 @@ export default {
 		...mapState(["coverage"]),
 		isProminent() {
 			return this.windowWidth > 520;
-		},
-		supportsMemory() {
-			return window.performance && window.performance.memory;
 		},
 	},
 	mounted() {

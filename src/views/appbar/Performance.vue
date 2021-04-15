@@ -1,6 +1,13 @@
 <template>
 	<div class="covid-performance">
-		<PerformanceChart :data="latestMemory" title="Memory" units="MB" :precision="1" setExtremes />
+		<PerformanceChart
+			:data="latestMemory"
+			title="Memory"
+			units="MB"
+			:precision="1"
+			setExtremes
+			v-if="supportsMemory"
+		/>
 		<PerformanceChart class="ml-4" :data="framesPerSecond" title="FPS" />
 	</div>
 </template>
@@ -18,10 +25,12 @@ export default {
 		return {
 			latestMemory: [],
 			framesPerSecond: [],
+			supportsMemory: false,
 		};
 	},
 	mounted() {
 		if (window.performance && window.performance.memory) {
+			this.supportsMemory = true;
 			this.startMemoryPolling();
 		}
 		this.startFPSPolling();
