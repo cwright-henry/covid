@@ -14,6 +14,16 @@ const merge = (tsTo, tsFrom) => {
 	}
 };
 
+const mergeVaccines = (to, from) => {
+	if (to === '') {
+		return from;
+	}
+	const toSet = new Set(to.split(','))
+	const fromSet = new Set(from.split(','))
+	fromSet.forEach(toSet.add, toSet)
+	return Array.from(toSet).join(',')
+}
+
 /**
  * Replace long names with shorter - this helps the map
  */
@@ -415,6 +425,7 @@ export const createSeriesRegion = (countries) => {
 				region: country.regionName,
 				subRegion: country.subRegionName,
 				countries: [],
+				vaccines: null,
 				stats: {
 					latestConfirmed: 0,
 					latestDeaths: 0,
@@ -441,6 +452,7 @@ export const createSeriesRegion = (countries) => {
 
 	// Now merge country series into region series
 	for (const region of subRegions) {
+		const vaccinesSet = new Set();
 		for (const country of region.countries) {
 			// Merge stats
 			region.stats.latestConfirmed += country.series.stats.latestConfirmed;
@@ -454,9 +466,18 @@ export const createSeriesRegion = (countries) => {
 			merge(region.ts.confirmedDailySeries, country.series.ts.confirmedDailySeries);
 			merge(region.ts.deathDailySeries, country.series.ts.deathDailySeries);
 			merge(region.ts.vaccinationsSeries, country.vaccinations.data);
+
+			// Merge Vaccines
+			const vaccines = country.vaccines.split(',');
+			for (const vaccineUsed of vaccines) {
+				if (vaccineUsed) {
+					vaccinesSet.add(vaccineUsed.trim());
+				}
+			}
+
 		}
 		region.ts.vaccinationsSeries.sort(timeseriesSorter('desc'));
-
+		region.vaccines = Array.from(vaccinesSet).join(', ')
 		region.ts.confirmedSMASeries = SMA_AVG(region.ts.confirmedDailySeries)
 		region.ts.deathSMASeries = SMA_AVG(region.ts.deathDailySeries)
 		region.ts.confirmed14DaySeries = create14DayPer100k(region.population, region.ts.confirmedDailySeries);
@@ -512,6 +533,7 @@ export const createSeriesRegion = (countries) => {
 		merge(aregion.ts.confirmedSMASeries, region.ts.confirmedSMASeries);
 		merge(aregion.ts.deathSMASeries, region.ts.deathSMASeries);
 		aregion.ts.vaccinationsSeries.sort(timeseriesSorter('desc'))
+		console.log(aregion.vaccines)
 
 		aregion.ts.confirmed14DaySeries = create14DayPer100k(aregion.population, aregion.ts.confirmedDailySeries);
 		aregion.stats.latestConfirmed14Day = getLatestFromSeries(aregion.ts.confirmed14DaySeries);

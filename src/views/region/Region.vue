@@ -4,8 +4,14 @@
 			<v-icon class="mb-2">mdi-arrow-left</v-icon>
 		</router-link>
 		<div class="covid-region covid-sheet">
-			<h1>{{ regionCode }}</h1>
-			<RegionStats :region="region" hasProgress/>
+			<h1>
+				<div>{{ regionCode }}</div>
+				<span class="covid-region--stats-vaccines">
+					<label>Vaccines used</label>
+					<span>{{ region.vaccines || "No data" }}</span>
+				</span>
+			</h1>
+			<RegionStats :region="region" hasProgress />
 			<div class="covid-region--charts">
 				<div class="covid-region--charts__chart mt-5">
 					<ColumnChart :regions="slices" name="Latest Confirmed" />
@@ -187,6 +193,19 @@ export default {
 		font-size: 24px;
 		font-weight: 400;
 		margin: 0 0 16px;
+		.covid-region--stats-vaccines {
+			display: flex;
+			font-size: 13px;
+			justify-content: flex-start;
+			align-items: baseline;
+			margin: 4px 0 0 2px;
+			label {
+				text-transform: uppercase;
+				font-weight: 300;
+				font-size: 10px;
+				margin: 0 8px 0 0;
+			}
+		}
 	}
 	h2 {
 		font-size: 16px;
