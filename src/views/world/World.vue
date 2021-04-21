@@ -70,7 +70,6 @@
 						<BasicChart
 							:ts="coverage.ts.dailyVaccinations"
 							chartType="bar"
-							:smats="coverage.ts.vaccinationsSMASeries"
 							name="Daily Change"
 						/>
 					</div>
@@ -94,7 +93,12 @@
 								}}</span>
 							</div>
 						</h1>
-						<RegionStats :region="region" isSlim class="ma-6"  hasProgress/>
+						<RegionStats
+							:region="region"
+							isSlim
+							class="ma-6"
+							hasProgress
+						/>
 						<div class="covid-world--charts__chart">
 							<div>
 								<ColumnChart

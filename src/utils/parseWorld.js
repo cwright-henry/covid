@@ -533,7 +533,6 @@ export const createSeriesRegion = (countries) => {
 		merge(aregion.ts.confirmedSMASeries, region.ts.confirmedSMASeries);
 		merge(aregion.ts.deathSMASeries, region.ts.deathSMASeries);
 		aregion.ts.vaccinationsSeries.sort(timeseriesSorter('desc'))
-		console.log(aregion.vaccines)
 
 		aregion.ts.confirmed14DaySeries = create14DayPer100k(aregion.population, aregion.ts.confirmedDailySeries);
 		aregion.stats.latestConfirmed14Day = getLatestFromSeries(aregion.ts.confirmed14DaySeries);
