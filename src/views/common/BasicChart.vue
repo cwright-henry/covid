@@ -69,6 +69,7 @@ const options = (vm) => {
 			tickColor: "#707073",
 			tickWidth: 1,
 			min: 0,
+			maxPadding: 0.0,
 		},
 		series: [],
 		plotOptions: {

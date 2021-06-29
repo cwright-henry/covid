@@ -82,53 +82,52 @@ export const createGeoJsonForCountry = country => {
 export const createGeoJsonHistoryForCountries = countries => {
     const history = [];
     const baseSeeries = countries[0].series.ts.confirmedSeries;
-    for (let i = 1; i < baseSeeries.length; i++) {
-        const totalConfirmed = createFeatureCollection();
-        const totalConfirmed14Day = createFeatureCollection();
-        const totalFatalities = createFeatureCollection();
-        const latestConfirmed = createFeatureCollection();
-        const latestConfirmed14Day = createFeatureCollection();
-        const latestFatalities = createFeatureCollection();
+    const i = baseSeeries.length - 1;
+    const totalConfirmed = createFeatureCollection();
+    const totalConfirmed14Day = createFeatureCollection();
+    const totalFatalities = createFeatureCollection();
+    const latestConfirmed = createFeatureCollection();
+    const latestConfirmed14Day = createFeatureCollection();
+    const latestFatalities = createFeatureCollection();
 
-        for (const country of countries) {
-            if (country.series.ts.confirmedSeries[i] && country.series.ts.confirmedSeries[i][1] > 0) {
-                totalConfirmed.features.push(createFeature(country, {
-                    totalConfirmed: country.series.ts.confirmedSeries[i][1]
-                }))
+    for (const country of countries) {
+        if (country.series.ts.confirmedSeries[i] && country.series.ts.confirmedSeries[i][1] > 0) {
+            totalConfirmed.features.push(createFeature(country, {
+                totalConfirmed: country.series.ts.confirmedSeries[i][1]
+            }))
 
-                totalConfirmed14Day.features.push(createFeature(country, {
-                    totalConfirmed14Day: (country.series.ts.confirmedSeries[i][1] / country.population) * 100000
-                }))
-            }
-            if (country.series.ts.deathSeries[i] && country.series.ts.deathSeries[i][1] > 0) {
-                totalFatalities.features.push(createFeature(country, {
-                    totalFatalities: country.series.ts.deathSeries[i][1]
-                }))
-            }
-            if (country.series.ts.confirmedDailySeries[i - 1] && country.series.ts.confirmedDailySeries[i - 1][1] > 0) {
-                latestConfirmed.features.push(createFeature(country, {
-                    latestConfirmed: country.series.ts.confirmedDailySeries[i - 1][1]
-                }))
-            }
-            if (country.series.ts.confirmed14DaySeries[i - 1] && country.series.ts.confirmed14DaySeries[i - 1][1] > 0) {
-                latestConfirmed14Day.features.push(createFeature(country, {
-                    latestConfirmed14Day: country.series.ts.confirmed14DaySeries[i - 1][1]
-                }))
-            }
-            if (country.series.ts.deathDailySeries[i - 1] && country.series.ts.deathDailySeries[i - 1][1] > 0) {
-                latestFatalities.features.push(createFeature(country, {
-                    latestFatalities: country.series.ts.deathDailySeries[i - 1][1]
-                }))
-            }
+            totalConfirmed14Day.features.push(createFeature(country, {
+                totalConfirmed14Day: (country.series.ts.confirmedSeries[i][1] / country.population) * 100000
+            }))
         }
-        totalConfirmed.features.sort(totalConfirmedSorter)
-        totalConfirmed14Day.features.sort(totalRecoveredSorter)
-        totalFatalities.features.sort(totalFatalitiesSorter)
-        latestConfirmed.features.sort(lastConfirmedSorter)
-        latestConfirmed14Day.features.sort(latestRecoveredSorter)
-        latestFatalities.features.sort(latestFatalitiesSorter)
-        history.push({ date: baseSeeries[i][0], totalConfirmed, totalConfirmed14Day, totalFatalities, latestConfirmed, latestConfirmed14Day, latestFatalities })
+        if (country.series.ts.deathSeries[i] && country.series.ts.deathSeries[i][1] > 0) {
+            totalFatalities.features.push(createFeature(country, {
+                totalFatalities: country.series.ts.deathSeries[i][1]
+            }))
+        }
+        if (country.series.ts.confirmedDailySeries[i - 1] && country.series.ts.confirmedDailySeries[i - 1][1] > 0) {
+            latestConfirmed.features.push(createFeature(country, {
+                latestConfirmed: country.series.ts.confirmedDailySeries[i - 1][1]
+            }))
+        }
+        if (country.series.ts.confirmed14DaySeries[i - 1] && country.series.ts.confirmed14DaySeries[i - 1][1] > 0) {
+            latestConfirmed14Day.features.push(createFeature(country, {
+                latestConfirmed14Day: country.series.ts.confirmed14DaySeries[i - 1][1]
+            }))
+        }
+        if (country.series.ts.deathDailySeries[i - 1] && country.series.ts.deathDailySeries[i - 1][1] > 0) {
+            latestFatalities.features.push(createFeature(country, {
+                latestFatalities: country.series.ts.deathDailySeries[i - 1][1]
+            }))
+        }
     }
+    totalConfirmed.features.sort(totalConfirmedSorter)
+    totalConfirmed14Day.features.sort(totalRecoveredSorter)
+    totalFatalities.features.sort(totalFatalitiesSorter)
+    latestConfirmed.features.sort(lastConfirmedSorter)
+    latestConfirmed14Day.features.sort(latestRecoveredSorter)
+    latestFatalities.features.sort(latestFatalitiesSorter)
+    history.push({ date: baseSeeries[i][0], totalConfirmed, totalConfirmed14Day, totalFatalities, latestConfirmed, latestConfirmed14Day, latestFatalities })
 
     return history;
 }

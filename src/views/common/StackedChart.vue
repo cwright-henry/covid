@@ -48,6 +48,7 @@ const options = (vm) => {
 			minorGridLineColor: "#505053",
 			tickColor: "#707073",
 			tickWidth: 1,
+			maxPadding: 0.0,
 		},
 		yAxis: {
 			title: {
@@ -66,7 +67,7 @@ const options = (vm) => {
 			tickColor: "#707073",
 			tickWidth: 1,
 			min: 0,
-			max: 100
+			max: 100,
 		},
 		series: [],
 		plotOptions: {

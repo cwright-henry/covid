@@ -47,6 +47,7 @@ const options = (vm) => {
 				text: null,
 			},
 			tickPositions: [],
+			maxPadding: 0.0,
 		},
 		legend: {
 			enabled: false,

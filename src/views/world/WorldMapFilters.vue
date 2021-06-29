@@ -119,17 +119,20 @@ export default {
 
 <style lang="less" scoped>
 .covid-map-filters {
+	display: flex;
+	flex-direction: column;
 	h1,
 	label {
 		font-size: 16px;
 		text-transform: uppercase;
 		font-weight: 300;
 		color: var(--section-header-color);
-		margin: 0 0 8px 8px;
+		margin: 0 0 4px 12px;
 	}
 	label {
-		font-size: 15px;
-		text-transform: none;
+		font-size: 13px;
+		margin-top: 16px;
+		display: inline-block;
 	}
 	.covid-map--filters__radio {
 		display: flex;

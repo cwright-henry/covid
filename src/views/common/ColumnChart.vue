@@ -41,6 +41,7 @@ const options = (vm) => {
 			minorGridLineColor: "#505053",
 			tickColor: "#707073",
 			tickWidth: 1,
+			maxPadding: 0.0,
 		},
 		yAxis: {
 			visible: false,

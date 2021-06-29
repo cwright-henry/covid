@@ -8,12 +8,6 @@
 				:coverage="coverage"
 				@onFilterChange="onFilterChange"
 			/>
-			<WorldMapSlider
-				class="mt-4"
-				:currentFilter="filter"
-				:coverage="coverage"
-				@coverageChange="coverageChange"
-			/>
 		</div>
 	</section>
 </template>
@@ -21,7 +15,6 @@
 <script>
 import mapboxgl from "mapbox-gl";
 import WorldMapFilters from "./WorldMapFilters";
-import WorldMapSlider from "./WorldMapSlider";
 
 export default {
 	props: {
@@ -35,7 +28,6 @@ export default {
 	},
 	components: {
 		WorldMapFilters,
-		WorldMapSlider,
 	},
 	data() {
 		return {
